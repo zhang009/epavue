@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui';
-
+import router from "../router";
 /*
 * 常见的状态码：
 * 401：未登录
@@ -32,6 +32,7 @@ axios.interceptors.response.use(success=>{
         Message.error({message:'权限不足，请联系管理员'})
     }else if(error.response.status==401){
         Message.error({message:'尚未登录，，，，请登录'})
+        router.replace("/")//回到登录页
     }else {
         if(error.response.data.msg){//如果服务端返回的有错误信息,则展示服务端返回过来的错误信息
             Message.error({message:error.response.data.msg})

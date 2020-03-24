@@ -51,7 +51,7 @@
                             <el-popover
                                     placement="right"
                                     title="请选择部门"
-                                    width="200"
+                                    width="250"
                                     trigger="manual"
                                     v-model="popVisible2">
                                 <div>
@@ -92,6 +92,10 @@
                     :data="teas"
                     stripe
                     border
+                    v-loading="loading"
+                    element-loading-text="正在加载..."
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-background="rgba(0, 0, 0, 0.7)"
                     @selection-change="handleSelectionChange"
                     style="width: 90%">
                 <el-table-column
@@ -120,7 +124,7 @@
                 <el-table-column
                         prop="phone"
                         width="150"
-                        label="电话号码">
+                        label="手机号码">
                 </el-table-column>
 
                 <el-table-column
@@ -142,12 +146,21 @@
                 </el-table-column>
 
                 <el-table-column
-                        width="250"
+                        width="255"
                         label="用户角色">
                     <template slot-scope="scope">
                         <el-tag type="success" style="margin-right: 3px" v-for="(role,indexj) in scope.row.roles" :key="indexj">{{role.rnameZh}}</el-tag>
+
+                    </template>
+                </el-table-column>
+
+                <el-table-column
+                        fixed="right"
+                        width="200px"
+                        label="操作">
+                    <template slot-scope="scope">
                         <el-popover
-                                placement="right"
+                                placement="left"
                                 title="角色列表"
                                 width="200"
                                 @show="showPop(scope.row)"
@@ -161,18 +174,10 @@
                                         :value="r.id">
                                 </el-option>
                             </el-select>
-                            <el-button slot="reference" icon="el-icon-more" type="text"></el-button>
+                            <el-button slot="reference"  style="padding:3px;margin-right: 3px" size="mini" type="primary" plain>修改角色</el-button>
                         </el-popover>
-                    </template>
-                </el-table-column>
-
-                <el-table-column
-                        fixed="right"
-                        width="200px"
-                        label="操作">
-                    <template slot-scope="scope">
-                        <el-button @click="showEditEmpView(scope.row)" style="padding:3px;" size="mini"> 编辑</el-button>
-                        <el-button @click="deleteEmp(scope.row)" style="padding:3px;" size="mini" type="danger"> 删除</el-button>
+                        <el-button @click="showEditTeaView(scope.row)" style="padding:3px;" size="mini" > 编辑</el-button>
+                        <el-button @click="deleteTea(scope.row)" style="padding:3px;" size="mini" type="danger"> 删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -195,14 +200,20 @@
         <el-dialog
                 :title="title"
                 :visible.sync="dialogVisible"
-                width="30%">
+                width="35%">
 
             <div>
-                <el-form :model="tea" :rules="rules" ref="teaForm" label-position="right" label-width="100px" style="margin: 0px auto">
+                <el-form
+                        :model="updateTea"
+                        :rules="rules"
+                        ref="teaForm"
+                        label-position="right"
+                        label-width="100px"
+                        style="margin: 0px auto">
                     <el-row >
                         <el-col :span="24">
                             <el-form-item label="姓名:" prop="name"  >
-                                <el-input size="mini" style="width: 150px" prefix-icon="el-icon-edit" v-model="tea.name"
+                                <el-input size="mini" style="width: 180px" prefix-icon="el-icon-edit" v-model="updateTea.name"
                                           placeholder="请输入教师姓名"></el-input>
                             </el-form-item>
                         </el-col>
@@ -210,7 +221,7 @@
                     <el-row>
                         <el-col :span="24">
                             <el-form-item label="性别:" prop="gender">
-                                <el-radio-group v-model="tea.gender">
+                                <el-radio-group v-model="updateTea.gender">
                                     <el-radio label="男">男</el-radio>
                                     <el-radio label="女">女</el-radio>
                                 </el-radio-group>
@@ -219,25 +230,25 @@
                     </el-row>
                     <el-row>
                         <el-col :span="24">
-                            <el-form-item label="工号" prop="wordID">
-                                <el-input size="mini" style="width: 150px" prefix-icon="el-icon-phone"
-                                          v-model="tea.workID" placeholder="工号" ></el-input>
+                            <el-form-item label="工号" prop="workID">
+                                <el-input size="mini" style="width: 180px" prefix-icon="el-icon-edit"
+                                          v-model="updateTea.workID" placeholder="工号" ></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="24">
                             <el-form-item label="电子邮箱"  prop="email">
-                                <el-input size="mini" style="width: 150px" prefix-icon="el-icon-email"
-                                          v-model="tea.email" placeholder="请输入电子邮箱"></el-input>
+                                <el-input size="mini" style="width: 180px" prefix-icon="el-icon-edit"
+                                          v-model="updateTea.email" placeholder="请输入电子邮箱"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="24">
-                            <el-form-item label="电话号码" prop="phone">
-                                <el-input size="mini" style="width: 150px" prefix-icon="el-icon-phone"
-                                          v-model="tea.phone" placeholder="电话号码"></el-input>
+                            <el-form-item label="手机号码" prop="phone">
+                                <el-input size="mini" style="width: 180px" prefix-icon="el-icon-phone"
+                                          v-model="updateTea.phone" placeholder="手机号码"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -251,7 +262,7 @@
                                 <el-popover
                                         placement="right"
                                         title="请选择部门"
-                                        width="200"
+                                        width="220"
                                         trigger="manual"
                                         v-model="popVisible">
                                     <div>
@@ -270,7 +281,7 @@
                     <el-row>
                         <el-col :span="24">
                             <el-form-item label="职称:" prop="jobLevelId">
-                                <el-select v-model="tea.jobLevelId" placeholder="请选择职称" size="mini" style="width: 150px;">
+                                <el-select v-model="updateTea.jobLevelId" placeholder="请选择职称" size="mini" style="width: 180px;">
                                     <el-option
                                             v-for="item in joblevels"
                                             :key="item.id"
@@ -297,10 +308,51 @@
 </template>
 
 <script>
+    var checkPhone = (rule,value,callback) => {
+        if(!value) {
+            return callback(new Error('请输入手机号码'));
+        }else{
+            const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+            if(reg.test(value)) {
+                callback();
+            }else{
+                return callback(new Error('请输入正确的手机号'));
+            }
+        }
+    };
+    let reg='';//工号验证规则
+
+
+
+
+
     export default {
         name: "UserMan",
         data(){
+            var checkWorkID=(rule,value,callback) => {
+                if(!value) {
+                    return callback(new Error('请输入工号'));
+                }else{
+                    const reg = /^\d{8}$/
+                    if(reg.test(value)) {
+                        //工号格式正确
+                       // alert(value);
+
+                        this.getRequest("/system/user/workID/"+value).then(resp=>{
+                            if(resp){
+                              //  alert(resp.result);
+                                if(resp.result=='yes'){//数据库存在工号
+                                    return callback(new Error('该工号已被使用，请重新输入'));
+                                }
+                            }
+                        })
+                    }else{
+                        return callback(new Error('请输入正确的工号'));
+                    }
+                }
+            };
             return{
+                loading:false,
                 searchValue:{/*条件搜索值*/
                     teacherRoleId:null,
                     jobLevelId:null,
@@ -308,13 +360,22 @@
 
                 },
                 tea: {/*添加用户*/
-                    name: "张依方",
+                    name: "testname",
                     gender: "男",
                     workID: "00000001",
                     email: "laowang@qq.com",
                     phone: "18565558897",
-                    academy: '软件学院',
-                    jobLevelId: 1,
+                    departmentId: '软件学院',
+                    jobLevelId: null,
+                },
+                updateTea:{
+                    name: "",
+                    gender: "",
+                    workID: "",
+                    email: "",
+                    phone: "",
+                    departmentId: '',
+                    jobLevelId: null,
                 },
                 defaultProps: {
                     children: 'children',
@@ -337,9 +398,22 @@
                 page:1,//设置第几页
                 size:10,//设置每页的数据
                 keyword:"",/*搜索用户名*/
-                rules:{},
+                rules:{
+                    name: [{required: true, message: '请输入姓名', trigger: 'blur'}],
+                    gender: [{required: true, message: '请输入性别', trigger: 'blur'}],
+                    workID: [{validator:checkWorkID,required: true,  trigger: 'blur'}],
+                    email: [{required: true, message: '请输入邮箱地址', trigger: 'blur'}, {
+                        type: 'email',
+                        message: '邮箱格式不正确',
+                        trigger: 'blur'
+                    }],
+                    phone: [{validator:checkPhone, required: true, trigger: 'blur'}],
+                    departmentId: [{required: true, message: '请输入部门名称', trigger: 'blur'}],
+                    jobLevelId: [{required: true, message: '请输入职称', trigger: 'blur'}],
+                },
                 selectedRoles:[],
-                multipleSelection: []//批量操作勾选数组
+                multipleSelection: [],//批量操作勾选数组
+
 
             }
         },mounted() {
@@ -349,6 +423,7 @@
         methods:{
             /*初始化用户数据*/
             initUsers(type){
+                this.loading = true;
                 let url = '/system/user/?page=' + this.page + '&size=' + this.size;
                 if (type && type == 'advanced') {//条件搜索
                     if (this.searchValue.jobLevelId) {
@@ -365,6 +440,7 @@
                 }
                 this.getRequest(url).then(resp=>{
                     if(resp){
+                        this.loading = false;
                         console.log(resp.data);
                         this.teas=resp.data;
                         this.total=resp.total;
@@ -404,23 +480,62 @@
                     })
 
             },
-            showEditEmpView(data){
+            showEditTeaView(data){
               /*  this.initPositions();*/
                 this.title='编辑教师用户信息';
-                this.tea=data;
+               // this.tea=data;
+                Object.assign(this.updateTea,data);
                 this.inputDepName=data.department.name;
                 this.dialogVisible=true;
             },
+            //修改用户角色弹出框
             showPop(tea){
-                this.initAllRoles();
+                //this.initAllRoles();
                 let roles=tea.roles;
+                console.log('roles.length>>>>>>>>>>'+roles.length);
                 this.selectedRoles=[];//先清空数据
                 roles.forEach(r=>{
-                    this.selectedRoles.push(r.id);
+                    console.log('r.id>>>>>>>>>>'+r.rid);
+                    this.selectedRoles.push(r.rid);
                 })
             },
-            deleteEmp(data){
-                this.$confirm('此操作将永久删除['+data.name+'], 是否继续?', '提示', {
+            hidePop(tea){//关闭后，更新角色
+                let roles=[];
+                Object.assign(roles,tea.roles);//拷贝数据
+                let flag=false;
+                if(roles.length!=this.selectedRoles.length){
+                    flag=true
+                }else{
+                    for(let i=0;i<roles.length;i++){
+                        let role=roles[i];
+                        for(let j=0;j<this.selectedRoles.length;j++){
+                            let sr=this.selectedRoles[j];
+                            if(role.rid==sr){
+                                roles.splice(i,1);//移除相等的数据
+                                i--;//防止跳过数据
+                                break;
+                            }
+                        }
+                    }
+                    if(roles.length!=0){
+                        flag=true;
+                    }
+                }
+                if(flag){
+                    let url='/system/user/role?tid='+tea.id;
+                    this.selectedRoles.forEach(sr=>{
+                        url+='&rids='+sr;
+                    })
+                    this.putRequest(url).then(resp=>{
+                        if(resp){
+                            this.initUsers();
+                        }
+                    })
+                }
+            },
+
+            deleteTea(data){
+                this.$confirm('此操作将永久删除['+data.name+']用户, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -482,48 +597,13 @@
                 this.page=currentPage;
                 this.initUsers();
             },
-            hidePop(tea){//关闭后，更新角色
-                let roles=[];
-                Object.assign(roles,tea.roles);//拷贝数据
-                let flag=false;
-                if(roles.length!=this.selectedRoles.length){
-                    flag=true
-                }else{
-                    for(let i=0;i<roles.length;i++){
-                        let role=roles[i];
-                        for(let j=0;j<this.selectedRoles.length;j++){
-                            let sr=this.selectedRoles[j];
-                            if(role.id==sr){
-                                roles.splice(i,1);//移除相等的数据
-                                i--;//防止跳过数据
-                                break;
-                            }
-                        }
-                    }
-                    if(roles.length!=0){
-                        flag=true;
-                    }
-                }
-                if(flag){
-                    let url='/system/user/role?tid='+tea.id;
-                    this.selectedRoles.forEach(sr=>{
-                        url+='&rids='+sr;
-                    })
-                    this.putRequest(url).then(resp=>{
-                        if(resp){
-                            this.initUsers();
-                        }
-                    })
-                }
 
-
-            },
             doAddTea(){
                 //判断是添加还是更新，有id则为更新，没有id则为更新
-                if(this.tea.id){//更新
+                if(this.updateTea.id){//更新
                     this.$refs.teaForm.validate(valid=>{
                         if(valid){//数据验证成功
-                            this.putRequest("/system/user/",this.tea).then(resp=>{
+                            this.putRequest("/system/user/",this.updateTea).then(resp=>{
                                 if(resp){
                                     this.dialogVisible=false;//关闭添加对话框
                                     this.initUsers();//刷新页面
@@ -532,9 +612,10 @@
                         }
                     })
                 }else{//添加
+
                     this.$refs.teaForm.validate(valid=>{
                         if(valid){//数据验证成功
-                            this.postRequest("/system/user/",this.tea).then(resp=>{
+                            this.postRequest("/system/user/",this.updateTea).then(resp=>{
                                 if(resp){
                                     this.dialogVisible=false;//关闭添加对话框
                                     this.initUsers();//初始化刷新页面
@@ -558,10 +639,11 @@
             },
             handleNodeClick(data){//添加部门，点击部门树时触发该方法
                 this.inputDepName=data.name;
-                this.tea.departmentId=data.id;
+                this.updateTea.departmentId=data.id;
                 this.popVisible=!this.popVisible;
             },
             showAddTeacherView(){//添加用户按钮点击事件
+                this.emptyTea();
                 this.title='添加教师';
                 this.dialogVisible=true;
             },
@@ -581,6 +663,18 @@
                 this.importDataBtnIcon='el-icon-loading';
                 this.importDataDisabled=true;
             },
+            emptyTea(){
+                this.updateTea={
+                    name: "",
+                    gender: "",
+                    workID: null,
+                    email: "",
+                    phone: "",
+                    departmentId: '',
+                    jobLevelId: null,
+                }
+                this.inputDepName='';
+            }
         }
     }
 </script>
