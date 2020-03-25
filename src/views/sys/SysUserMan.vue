@@ -37,7 +37,7 @@
             <transition name="slide-fade"><!--第二行，条件搜索div-->
                 <div v-show="showAdvanceSearchView" style="border :1px solid #409eff;border-radius: 5px;box-sizing: border-box;padding: 5px ;margin: 10px 0px;"><!--条件搜索-->
                     <el-row>
-                        <el-col :span="12">
+                        <el-col :span="13">
                             用户角色:
                             <el-select v-model="searchValue.teacherRoleId" placeholder="请选择角色" size="mini" style="width: 180px;">
                                 <el-option
@@ -74,11 +74,11 @@
                             </el-select>
                         </el-col>
 
-                        <el-col :span="8" >
+                        <el-col :span="7" >
                             <div style="background-color: #409eff"></div>
                         </el-col>
                         <el-col :span="4">
-                            <el-button size="mini">取消</el-button>
+                            <el-button size="mini" @click="emptySearchValue">取消</el-button>
                             <el-button size="mini" icon="el-icon-search" type="primary" @click="initUsers('advanced')">搜索</el-button>
                         </el-col>
 
@@ -149,7 +149,7 @@
                         width="255"
                         label="用户角色">
                     <template slot-scope="scope">
-                        <el-tag type="success" style="margin-right: 3px" v-for="(role,indexj) in scope.row.roles" :key="indexj">{{role.rnameZh}}</el-tag>
+                        <el-tag type="success" style="margin-right: 3px" v-for="(role,indexj) in scope.row.roles" :key="indexj">{{role.nameZh}}</el-tag>
 
                     </template>
                 </el-table-column>
@@ -308,6 +308,10 @@
 </template>
 
 <script>
+
+
+
+
     var checkPhone = (rule,value,callback) => {
         if(!value) {
             return callback(new Error('请输入手机号码'));
@@ -320,20 +324,16 @@
             }
         }
     };
-    let reg='';//工号验证规则
-
-
-
-
 
     export default {
         name: "UserMan",
         data(){
+
             var checkWorkID=(rule,value,callback) => {
                 if(!value) {
                     return callback(new Error('请输入工号'));
                 }else{
-                    const reg = /^\d{8}$/
+                    const reg = /^\d{4}$/
                     if(reg.test(value)) {
                         //工号格式正确
                        // alert(value);
@@ -343,6 +343,8 @@
                               //  alert(resp.result);
                                 if(resp.result=='yes'){//数据库存在工号
                                     return callback(new Error('该工号已被使用，请重新输入'));
+                                }else{
+                                    callback();
                                 }
                             }
                         })
@@ -408,8 +410,8 @@
                         trigger: 'blur'
                     }],
                     phone: [{validator:checkPhone, required: true, trigger: 'blur'}],
-                    departmentId: [{required: true, message: '请输入部门名称', trigger: 'blur'}],
-                    jobLevelId: [{required: true, message: '请输入职称', trigger: 'blur'}],
+                    departmentId: [{required: true, message: '请选择部门', trigger: 'blur'}],
+                    jobLevelId: [{required: true, message: '请选择职称', trigger: 'blur'}],
                 },
                 selectedRoles:[],
                 multipleSelection: [],//批量操作勾选数组
@@ -562,7 +564,7 @@
                 })
             },
             deleteMany(){
-               /* this.$confirm('此操作将永久删除【'+this.multipleSelection.length+'】条记录, 是否继续?', '提示', {
+                this.$confirm('此操作将永久删除【'+this.multipleSelection.length+'】条记录, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -572,10 +574,10 @@
                     this.multipleSelection.forEach(item=>{
                         ids+='ids='+item.id+'&'
                     })
-                    this.deleteRequest("/system/basic/pos/"+ids).then(resp=>{
+                    this.deleteRequest("/system/user/"+ids).then(resp=>{
                         if(resp){
                             //删除成功
-                            this.initPositions();
+                            this.initUsers();
                         }
                     });
 
@@ -584,7 +586,7 @@
                         type: 'info',
                         message: '已取消删除'
                     });
-                });*/
+                });
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
@@ -597,8 +599,14 @@
                 this.page=currentPage;
                 this.initUsers();
             },
-
+            emptySearchValue(){
+                    this.searchValue.teacherRoleId=null;
+                    this.searchValue.jobLevelId=null;
+                    this.searchValue.departmentId='';
+                    this.inputDepName='';
+            },
             doAddTea(){
+
                 //判断是添加还是更新，有id则为更新，没有id则为更新
                 if(this.updateTea.id){//更新
                     this.$refs.teaForm.validate(valid=>{
@@ -609,6 +617,7 @@
                                     this.initUsers();//刷新页面
                                 }
                             })
+                        }else{
                         }
                     })
                 }else{//添加
@@ -621,6 +630,7 @@
                                     this.initUsers();//初始化刷新页面
                                 }
                             })
+                        }else{
                         }
                     })
                 }
