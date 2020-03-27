@@ -14,20 +14,38 @@
                         条件搜索</el-button>
                 </div>
                 <div ><!--第一行右侧，批量导入，添加用户按钮-->
-                    <el-upload
-                            :on-error="onError"
-                            :on-success="onSuccess"
-                            :show-file-list="false"
-                            :before-upload="beforeUpload"
-                            :disabled="importDataDisabled"
-                            style="display: inline-flex;margin-right: 8px"
-                            class="upload-demo"
-                            action="/system/user/import">
-                        <el-button :disabled="importDataDisabled" type="success" :icon="importDataBtnIcon">
-                            <!-- <i class="fa fa-level-up" aria-hidden="true" icon="el-icon-download"/>-->
-                            {{importDataBtnText}}<!--导入数据-->
-                        </el-button>
-                    </el-upload>
+                    <el-button @click="showImportView" :icon="importDataBtnIcon" type="success"   style="display: inline-flex;margin-right: 8px">导入数据</el-button>
+
+                    <!--导入数据提示框-->
+                    <el-dialog
+                            title="导入数据"
+                            :visible.sync="importDialogVisible"
+                            width="30%"
+                            :before-close="handleClose">
+                        <p>导入数据前可以从这里<el-link type="primary" @click="exportData">下载模板</el-link>并将用户的信息整理到模板中，请使用模板给出的提示填写字段</p>
+
+                         <el-upload
+                                 v-loading.fullscreen.lock="loading2"
+                                 element-loading-text="拼命解析数据中..."
+                                 element-loading-spinner="el-icon-loading"
+                                 element-loading-background="rgba(0, 0, 0, 0.7)"
+                                 :on-error="onError"
+                                 :on-success="onSuccess"
+                                 :show-file-list="false"
+                                 :before-upload="beforeUpload"
+                                 :disabled="importDataDisabled"
+                                 style="display: inline-flex;margin-right: 8px"
+                                 class="upload-demo"
+                                 action="/system/user/import">
+                            <el-button :disabled="importDataDisabled" type="primary" :icon="importDataBtnIcon">
+                                <!-- <i class="fa fa-level-up" aria-hidden="true" icon="el-icon-download"/>-->
+                                {{importDataBtnText}}<!--导入数据-->
+                            </el-button>
+                        </el-upload>
+
+
+
+                    </el-dialog>
 
                     <el-button type="primary" icon="el-icon-plus" @click="showAddTeacherView">
                         添加用户
@@ -355,6 +373,7 @@
             };
             return{
                 loading:false,
+                loading2:false,
                 searchValue:{/*条件搜索值*/
                     teacherRoleId:null,
                     jobLevelId:null,
@@ -389,6 +408,7 @@
                 allroles:[],/*所有角色*/
                 title:'添加员工',/*添加和编辑对话框的标题*/
                 showAdvanceSearchView:false,/*是否高级搜索按钮点击*/
+                importDialogVisible:false,
                 importDataDisabled:false,
                 importDataBtnText:'导入数据',
                 importDataBtnIcon:'el-icon-upload2',
@@ -481,6 +501,12 @@
                         }
                     })
 
+            },
+            exportData(){
+                window.open('/system/user/export','_parent');
+            },
+            showImportView(){
+                this.importDialogVisible=true;
             },
             showEditTeaView(data){
               /*  this.initPositions();*/
@@ -658,17 +684,29 @@
                 this.dialogVisible=true;
             },
             onError(response,file,fileList){
+                this.loading2=false;
+                this.importDialogVisible=false;
                 this.importDataBtnText='导入数据';
                 this.importDataBtnIcon='el-icon-upload2';
+                this.$message.error('数据导入失败！');
                 this.importDataDisabled=false;
             },
             onSuccess(response,file,fileList){
+                this.loading2=false;
+                this.importDialogVisible=false;
                 this.importDataBtnText='导入数据';
                 this.importDataBtnIcon='el-icon-upload2';
                 this.importDataDisabled=false;
+
+                this.$message({
+                    message: '导入数据成功！',
+                    type: 'success'
+                });
+
                 this.initUsers();
             },
             beforeUpload(){//上传之前事件
+                this.loading2=true;
                 this.importDataBtnText='正在导入';
                 this.importDataBtnIcon='el-icon-loading';
                 this.importDataDisabled=true;
