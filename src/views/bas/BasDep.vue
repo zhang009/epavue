@@ -63,8 +63,6 @@
                         <td><el-tag>部门名称</el-tag></td>
                         <td><el-input v-model="dep.name" placeholder="请输入部门名称..."></el-input></td>
                     </tr>
-
-
                 </table>
 
             </div>
