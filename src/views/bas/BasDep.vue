@@ -13,6 +13,10 @@
             </el-input>
 
         <el-tree
+                v-loading="loading"
+                element-loading-text="正在加载数据..."
+                element-loading-spinner="el-icon-loading"
+
                 :data="deps"
                 :props="defaultProps"
                 :expand-on-click-node="false"
@@ -80,6 +84,7 @@
         name: "SysDep",
         data(){
             return{
+                loading:false,
                 dialogVisible:false,/*对话框是否可见*/
                 filterText:'',/*搜索输入的部门名称*/
                 deps:[],/*所有部门的json数组*/
@@ -105,6 +110,7 @@
         },
         methods:{
             initDep(){
+
                 this.dep={
                     name:'',
                     parentId:-1
@@ -112,9 +118,11 @@
                     this.pname=''
             },
             initDeps(){
+                this.loading=true;
                 this.getRequest("/baseinfo/department/").then(resp=> {
                     if (resp) {
                         this.deps=resp;
+                        this.loading = false;
                     }
                 })
             },addDep2Deps(deps,dep){//解决添加部门之后，弹窗收起问题
