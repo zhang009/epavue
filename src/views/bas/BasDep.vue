@@ -30,7 +30,7 @@
                           type="primary"
                           size="mini"
                           class="depBtn"
-                          @click="() => showAddDepView(data)">
+                          @click="() => showAddDepView(node,data)">
                     添加部门
                   </el-button>
                   <el-button
@@ -143,7 +143,8 @@
                 if (!value) return true;/*这里的data即为每一行的json对象，如果有值的话给我留着，如果没有值则给去除掉*/
                 return data.name.indexOf(value) !== -1;/*默认的label改为了name*/
             },
-            showAddDepView(data){/*展示添加部门对话框*/
+            showAddDepView(node,data){/*展示添加部门对话框*/
+                console.log(node);
                 console.log(data);
                 this.pname=data.name;
                 this.dep.parentId=data.id;
