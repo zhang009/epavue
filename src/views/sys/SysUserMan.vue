@@ -4,7 +4,7 @@
             <el-divider></el-divider><!--分割线-->
             <div style="display: flex;justify-content: space-between">
                 <div><!--第一行左侧搜索-->
-                    <el-input placeholder="通过姓名搜索用户..." prefix-icon="el-icon-search"
+                    <el-input placeholder="通过姓名搜索教师用户..." prefix-icon="el-icon-search"
                               clearable
                               @clear="initUsers"
                               style="width: 300px;margin-right: 10px" v-model="keyword" @keydown.enter.native="initUsers" :disabled="showAdvanceSearchView"></el-input>

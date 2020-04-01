@@ -37,9 +37,12 @@
                         width="55">
                 </el-table-column>
                 <el-table-column
-                        prop="id"
+                        type="index"
                         label="编号"
-                        width="100"><!-- type="index"-->
+                        width="100"><!-- prop="id" -->
+                    <template slot-scope="scope">
+                        <span>{{(page - 1) * size + scope.$index + 1}}</span>
+                    </template>
                 </el-table-column>
                 <el-table-column
                         prop="name"
