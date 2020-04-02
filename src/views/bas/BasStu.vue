@@ -36,7 +36,7 @@
                                 :disabled="importDataDisabled"
                                 style="display: inline-flex;margin-right: 8px"
                                 class="upload-demo"
-                                action="/system/user/import">
+                                action="/baseinfo/stu/import">
                             <el-button :disabled="importDataDisabled" type="primary" :icon="importDataBtnIcon">
                                 <!-- <i class="fa fa-level-up" aria-hidden="true" icon="el-icon-download"/>-->
                                 {{importDataBtnText}}<!--导入数据-->
@@ -299,12 +299,7 @@
 
                 },
                 multipleSelection:[],
-                showImportView(){
-                    this.importDialogVisible=true;
-                },
-                handleSelectionChange(val) {
-                    this.multipleSelection = val;
-                },
+
 
             }
         }
@@ -314,6 +309,13 @@
             this.initAllClasses2();//这里初始化主要解决，编辑学生信息的时候，班级选择框没有数据问题
         }
         ,methods:{
+            showImportView(){
+                // alert();
+                this.importDialogVisible=true;
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
             initStudents(type){
                 this.loading=true;
                 let url='/baseinfo/stu/?page='+this.page+'&size='+this.size;
@@ -353,7 +355,7 @@
                         if (resp) {
 
                             this.allClasses2 = resp;
-                            alert(this.allClasses2.length);
+                           // alert(this.allClasses2.length);
                             window.sessionStorage.setItem("classes", JSON.stringify(resp));
                         }
                     })
@@ -442,7 +444,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.deleteRequest("/system/user/"+data.id).then(resp=>{
+                    this.deleteRequest("/baseinfo/stu/"+data.id).then(resp=>{
                         if(resp){
                             this.initStudents();
                         }
