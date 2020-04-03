@@ -21,7 +21,7 @@ Vue.prototype.deleteRequest=deleteRequest;
 
 
 Vue.config.productionTip = false
-
+//全局设置elementUI的样式，把所有size改成small大小
 Vue.use(ElementUI,{size:'small'});
 
 router.beforeEach((to,from,next)=>{//前置导航守卫
