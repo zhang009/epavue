@@ -40,13 +40,13 @@ export const formatRoutes=(routes)=>{
             component(resolve){
                 if (component.startsWith("Home")) {
                     require(['../views/' + component + '.vue'], resolve);//这里也就是相当于vue例子中的动态导入
-                } else if (component.startsWith("Emp")) {
+                } else if (component.startsWith("Ana")) {
                     require(['../views/ana/' + component + '.vue'], resolve);
-                } else if (component.startsWith("Per")) {
+                } else if (component.startsWith("Gra")) {
                     require(['../views/gra/' + component + '.vue'], resolve);
-                } else if (component.startsWith("Sal")) {
+                } else if (component.startsWith("Pap")) {
                     require(['../views/pap/' + component + '.vue'], resolve);
-                } else if (component.startsWith("Sta")) {
+                } else if (component.startsWith("Que")) {
                     require(['../views/que/' + component + '.vue'], resolve);
                 } else if (component.startsWith("Sys")) {
                     require(['../views/sys/' + component + '.vue'], resolve);

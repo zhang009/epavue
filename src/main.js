@@ -34,6 +34,7 @@ router.beforeEach((to,from,next)=>{//前置导航守卫
         if(window.sessionStorage.getItem("user")){
             initMenu(router,store); //如果store里面有数据，则是一次正常的跳转，不是用户按了F5的跳转
             next();
+            //测试冲突
         }else {
             console.log("to:"+to);
             //next("/");//没有登陆，跳转到登录页面
