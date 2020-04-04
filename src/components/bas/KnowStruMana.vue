@@ -60,7 +60,7 @@
                     v-model="filterText"
                     prefix-icon="el-icon-search">
             </el-input>
-
+            <div style="color: #cac6c6">（为了方便后期的数据分析，请在每一个章节后面至少设置一个知识点）</div>
             <el-tree
                     v-loading="loading"
                     element-loading-text="正在加载数据..."
@@ -90,7 +90,7 @@
                           @click="() => deleteDep( data)">
                     删除章节
                   </el-button>-->
-                    <el-button v-if="data.id !== -1"  icon="el-icon-plus" type="text"
+                    <el-button  icon="el-icon-plus" type="text"
                                 @click="() => showAddKnowsView(node,data)">
                     </el-button>
                     <!-- 根节点不需要删除和重命名 -->
@@ -160,8 +160,7 @@
                     <table>
                         <tr>
                             <td><el-tag>所属章节</el-tag></td>
-                            <td>{{knowsName}}
-                            </td>
+                            <td>{{knowsName}}</td>
                         </tr>
                         <tr>
                             <td><el-tag>知识点名称</el-tag></td>
@@ -317,6 +316,12 @@
                     this.know.parentId=this.searchValue.courseId;//这里添加章节设置的parentId不在是后端传过来的，
                     this.courseName=node.parent.label;//展示所属课程
                     this.dialogVisible1=true;//展示
+                }else if(data.id==-1&&data.children==null){
+                    //如果是新建的课程（没有章节和知识点），则需要新建章节
+                    this.title1="添加章节"
+                    this.know.parentId=this.searchValue.courseId;//这里添加章节设置的parentId不在是后端传过来的，
+                    this.courseName=node.parent.label;//展示所属课程
+                    this.dialogVisible1=true;//展示
                 }else if(data.parentId==-1&&data.children==null){
                     //添加知识点
                     //如果该章节下面没有知识点，则显示添加知识点
@@ -365,6 +370,7 @@
                         //this.initDeps();
                        // this.addDep2Deps(this.deps,resp.obj);
                         this.dialogVisible1=false;
+                        this.know.name='';//清空输入框
                         this.initKnows();//初始化添加弹窗变量
                     }
                 })
@@ -376,6 +382,7 @@
                         //this.initDeps();
                         //this.addDep2Deps(this.deps,resp.obj);
                         this.dialogVisible2=false;
+                        this.know.name='';//清空输入框
                         this.initKnows();//初始化添加弹窗变量
                     }
                 })
