@@ -138,11 +138,11 @@
 </template>
 
 <script>
-    import AddSC from "../bas/que/AddSC";
-    import AddMC from "../bas/que/AddMC";
-    import AddQA from "../bas/que/AddQA";
-    import AddFB from "../bas/que/AddFB";
-    import AddTF from "../bas/que/AddTF";
+    import AddSC from "./que/AddSC";
+    import AddMC from "./que/AddMC";
+    import AddQA from "./que/AddQA";
+    import AddFB from "./que/AddFB";
+    import AddTF from "./que/AddTF";
     export default {
         name: "SingleAddQue",
         components: {

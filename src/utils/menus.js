@@ -18,7 +18,6 @@ export const initMenu=(router,store)=>{//第一个参数为router,因为一会�
 //格式化路径
 export const formatRoutes=(routes)=>{
     let fmRoutes=[];//最终返回的数据
-
     routes.forEach(router=>{
         let{
             path,
