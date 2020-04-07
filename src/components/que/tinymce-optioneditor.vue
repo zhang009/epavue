@@ -1,20 +1,22 @@
 <template>
 
     <div class="tinymce-editor">
-        <editor v-model="myValue"
+        <el-input >
+
+        </el-input>
+        <option-editor v-model="myValue"
                 :init="init"
                 :disabled="disabled"
                 @onClick="onClick">
-        </editor>
+        </option-editor>
     </div>
 </template>
 
 <!--<script data-main="js/main" src="https://cdn.bootcss.com/require.js/2.3.5/require.min.js"></script>&ndash;&gt;-->
 <script>
 
-
     import tinymce from 'tinymce/tinymce'
-    import Editor from '@tinymce/tinymce-vue'
+    import OptionEditor from '@tinymce/tinymce-vue'
     import 'tinymce/themes/silver'
     // 编辑器插件plugins
     // 更多插件参考：https://www.tiny.cloud/docs/plugins/
@@ -26,13 +28,10 @@
     import 'tinymce/plugins/charmap'
     import 'tinymce/plugins/paste'
     import 'tinymce/plugins/preview'
-
-
     export default {
         name: "tinymce-editor",
         components: {
-            Editor,
-
+            OptionEditor,
         },
         mounted () {
             tinymce.init({})
@@ -83,7 +82,7 @@
                     menubar: false,
                     forced_root_block : "",
                     external_plugins: {
-                      /*  'mathjax':'/@dimakorotkov/tinymce-mathjax/plugin.min.js', */
+                        /*  'mathjax':'/@dimakorotkov/tinymce-mathjax/plugin.min.js', */
                         'mathjax':'/tinymce/tinymce-mathjax/plugin.min.js',
 
                     },

@@ -25,7 +25,7 @@
                 </div>
 
                 <div style="margin-right: 20px;margin-bottom: 10px">
-                    <el-button plain>保存</el-button>
+                    <el-button plain @click="addQuestion">保存</el-button>
                     <el-button type="primary" plain>取消</el-button>
                 </div>
             </div>
@@ -33,20 +33,21 @@
             <el-container style="border:1px solid #eee;">
                 <el-main >
                     <!--el-main这里放置试题信息-->
-                    <AddSC v-if="isAddSC"></AddSC>
+                    <AddSC ref="AddSC" v-if="isAddSC" @submitInfo="checkSubmitInfo"></AddSC>
                     <AddMC v-if="isAddMC"></AddMC>
                     <AddTF v-if="isAddTF"></AddTF>
                     <AddFB v-if="isAddFB"></AddFB>
                     <AddQA v-if="isAddQA"> </AddQA>
                 </el-main>
                 <!--el-main这里放置试题的设置信息-->
-                <el-aside style="width: 38%;background-color: #dedede">
+                <el-aside style="width: 38%;border-left:1px dashed #dedede; ">
                     <el-scrollbar style="width: 100%"><!--这里是为了解决底部出现的滚动条-->
-                            <div>
+                            <div style="margin-left: 30px;margin-top: 20px">
                                 <el-form
+                                        ref="rightInfoForm"
                                         :model="updateRightQueInfo"
                                         :rules="rules"
-                                        label-position="right"
+                                        label-position="top"
                                         label-width="120px"
                                         style="margin: 0px auto">
                                     <el-row>
@@ -58,7 +59,7 @@
                                                            filterable
                                                            placeholder="请选择课程(可搜索）"
                                                            @change="selectCourseChanged"
-                                                           size="mini"
+                                                           size="large"
                                                            style="width: 250px;">
                                                     <el-option
                                                             v-for="item in courses"
@@ -76,7 +77,7 @@
                                                 <el-select v-model="updateRightQueInfo.chapterId"
                                                            placeholder="请选择章节"
                                                            @change="selectChapterChanged"
-                                                           size="mini"
+                                                           size="large"
                                                            style="width: 250px;">
                                                     <el-option
                                                             v-for="item in chapters"
@@ -95,8 +96,9 @@
                                                         ref="knowsCascader"
                                                         placeholder="请选择知识点"
                                                         style="width: 250px;"
+                                                        size="large"
                                                         :options="knows"
-                                                        v-model="selectKnowIds"
+                                                        v-model="updateRightQueInfo.selectKnowIds"
                                                         :props="defaultProps"
                                                         @change="selectKnowsChanged"
                                                         clearable>
@@ -114,13 +116,32 @@
                                                 <el-select v-model="updateRightQueInfo.dot"
                                                            placeholder="请选择试题难度"
                                                            @change="selectChapterChanged"
-                                                           size="mini"
+                                                           size="large"
                                                            style="width: 250px;">
                                                     <el-option
                                                             v-for="item in qlevel"
                                                             :key="item.value"
                                                             :label="item.label"
                                                             :value="item.value"><!--这里knows.children为课程列表-->
+                                                    </el-option>
+                                                </el-select>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="24" style="margin-top: 0px">
+                                            <el-form-item label="选择试题审核人:" prop="checkTeacherId"  >
+                                                <el-select v-model="updateRightQueInfo.checkTeacherId"
+                                                           placeholder="请选择审核人(课程负责人）"
+                                                           @change="selectCheckTeacherChanged"
+                                                           size="large"
+                                                           filterable
+                                                           style="width: 250px;">
+                                                    <el-option
+                                                            v-for="item in checkTeachers"
+                                                            :key="item.id"
+                                                            :label="item.name"
+                                                            :value="item.id"><!--这里knows.children为课程列表-->
                                                     </el-option>
                                                 </el-select>
                                             </el-form-item>
@@ -133,6 +154,10 @@
                 </el-aside>
 
             </el-container>
+            <div style="text-align: center;margin-top: 10px"><!--底部保存按钮-->
+                <el-button type="primary" @click="addQuestion">保存</el-button>
+                <el-button  >取消</el-button>
+            </div>
         </div>
     </div>
 </template>
@@ -158,7 +183,6 @@
                 fillBlank:false,
                 trueOrFalse:false,
                 questionAnswer:false,
-
                 searchValue:{
                     chapterId:'',
 
@@ -169,18 +193,21 @@
                 updateRightQueInfo:{/*右侧试题设置参数*/
                     courseId:'',//课程id
                     chapterId:'',
-                    dot:''
+                    selectKnowIds:[],//获取用户选中的知识点
+                    dot:'',//试题难度
+                    checkTeacherId:[],
                 },
-                qlevel:[
+                qlevel:[//试题难度下拉框选择值
                     {value:1,label:'简单'},{value:2,label: '适中'},{value:3,label:'偏难'},{value:4,label: '难'}
                 ],
                 rules:{
                     courseId: [{required: true, message: '请选择课程', trigger: 'blur'}],
                     chapterId: [{required: true, message: '请选择章节', trigger: 'blur'}],
                     dot:[{required: true, message: '请选择试题难度', trigger: 'blur'}],
+                    checkTeacherId:[{required: true, message: '请选择审核人', trigger: 'blur'}],
                 },
                 knows:[],//后端根据课程id传过来的章节列表（包含知识点）
-                selectKnowIds:[],//获取用户选中的知识点
+                checkTeachers:[],
                 chapters:[],
                 defaultProps: {
                     multiple:true,
@@ -202,6 +229,11 @@
                 isAddTF:false,
                 isAddFB:false,
                 isAddQA:false,
+                scData:{},
+                mcData:{},
+                tfData:{},
+                fbData:{},
+                qaData:{}
 
             }
 
@@ -209,10 +241,11 @@
         mounted() {
             this.initQue();
             this.initCourse();
+            this.initCheckTeachers();
 
         },
         methods:{
-            initQue(){
+            initQue(){//初始化试题添加组件
                 if(this.queType=='单选题'){
                     this.isAddSC=true;
                     this.isAddMC=false;
@@ -247,7 +280,7 @@
                     this.isAddQA=true;
                 }
             },
-            initCourse(){
+            initCourse(){//
                 if(!window.sessionStorage.getItem("courses")){
                     this.getRequest('/baseinfo/course/all?classId='+'').then(resp => {
                         if (resp) {
@@ -257,6 +290,18 @@
                     })
                 }else{
                     this.courses=JSON.parse(window.sessionStorage.getItem("courses"));
+                }
+            },
+            initCheckTeachers(){//
+                if(!window.sessionStorage.getItem("checkTeachers")){
+                    this.getRequest('/system/user/addQue').then(resp => {
+                        if (resp) {
+                            this.checkTeachers = resp;
+                            window.sessionStorage.setItem("checkTeachers", JSON.stringify(resp));
+                        }
+                    })
+                }else{
+                    this.checkTeachers=JSON.parse(window.sessionStorage.getItem("checkTeachers"));
                 }
             },
             selectCourseChanged(){//课程选中后，根据课程查找到所有的章节和知识点信息
@@ -296,7 +341,46 @@
             },
             selectQueTypeChanged(){
                 this.initQue();
+                this.emptyRightInfo();
             },
+            selectCheckTeacherChanged(){
+
+            },
+            checkSubmitInfo(data){
+                this.scData=data;
+                console.log('接受子组件的数据：'+data);
+            },
+            addQuestion(){
+              //用户点击保存按钮
+                if(this.queType=='单选题'){
+                    this.$refs.AddSC.submit() // 方法2
+                    if(this.scData){
+                        this.$refs.rightInfoForm.validate((valid) => {//this.refs可以获取到当前页面所有的ref
+                            if (valid) {
+                               //数据通过验证，发送到后端进行保存操作
+                                
+                            }
+                        });
+                    }
+
+                }else if(this.queType=='多选题'){
+
+                }else if(this.queType=='判断题'){
+
+
+                }else if(this.queType=='填空题'){
+
+
+                }else if(this.queType=='简答题'){
+
+                }
+            },
+            emptyRightInfo(){
+                this.updateRightQueInfo.courseId='';
+                this.updateRightQueInfo.chapterId='';
+                this.updateRightQueInfo.dot='';
+                this.updateRightQueInfo.selectKnowIds=[];
+            }
         }
     }
 </script>
