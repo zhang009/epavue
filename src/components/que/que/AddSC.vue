@@ -1,4 +1,4 @@
-<template>
+<template xmlns:el-col="http://www.w3.org/1999/html">
     <div><!--添加单选-->
 
         <el-form
@@ -10,10 +10,10 @@
                 style="margin: 0px auto">
             <el-row>
                 <el-col :span="24" style="margin-top: 0px">
-                    <el-form-item label="题干:" prop="term"  >
-                        {{updateMainQueInfo.term}}
+                    <el-form-item label="题干:" prop="stem"  >
+
                         <tinymce-editor ref="editor"
-                                        v-model="updateMainQueInfo.term"
+                                        v-model="updateMainQueInfo.stem"
 
                                         @onClick="onClick">
                         </tinymce-editor>
@@ -24,9 +24,9 @@
             </el-row>
             <el-row>
                 <el-col :span="24" style="margin-top: 0px">
-                    <el-form-item label="选项:" prop="options"  >
+                    <el-form-item label="选项:"   >
 
-                        <div v-for="(item,index) in updateMainQueInfo.options">
+                       <!-- <div v-for="(item,index) in updateMainQueInfo.options">
                             <el-row style="margin-top: 10px">
                                 <el-col :span="1">
                                     <span>{{optionNum[index]}}</span>
@@ -39,7 +39,66 @@
                                     <el-radio v-model="updateMainQueInfo.radio" :label="index+1" border style="margin-left: 20px">设为答案</el-radio>
                                 </el-col>
                             </el-row>
+                        </div>-->
+                        <div>
+                            <el-row style="margin-top: 10px">
+                                <el-col :span="1">
+                                    <span>A.</span>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-form-item   prop="option1" >
+                                    <el-input size="large" v-model="updateMainQueInfo.option1" style=""></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="5">
+
+                                    <el-radio v-model="updateMainQueInfo.answer" :label="1" border style="margin-left: 20px" prop="answer">设为答案</el-radio>
+
+                                </el-col>
+                            </el-row>
                         </div>
+                        <div>
+                            <el-row style="margin-top: 10px">
+                                <el-col :span="1">
+                                    <span>B.</span>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-form-item   prop="option2" >
+                                    <el-input size="large" v-model="updateMainQueInfo.option2" style="" prop="option2"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-radio v-model="updateMainQueInfo.answer" :label="2" border style="margin-left: 20px" prop="answer">设为答案</el-radio>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <div>
+                            <el-row style="margin-top: 10px">
+                                <el-col :span="1">
+                                    <span>C.</span>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-input size="large" v-model="updateMainQueInfo.option3" style="" prop="option3"></el-input>
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-radio v-model="updateMainQueInfo.answer" :label="3" border style="margin-left: 20px" prop="answer">设为答案</el-radio>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <div>
+                            <el-row style="margin-top: 10px">
+                                <el-col :span="1">
+                                    <span>D.</span>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-input size="large" v-model="updateMainQueInfo.option4" style="" prop="option4"></el-input>
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-radio v-model="updateMainQueInfo.answer" :label="4" border style="margin-left: 20px" prop="answer">设为答案</el-radio>
+                                </el-col>
+                            </el-row>
+                        </div>
+
                         <!--<button @click="clear">清空内容</button>
                         <button @click="disabled = true">禁用</button>-->
                     </el-form-item>
@@ -48,7 +107,7 @@
 
             <el-row>
                 <el-col :span="24" style="margin-top: 0px">
-                    <el-form-item label="解析:" prop="term"  >
+                    <el-form-item label="解析:"   >
                         <tinymce-editor ref="editor"
                                         v-model="updateMainQueInfo.analysis"
 
@@ -70,42 +129,38 @@
     export default {
         name: "AddSC",
         components: {TinymceEditor,TinymceOptioneditor},
+        props:{
+            scMainQueInfo:{
+                stem:'',
+                option1:'',
+                option2:'',
+                option3:'',
+                option4:'',
+                answer:1,//设为答案的序号
+                analysis:'',
+            },
+        },
         mounted() {
 
         },
+        watch:{//监听父组件传入的值
+            'scMainQueInfo':function (val) {
+                this.updateMainQueInfo=val;
+            }
+        },
         data(){
             return{
-                props:{
-                    rules: [],
-
-                },
+                updateMainQueInfo:this.scMainQueInfo,
                 rules:{
-                    term: [{required: true, message: '请输入题干', trigger: 'blur'}],
-                    options: [{required: true, message: '请输入选项', trigger: 'blur'}],
-                },
-                updateMainQueInfo:{
-                    term:'',
-                    options:[{
-                        id:1,
-                        name:'测试选项1'
-                    }, {
-                        id:2,
-                        name:'测试选项2'
-                    },{
-                        id:3,
-                        name:'测试选项3'
-                    },{
-                        id:4,
-                        name:'测试选项4'
-                    }],
-                    answerNum:1,//答案个数
-                    analysis:'',
-                    radio:1,//设为答案的序号
+                    stem: [{required: true, message: '请输入题干', trigger: 'blur'}],
+                    option1: [{required: true, message: '请输入选项A', trigger: 'blur'}],
+                    option2: [{required: true, message: '请输入选项B', trigger: 'blur'}],
+                    answer: [{required: true, message: '请选择答案', trigger: 'blur'}],
 
                 },
+
+
                 msg: 'Welcome to Use Tinymce Editor',
-
-
                 optionSelectNum:4,
                 optionNum:['A.',"B.", "C.","D.","E.","F.","G.","H.","I.","J."]
             }
@@ -128,8 +183,24 @@
                         this.$emit('submitInfo',this.updateMainQueInfo);
                     }
                 });
-
-
+            },
+            checkData(){
+                var isContinue=false;
+                this.$refs.scMainForm.validate((valid) => {//this.refs可以获取到当前页面所有的ref
+                    if (valid) {
+                       isContinue=true;
+                    }
+                });
+                return isContinue;
+            },
+            emptyData(){
+                this.scMainQueInfo.stem='';
+                this.scMainQueInfo.answer=1;
+                this.scMainQueInfo.analysis='';
+                this.scMainQueInfo.option1='';
+                this.scMainQueInfo.option2='';
+                this.scMainQueInfo.option3='';
+                this.scMainQueInfo.option4='';
             }
         }
     }

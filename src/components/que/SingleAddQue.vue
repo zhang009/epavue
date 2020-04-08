@@ -1,5 +1,5 @@
 <template xmlns:el-col="http://www.w3.org/1999/html">
-    <div>
+    <div><!--单个试题录入页面-->
 
         <div >
             <div style="padding-top: 10px;padding-left: 10px;">
@@ -26,15 +26,15 @@
 
                 <div style="margin-right: 20px;margin-bottom: 10px">
                     <el-button plain @click="addQuestion">保存</el-button>
-                    <el-button type="primary" plain>取消</el-button>
+                    <el-button type="primary" plain >取消</el-button>
                 </div>
             </div>
 
             <el-container style="border:1px solid #eee;">
                 <el-main >
                     <!--el-main这里放置试题信息-->
-                    <AddSC ref="AddSC" v-if="isAddSC" @submitInfo="checkSubmitInfo"></AddSC>
-                    <AddMC v-if="isAddMC"></AddMC>
+                    <AddSC ref="AddSC" v-if="isAddSC" @submitInfo="submitSCData" :scMainQueInfo="scMainQueInfo"></AddSC>
+                    <AddMC ref="AddMC" v-if="isAddMC" @submitInfo="submitMCData" :mcMainQueInfo="mcMainQueInfo"></AddMC>
                     <AddTF v-if="isAddTF"></AddTF>
                     <AddFB v-if="isAddFB"></AddFB>
                     <AddQA v-if="isAddQA"> </AddQA>
@@ -98,7 +98,7 @@
                                                         style="width: 250px;"
                                                         size="large"
                                                         :options="knows"
-                                                        v-model="updateRightQueInfo.selectKnowIds"
+                                                        v-model="knowIds"
                                                         :props="defaultProps"
                                                         @change="selectKnowsChanged"
                                                         clearable>
@@ -178,24 +178,69 @@
             AddSC
         }, data(){
             return{
-                singleChoice:true,
-                multiChoice:false,
-                fillBlank:false,
-                trueOrFalse:false,
-                questionAnswer:false,
-                searchValue:{
-                    chapterId:'',
 
-                },
+                //
                 courseKeyword:'',
-                courses:[],/*存储根据关键词查找的课程列表*/
-                chapters:[],
+                courses:[],/*存放右侧根据关键词查找的课程列表*/
+                chapters:[],//存放右侧章节列表
                 updateRightQueInfo:{/*右侧试题设置参数*/
                     courseId:'',//课程id
-                    chapterId:'',
-                    selectKnowIds:[],//获取用户选中的知识点
+                    chapterId:'',//章节id
+                    knowIds:'',//获取用户选中的知识点
                     dot:'',//试题难度
-                    checkTeacherId:[],
+                    checkTeacherId:[],//审核教师id
+                },
+                knowIds:[],//右侧知识点存放的数组，（提交的时候需要转化为字符串）
+                //需要传递给单选组件中的信息
+                scMainQueInfo:{
+                    stem:'',
+                    option1:'',
+                    option2:'',
+                    option3:'',
+                    option4:'',
+                    answer:1,//设为答案的序号
+                    analysis:'',
+                },
+                //把组件中的信息和右侧的信息合并到这里，也就是最后提交的数据信息
+                scMainAllQueInfo:{
+                    stem:'',
+                    option1:'',
+                    option2:'',
+                    option3:'',
+                    option4:'',
+                    answer:1,//设为答案的序号
+                    analysis:'',
+                    courseId:'',//课程id
+                    chapterId:'',//章节id
+                    knowIds:'',//获取用户选中的知识点
+                    dot:'',//试题难度
+                    checkTeacherId:[],//审核教师id
+                },
+                //需要传递给单选组件中的信息
+                mcMainQueInfo:{
+                    stem:'',
+                    options:[{
+                        id:1,
+                        name:'测试选项1'
+                    }, ],
+                    answer:'',//设为答案的序号
+                    analysis:'',
+                },
+                //把组件中的信息和右侧的信息合并到这里，也就是最后提交的数据信息
+                mcMainAllQueInfo:{
+                    stem:'',
+                    options:[{
+                        id:1,
+                        name:'测试选项1'
+                    }],
+                    answer:'',//设为答案的序号
+                    analysis:'',
+
+                    courseId:'',//课程id
+                    chapterId:'',//章节id
+                    knowIds:'',//获取用户选中的知识点
+                    dot:'',//试题难度
+                    checkTeacherId:[],//审核教师id
                 },
                 qlevel:[//试题难度下拉框选择值
                     {value:1,label:'简单'},{value:2,label: '适中'},{value:3,label:'偏难'},{value:4,label: '难'}
@@ -229,11 +274,11 @@
                 isAddTF:false,
                 isAddFB:false,
                 isAddQA:false,
-                scData:{},
+               /* scData:{},
                 mcData:{},
                 tfData:{},
                 fbData:{},
-                qaData:{}
+                qaData:{}*/
 
             }
 
@@ -323,7 +368,7 @@
 
             },
             selectKnowsChanged(){
-                //console.log('selectKnowIds:'+this.selectKnowIds);
+                //console.log('knowIds:'+this.knowIds);
                 //let knowIds=this.$refs['knowsCascader'].getCheckedNodes();
                 /*for(var i=0;i<knowIds.length;i++){
                     let know1=knowIds[i];//获取到每个章节（包含知识点）
@@ -338,6 +383,11 @@
                 }*/
                 //数据回显：app.selectedOptions=JSON.parse(result.data.userAddress);
                 //console.log(this.$refs['knowsCascader'].getCheckedNodes());
+
+                //这里将数组类型转化为字符串类型
+                let ids=this.knowIds.join('|');
+                this.updateRightQueInfo.knowIds=ids;
+
             },
             selectQueTypeChanged(){
                 this.initQue();
@@ -346,23 +396,44 @@
             selectCheckTeacherChanged(){
 
             },
-            checkSubmitInfo(data){
-                this.scData=data;
-                console.log('接受子组件的数据：'+data);
+            submitSCData(data){
+                this.scMainQueInfo=data;
             },
-            addQuestion(){
+            submitMCData(data){
+
+            },
+            addQuestion(data){
               //用户点击保存按钮
                 if(this.queType=='单选题'){
-                    this.$refs.AddSC.submit() // 方法2
-                    if(this.scData){
+
+                    if(this.$refs.AddSC.checkData()){ //这里还需要对组件中的值是否为空进行判断
+                        this.$refs.AddSC.submit(); // 获取sc组件中的数据
                         this.$refs.rightInfoForm.validate((valid) => {//this.refs可以获取到当前页面所有的ref
                             if (valid) {
-                               //数据通过验证，发送到后端进行保存操作
-                                
+
+                                //数据通过验证，发送到后端进行保存操作
+                                this.scMainAllQueInfo.stem=this.scMainQueInfo.stem;
+                                this.scMainAllQueInfo.option1=this.scMainQueInfo.option1;
+                                this.scMainAllQueInfo.option2=this.scMainQueInfo.option2;
+                                this.scMainAllQueInfo.option3=this.scMainQueInfo.option3;
+                                this.scMainAllQueInfo.option4=this.scMainQueInfo.option4;
+                                this.scMainAllQueInfo.answer=this.scMainQueInfo.answer;
+                                this.scMainAllQueInfo.analysis=this.scMainQueInfo.analysis;
+
+                                this.scMainAllQueInfo.courseId=this.updateRightQueInfo.courseId;
+                                this.scMainAllQueInfo.chapterId=this.updateRightQueInfo.chapterId;
+                                this.scMainAllQueInfo.knowIds=this.updateRightQueInfo.knowIds;
+                                this.scMainAllQueInfo.dot=this.updateRightQueInfo.dot;
+                                this.scMainAllQueInfo.checkTeacherId=this.updateRightQueInfo.checkTeacherId;
+                                this.postRequest("/question/input/add",this.scMainAllQueInfo).then(resp=>{
+                                    if(resp){
+                                        this.emptyRightInfo();//刷新页面
+                                        this.$refs.AddSC.emptyData();//调用组件中方法清空数据
+                                    }
+                                })
                             }
                         });
                     }
-
                 }else if(this.queType=='多选题'){
 
                 }else if(this.queType=='判断题'){
@@ -379,7 +450,7 @@
                 this.updateRightQueInfo.courseId='';
                 this.updateRightQueInfo.chapterId='';
                 this.updateRightQueInfo.dot='';
-                this.updateRightQueInfo.selectKnowIds=[];
+                this.updateRightQueInfo.knowIds='';
             }
         }
     }
