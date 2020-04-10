@@ -198,7 +198,7 @@
                     option2:'',
                     option3:'',
                     option4:'',
-                    answer:1,//设为答案的序号
+                    answer:'A',//设为答案
                     analysis:'',
                 },
                 //把组件中的信息和右侧的信息合并到这里，也就是最后提交的数据信息
@@ -208,7 +208,7 @@
                     option2:'',
                     option3:'',
                     option4:'',
-                    answer:1,//设为答案的序号
+                    answer:'',//设为答案
                     analysis:'',
                     courseId:'',//课程id
                     chapterId:'',//章节id

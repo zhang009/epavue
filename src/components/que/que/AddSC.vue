@@ -52,7 +52,7 @@
                                 </el-col>
                                 <el-col :span="5">
 
-                                    <el-radio v-model="updateMainQueInfo.answer" :label="1" border style="margin-left: 20px" prop="answer">设为答案</el-radio>
+                                    <el-radio v-model="updateMainQueInfo.answer" label="A" border style="margin-left: 20px" prop="answer" >设为答案</el-radio>
 
                                 </el-col>
                             </el-row>
@@ -68,7 +68,7 @@
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="5">
-                                    <el-radio v-model="updateMainQueInfo.answer" :label="2" border style="margin-left: 20px" prop="answer">设为答案</el-radio>
+                                    <el-radio v-model="updateMainQueInfo.answer" label="B" border style="margin-left: 20px" prop="answer" >设为答案</el-radio>
                                 </el-col>
                             </el-row>
                         </div>
@@ -81,7 +81,7 @@
                                     <el-input size="large" v-model="updateMainQueInfo.option3" style="" prop="option3"></el-input>
                                 </el-col>
                                 <el-col :span="5">
-                                    <el-radio v-model="updateMainQueInfo.answer" :label="3" border style="margin-left: 20px" prop="answer">设为答案</el-radio>
+                                    <el-radio v-model="updateMainQueInfo.answer" label="C" border style="margin-left: 20px" prop="answer" >设为答案</el-radio>
                                 </el-col>
                             </el-row>
                         </div>
@@ -94,7 +94,7 @@
                                     <el-input size="large" v-model="updateMainQueInfo.option4" style="" prop="option4"></el-input>
                                 </el-col>
                                 <el-col :span="5">
-                                    <el-radio v-model="updateMainQueInfo.answer" :label="4" border style="margin-left: 20px" prop="answer">设为答案</el-radio>
+                                    <el-radio v-model="updateMainQueInfo.answer" label="D" border style="margin-left: 20px" prop="answer" >设为答案</el-radio>
                                 </el-col>
                             </el-row>
                         </div>
@@ -136,7 +136,7 @@
                 option2:'',
                 option3:'',
                 option4:'',
-                answer:1,//设为答案的序号
+                answer:'A',//设为答案的序号
                 analysis:'',
             },
         },
@@ -167,6 +167,7 @@
         },
         methods: {
             // 鼠标单击的事件
+
             onClick (e, editor) {
                 console.log('Element clicked')
                 console.log(e)
@@ -195,7 +196,7 @@
             },
             emptyData(){
                 this.scMainQueInfo.stem='';
-                this.scMainQueInfo.answer=1;
+                this.scMainQueInfo.answer='A';
                 this.scMainQueInfo.analysis='';
                 this.scMainQueInfo.option1='';
                 this.scMainQueInfo.option2='';

@@ -476,7 +476,7 @@
                     this.getRequest('/system/user/joblevel').then(resp => {
                         if (resp) {
                             this.joblevels = resp;
-                            console.log(this.joblevels);
+
                             window.sessionStorage.setItem("joblevel", JSON.stringify(resp));
                         }
                     })
@@ -486,7 +486,7 @@
                     this.getRequest('/system/user/deps').then(resp => {
                         if (resp) {
                             this.allDeps = resp;
-                            console.log(this.allDeps);
+
                             window.sessionStorage.setItem("deps", JSON.stringify(resp));
                         }
                     })

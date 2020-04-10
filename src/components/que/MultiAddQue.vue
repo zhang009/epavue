@@ -8,18 +8,19 @@
                     <el-button type="primary" @click="clickUpload">上传文件</el-button>
              <!--   </router-link>-->
 
-                <el-button type="primary" plain>下载模板</el-button>
+                <el-button type="primary" plain @click="exportQueTemplate">下载模板</el-button>
             </div>
 
             <el-dialog
                     title="上传试题"
                     :visible.sync="dialogVisible"
                     width="50%"
+
                     @close="emptyData"
                     :close-on-click-modal="false">
-                <div style="display: flex;justify-content: center;">
+                <div style="display: flex;justify-content: flex-start;">
                     <el-steps :active="activeItemIndex" direction="vertical">
-                        <el-step title="选择课程" size="mini"></el-step>
+                        <el-step title="选择课程" ></el-step>
                         <el-step title="选择试题审核人"></el-step>
                         <el-step title="上传文件"></el-step>
                     </el-steps>
@@ -75,8 +76,8 @@
                                     :before-upload="beforeUpload"
                                     :disabled="importDataDisabled"
                                     style="display: inline-flex;margin-right: 8px"
-                                    class="upload-demo"
-                                    action="/question/input/import">
+                                    :data="importData"
+                                    action="/question/input/import?courseId=">
                                 <el-button :disabled="importDataDisabled" type="primary" :icon="importDataBtnIcon">
                                     <!-- <i class="fa fa-level-up" aria-hidden="true" icon="el-icon-download"/>-->
                                     {{importDataBtnText}}<!--导入数据-->
@@ -89,8 +90,8 @@
                 </div>
                 <div style="display: flex;align-items: center;justify-content: center;padding: 0px;margin: 0px;">
                    <span slot="footer" class="dialog-footer">
-                    <el-button @click="preStep">{{activeItemIndex==10?'取消':'上一步'}}</el-button>
-                    <el-button type="primary" @click="nextStep">{{activeItemIndex==10?'完成':'下一步'}}</el-button>
+                    <el-button @click="preStep">{{activeItemIndex==3?'取消':'上一步'}}</el-button>
+                    <el-button type="primary" @click="nextStep">{{activeItemIndex==2?'完成':'下一步'}}</el-button>
                    </span>
                 </div>
 
@@ -114,6 +115,10 @@
              importDataBtnText:'导入数据',
              importDataBtnIcon:'el-icon-upload2',
              activeItemIndex: 0,
+             importData:{
+                 courseId:'',
+                 checkTeacherId:''
+             }
 
          }
         },
@@ -125,6 +130,10 @@
             clickUpload(){
                     this.dialogVisible=true;
             },
+            exportQueTemplate(){//导出试题下载模板
+                window.open('/question/input/export','_parent');
+            },
+
             emptyData(){
 
             },selectCourseChanged(){
@@ -169,6 +178,10 @@
                 this.importDataBtnIcon='el-icon-upload2';
                 this.importDataDisabled=false;
 
+                this.dialogVisible = false;
+                this.checkTeacherId='',
+                    this.courseId='',
+                    this.activeItemIndex=0;
                 this.$message({
                     message: '导入数据成功！',
                     type: 'success'
@@ -177,6 +190,8 @@
              /*   this.initUsers();*/
             },
             beforeUpload(){//上传之前事件
+                this.importData.checkTeacherId=this.checkTeacherId;
+                this.importData.courseId=this.courseId;
                 this.loading=true;
                 this.importDataBtnText='正在导入';
                 this.importDataBtnIcon='el-icon-loading';
@@ -193,7 +208,7 @@
                 this.activeItemIndex--;
             },
             nextStep() {
-                if (this.activeItemIndex == 10) {
+                if (this.activeItemIndex == 2) {
                     /*if (this.salary.id) {
                         this.putRequest("/salary/sob/", this.salary).then(resp=>{
                             if (resp) {
@@ -210,6 +225,16 @@
                         });
                     }
                     return;*/
+
+                    this.dialogVisible = false;
+                    this.checkTeacherId='',
+                        this.courseId='',
+                        this.activeItemIndex=0;
+
+                    this.importDataBtnText='导入数据';
+                    this.importDataBtnIcon='el-icon-upload2';
+                    this.importDataDisabled=false;
+                    return;
                 }
                 this.activeItemIndex++;
             },

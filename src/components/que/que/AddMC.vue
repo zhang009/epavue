@@ -108,7 +108,7 @@
             const checkAnswer = (rule,value,callback) => {//自定义多选验证规则
 
                 var s=value;
-                var n=(s.split('|')).length;
+                var n=(s.split('')).length;
 
                 if(n<1) {
                     return callback(new Error('请选择试题答案'));
@@ -158,19 +158,18 @@
                 }
             },
             selectAnswerChange(){
-                console.log('this.answer:'+this.answer);
-                //当点击答案多选时，需要把数组答案转化为字符串
+              /*  console.log('this.answer:'+this.answer);*/
+                //当点击答案多选时，需要把数组答案转化为字符串,如何[A,B]转化为AB
                 var arr=new Array();
-                for(var i=0;i<this.answer.length;i++){
+               /* for(var i=0;i<this.answer.length;i++){
                     for(var j=0;j<this.answerChar2.length;j++){
                         if(this.answer[i]==this.answerChar2[j]){
                             arr.push(j+1);
                         }
                     }
-                }
-                this.updateMainQueInfo.answer=arr.join("|");
-              /*  console.log('arr:'+arr);
-                console.log('this.updateMainQueInfo.answer:'+this.updateMainQueInfo.answer);*/
+                }*/
+                this.updateMainQueInfo.answer=this.answer.join("");//数组转换为字符串
+
             },
             submit(){//试题保存点击事件
                 this.$refs.mcMainForm.validate((valid) => {//this.refs可以获取到当前页面所有的ref
