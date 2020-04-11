@@ -176,7 +176,8 @@
             AddQA,
             AddMC,
             AddSC
-        }, data(){
+        },
+        data(){
             return{
 
                 //
@@ -193,6 +194,7 @@
                 knowIds:[],//右侧知识点存放的数组，（提交的时候需要转化为字符串）
                 //需要传递给单选组件中的信息
                 scMainQueInfo:{
+                    id:'',
                     stem:'',
                     option1:'',
                     option2:'',
@@ -333,6 +335,140 @@
             }
 
         },
+        created() {
+
+            if(this.$route.params.queType){//如果有参数，表示由试题页面跳转过来，进入编辑试题页面
+
+                var queType=this.$route.params.queType;
+
+                if(queType=='sc'){
+                    this.queType="单选题";
+                    this.scMainAllQueInfo=JSON.parse(this.$route.params.scMainAllQueInfo);
+                    this.$set(this.scMainQueInfo,"id",this.scMainAllQueInfo.id);
+                    this.$set(this.scMainQueInfo,"stem",this.scMainAllQueInfo.stem);
+                    this.$set(this.scMainQueInfo,"option1",this.scMainAllQueInfo.option1);
+                    this.$set(this.scMainQueInfo,"option2",this.scMainAllQueInfo.option2);
+                    this.$set(this.scMainQueInfo,"option3",this.scMainAllQueInfo.option3);
+                    this.$set(this.scMainQueInfo,"option4",this.scMainAllQueInfo.option4);
+                    this.$set(this.scMainQueInfo,"analysis",this.scMainAllQueInfo.analysis);
+
+
+                    this.$set(this.scMainQueInfo,"courseId",this.scMainAllQueInfo.courseId);
+                    this.$set(this.updateRightQueInfo,"courseId",this.scMainAllQueInfo.courseId);
+                    this.selectCourseChanged();
+                    this.$set(this.scMainQueInfo,"chapterId",this.scMainAllQueInfo.chapterId);
+                    this.$set(this.updateRightQueInfo,"chapterId",this.scMainAllQueInfo.chapterId);
+                    this.selectChapterChanged();
+                    this.$set(this.scMainQueInfo,"dot",this.scMainAllQueInfo.dot);
+                    this.$set(this.updateRightQueInfo,"dot",this.scMainAllQueInfo.dot);
+                    this.$set(this.scMainQueInfo,"knowIds",this.scMainAllQueInfo.knowIds);
+                    this.$set(this.updateRightQueInfo,"knowIds",this.scMainAllQueInfo.knowIds);
+                    this.$set(this.scMainQueInfo,"checkTeacherId",this.scMainAllQueInfo.checkTeacherId);
+                    this.$set(this.updateRightQueInfo,"checkTeacherId",this.scMainAllQueInfo.checkTeacherId);
+                    this.strToKnows();
+
+                    this.$forceUpdate();
+                }
+                else if(queType=='mc'){
+
+                    this.mcMainAllQueInfo=JSON.parse(this.$route.params.mcMainAllQueInfo);
+                    this.$set(this.mcMainQueInfo,"id",this.mcMainAllQueInfo.id);
+                    this.$set(this.mcMainQueInfo,"stem",this.mcMainAllQueInfo.stem);
+                    this.$set(this.mcMainQueInfo,"options",this.mcMainAllQueInfo.options);
+                    this.$set(this.mcMainQueInfo,"answer",this.mcMainAllQueInfo.answer);
+                    this.$set(this.mcMainQueInfo,"analysis",this.mcMainAllQueInfo.analysis);
+
+
+                    this.$set(this.mcMainQueInfo,"courseId",this.mcMainAllQueInfo.courseId);
+                    this.$set(this.updateRightQueInfo,"courseId",this.mcMainAllQueInfo.courseId);
+                    this.selectCourseChanged();
+                    this.$set(this.mcMainQueInfo,"chapterId",this.mcMainAllQueInfo.chapterId);
+                    this.$set(this.updateRightQueInfo,"chapterId",this.mcMainAllQueInfo.chapterId);
+                    this.selectChapterChanged();
+                    this.$set(this.mcMainQueInfo,"dot",this.mcMainAllQueInfo.dot);
+                    this.$set(this.updateRightQueInfo,"dot",this.mcMainAllQueInfo.dot);
+                    this.$set(this.mcMainQueInfo,"knowIds",this.mcMainAllQueInfo.knowIds);
+                    this.$set(this.updateRightQueInfo,"knowIds",this.mcMainAllQueInfo.knowIds);
+                    this.$set(this.mcMainQueInfo,"checkTeacherId",this.mcMainAllQueInfo.checkTeacherId);
+                    this.$set(this.updateRightQueInfo,"checkTeacherId",this.mcMainAllQueInfo.checkTeacherId);
+                    this.strToKnows();
+
+                    this.$forceUpdate();
+                }
+                else if(queType=='tf'){
+
+                    this.tfMainAllQueInfo=JSON.parse(this.$route.params.tfMainAllQueInfo);
+                    this.$set(this.tfMainQueInfo,"id",this.tfMainAllQueInfo.id);
+                    this.$set(this.tfMainQueInfo,"stem",this.tfMainAllQueInfo.stem);
+                    this.$set(this.tfMainQueInfo,"answer",this.tfMainAllQueInfo.answer);
+                    this.$set(this.tfMainQueInfo,"analysis",this.tfMainAllQueInfo.analysis);
+
+                    this.$set(this.tfMainQueInfo,"courseId",this.tfMainAllQueInfo.courseId);
+                    this.$set(this.updateRightQueInfo,"courseId",this.tfMainAllQueInfo.courseId);
+                    this.selectCourseChanged();
+                    this.$set(this.tfMainQueInfo,"chapterId",this.tfMainAllQueInfo.chapterId);
+                    this.$set(this.updateRightQueInfo,"chapterId",this.tfMainAllQueInfo.chapterId);
+                    this.selectChapterChanged();
+                    this.$set(this.tfMainQueInfo,"dot",this.tfMainAllQueInfo.dot);
+                    this.$set(this.updateRightQueInfo,"dot",this.tfMainAllQueInfo.dot);
+                    this.$set(this.tfMainQueInfo,"knowIds",this.tfMainAllQueInfo.knowIds);
+                    this.$set(this.updateRightQueInfo,"knowIds",this.tfMainAllQueInfo.knowIds);
+                    this.$set(this.tfMainQueInfo,"checkTeacherId",this.tfMainAllQueInfo.checkTeacherId);
+                    this.$set(this.updateRightQueInfo,"checkTeacherId",this.tfMainAllQueInfo.checkTeacherId);
+                    this.strToKnows();
+
+                    this.$forceUpdate();
+                }
+                else if(queType=='fb'){
+
+                    this.fbMainAllQueInfo=JSON.parse(this.$route.params.fbMainAllQueInfo);
+                    this.$set(this.fbMainQueInfo,"id",this.fbMainAllQueInfo.id);
+                    this.$set(this.fbMainQueInfo,"stem",this.fbMainAllQueInfo.stem);
+                    this.$set(this.fbMainQueInfo,"answer",this.fbMainAllQueInfo.answer);
+                    this.$set(this.fbMainQueInfo,"analysis",this.fbMainAllQueInfo.analysis);
+
+                    this.$set(this.fbMainQueInfo,"courseId",this.fbMainAllQueInfo.courseId);
+                    this.$set(this.updateRightQueInfo,"courseId",this.fbMainAllQueInfo.courseId);
+                    this.selectCourseChanged();
+                    this.$set(this.fbMainQueInfo,"chapterId",this.fbMainAllQueInfo.chapterId);
+                    this.$set(this.updateRightQueInfo,"chapterId",this.fbMainAllQueInfo.chapterId);
+                    this.selectChapterChanged();
+                    this.$set(this.fbMainQueInfo,"dot",this.fbMainAllQueInfo.dot);
+                    this.$set(this.updateRightQueInfo,"dot",this.fbMainAllQueInfo.dot);
+                    this.$set(this.fbMainQueInfo,"knowIds",this.fbMainAllQueInfo.knowIds);
+                    this.$set(this.updateRightQueInfo,"knowIds",this.fbMainAllQueInfo.knowIds);
+                    this.$set(this.fbMainQueInfo,"checkTeacherId",this.fbMainAllQueInfo.checkTeacherId);
+                    this.$set(this.updateRightQueInfo,"checkTeacherId",this.fbMainAllQueInfo.checkTeacherId);
+                    this.strToKnows();
+
+                    this.$forceUpdate();
+                }
+                else if(queType=='qa'){
+
+                    this.qaMainAllQueInfo=JSON.parse(this.$route.params.qaMainAllQueInfo);
+                    this.$set(this.qaMainQueInfo,"id",this.qaMainAllQueInfo.id);
+                    this.$set(this.qaMainQueInfo,"stem",this.qaMainAllQueInfo.stem);
+                    this.$set(this.qaMainQueInfo,"answer",this.qaMainAllQueInfo.answer);
+                    this.$set(this.qaMainQueInfo,"analysis",this.qaMainAllQueInfo.analysis);
+
+                    this.$set(this.qaMainQueInfo,"courseId",this.qaMainAllQueInfo.courseId);
+                    this.$set(this.updateRightQueInfo,"courseId",this.qaMainAllQueInfo.courseId);
+                    this.selectCourseChanged();
+                    this.$set(this.qaMainQueInfo,"chapterId",this.qaMainAllQueInfo.chapterId);
+                    this.$set(this.updateRightQueInfo,"chapterId",this.qaMainAllQueInfo.chapterId);
+                    this.selectChapterChanged();
+                    this.$set(this.qaMainQueInfo,"dot",this.qaMainAllQueInfo.dot);
+                    this.$set(this.updateRightQueInfo,"dot",this.qaMainAllQueInfo.dot);
+                    this.$set(this.qaMainQueInfo,"knowIds",this.qaMainAllQueInfo.knowIds);
+                    this.$set(this.updateRightQueInfo,"knowIds",this.qaMainAllQueInfo.knowIds);
+                    this.$set(this.qaMainQueInfo,"checkTeacherId",this.qaMainAllQueInfo.checkTeacherId);
+                    this.$set(this.updateRightQueInfo,"checkTeacherId",this.qaMainAllQueInfo.checkTeacherId);
+                    this.strToKnows();
+
+                    this.$forceUpdate();
+                }
+            }
+        },
         mounted() {
             this.initQue();
             this.initCourse();
@@ -439,6 +575,11 @@
                 this.updateRightQueInfo.knowIds=ids;
 
             },
+            strToKnows(){//把知识转化为数组类型方便显示
+                var idsArr=this.updateRightQueInfo.knowIds.split("|");
+                /*this.$set(this.knowIds,"knowIds",this.scMainAllQueInfo.knowIds);*/
+                this.knowIds=idsArr;
+            },
             selectQueTypeChanged(){
                 this.initQue();
                 this.emptyRightInfo();
@@ -484,12 +625,22 @@
                                 this.scMainAllQueInfo.knowIds=this.updateRightQueInfo.knowIds;
                                 this.scMainAllQueInfo.dot=this.updateRightQueInfo.dot;
                                 this.scMainAllQueInfo.checkTeacherId=this.updateRightQueInfo.checkTeacherId;
-                                this.postRequest("/question/scinput/add",this.scMainAllQueInfo).then(resp=>{
-                                    if(resp){
-                                        this.emptyRightInfo();//刷新页面
-                                        this.$refs.AddSC.emptyData();//调用组件中方法清空数据
-                                    }
-                                })
+
+                                if(this.scMainQueInfo.id){//不为空时为更新操作
+                                    this.putRequest("/question/scinput/update",this.scMainAllQueInfo).then(resp=>{
+                                        if(resp){
+                                            this.emptyRightInfo();//刷新页面
+                                            this.$refs.AddSC.emptyData();//调用组件中方法清空数据
+                                        }
+                                    })
+                                }else {//否则，为添加操作
+                                    this.postRequest("/question/scinput/add",this.scMainAllQueInfo).then(resp=>{
+                                        if(resp){
+                                            this.emptyRightInfo();//刷新页面
+                                            this.$refs.AddSC.emptyData();//调用组件中方法清空数据
+                                        }
+                                    })
+                                }
                             }
                         });
                     }
@@ -600,7 +751,9 @@
                 this.updateRightQueInfo.chapterId='';
                 this.updateRightQueInfo.dot='';
                 this.updateRightQueInfo.knowIds='';
+                this.updateRightQueInfo.checkTeacherId='';
                 this.knowIds=[];
+                this.knows=[];
             }
         }
     }

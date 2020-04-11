@@ -11,12 +11,18 @@
             <el-row>
                 <el-col :span="24" style="margin-top: 0px">
                     <el-form-item label="题干:" prop="stem"  >
+                        <el-input
+                                type="textarea"
+                                :rows="10"
+                                placeholder="请输入内容"
+                                v-model="updateMainQueInfo.stem">
+                        </el-input>
 
-                        <tinymce-editor ref="editor"
+                        <!--<tinymce-editor ref="editor"
                                         v-model="updateMainQueInfo.stem"
 
                                         @onClick="onClick">
-                        </tinymce-editor>
+                        </tinymce-editor>-->
                         <!--<button @click="clear">清空内容</button>
                         <button @click="disabled = true">禁用</button>-->
                     </el-form-item>
@@ -108,11 +114,17 @@
             <el-row>
                 <el-col :span="24" style="margin-top: 0px">
                     <el-form-item label="解析:"   >
-                        <tinymce-editor ref="editor"
+                        <el-input
+                                type="textarea"
+                                :rows="10"
+                                placeholder="请输入解析"
+                                v-model="updateMainQueInfo.analysis">
+                        </el-input>
+                      <!--  <tinymce-editor ref="editor"
                                         v-model="updateMainQueInfo.analysis"
 
                                         @onClick="onClick">
-                        </tinymce-editor>
+                        </tinymce-editor>-->
                         <!--<button @click="clear">清空内容</button>
                         <button @click="disabled = true">禁用</button>-->
                     </el-form-item>
@@ -177,6 +189,7 @@
             clear () {
                 this.$refs.editor.clear()
             },
+
 
             submit(){//试题保存点击事件
                 this.$refs.scMainForm.validate((valid) => {//this.refs可以获取到当前页面所有的ref
