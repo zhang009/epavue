@@ -102,6 +102,7 @@
         components: {TinymceEditor,TinymceOptioneditor},
         props:{
             mcMainQueInfo:{
+                id:'',
                 stem:'',
                 options:[],
                 answer:'',//设为答案的序号
@@ -162,17 +163,28 @@
                 this.$refs.editor.clear()
             },
             selectOptionNumChanged(){
-                this.updateMainQueInfo.options=[];//清空
-                this.answerChar3=[];
-                for(var i=0;i<this.optionSelectNum;i++){
-                    this.updateMainQueInfo.options.push({optionNum:i+1,optionContent:''});
-                    this.answerChar3.push(this.answerChar2[i]);
+                if(this.updateMainQueInfo.id!=''&&this.updateMainQueInfo.id!=null){//如果id不为空，表示进入编辑页面，不再重新初始化选项内容
+
+                    //在这里把答案进行赋值（把字符串转换为数组）
+                    var arr=new Array();
+                    arr=this.updateMainQueInfo.answer.split("");
+                    this.answer=arr;
+
+                }else{
+                    this.updateMainQueInfo.options=[];//清空
+                    this.answerChar3=[];
+                    for(var i=0;i<this.optionSelectNum;i++){
+                        this.updateMainQueInfo.options.push({optionNum:i+1,optionContent:''});
+                        this.answerChar3.push(this.answerChar2[i]);
+                    }
                 }
+
+
             },
             selectAnswerChange(){
               /*  console.log('this.answer:'+this.answer);*/
                 //当点击答案多选时，需要把数组答案转化为字符串,如何[A,B]转化为AB
-                var arr=new Array();
+
                /* for(var i=0;i<this.answer.length;i++){
                     for(var j=0;j<this.answerChar2.length;j++){
                         if(this.answer[i]==this.answerChar2[j]){

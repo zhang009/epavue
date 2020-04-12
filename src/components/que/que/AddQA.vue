@@ -69,6 +69,7 @@
         components: {TinymceEditor,TinymceOptioneditor},
         props:{
             qaMainQueInfo:{
+                id:'',
                 stem:'',
                 answer:'',//设为答案的序号
                 analysis:'',

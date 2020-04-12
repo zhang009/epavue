@@ -205,6 +205,7 @@
                 },
                 //把组件中的信息和右侧的信息合并到这里，也就是最后提交的数据信息
                 scMainAllQueInfo:{
+                    id:'',
                     stem:'',
                     option1:'',
                     option2:'',
@@ -220,6 +221,7 @@
                 },
                 //需要传递给单选组件中的信息
                 mcMainQueInfo:{
+                    id:'',
                     stem:'',
                     options:[{
                         optionNum:1,
@@ -230,6 +232,7 @@
                 },
                 //把组件中的信息和右侧的信息合并到这里，也就是最后提交的数据信息
                 mcMainAllQueInfo:{
+                    id:'',
                     stem:'',
                     options:[{
                         optionNum:1,
@@ -245,11 +248,13 @@
                     checkTeacherId:[],//审核教师id
                 },
                 fbMainQueInfo:{
+                    id:'',
                     stem:'',
                     answer:'',
                     analysis:'',
                 },
                 fbMainAllQueInfo:{
+                    id:'',
                     stem:'',
                     answer:'',//设为答案的序号
                     analysis:'',
@@ -261,12 +266,14 @@
                     checkTeacherId:[],//审核教师id
                 },
                 tfMainQueInfo:{
+                    id:'',
                     stem:'',
                     answer:'',
                     analysis:'',
                 },
 
                 tfMainAllQueInfo:{
+                    id:'',
                     stem:'',
                     answer:'',//设为答案的序号
                     analysis:'',
@@ -278,12 +285,14 @@
                     checkTeacherId:[],//审核教师id
                 },
                 qaMainQueInfo:{
+                    id:'',
                     stem:'',
                     answer:'',
                     analysis:'',
                 },
 
                 qaMainAllQueInfo:{
+                    id:'',
                     stem:'',
                     answer:'',//设为答案的序号
                     analysis:'',
@@ -370,7 +379,7 @@
                     this.$forceUpdate();
                 }
                 else if(queType=='mc'){
-
+                    this.queType="多选题";
                     this.mcMainAllQueInfo=JSON.parse(this.$route.params.mcMainAllQueInfo);
                     this.$set(this.mcMainQueInfo,"id",this.mcMainAllQueInfo.id);
                     this.$set(this.mcMainQueInfo,"stem",this.mcMainAllQueInfo.stem);
@@ -396,7 +405,7 @@
                     this.$forceUpdate();
                 }
                 else if(queType=='tf'){
-
+                    this.queType="判断题";
                     this.tfMainAllQueInfo=JSON.parse(this.$route.params.tfMainAllQueInfo);
                     this.$set(this.tfMainQueInfo,"id",this.tfMainAllQueInfo.id);
                     this.$set(this.tfMainQueInfo,"stem",this.tfMainAllQueInfo.stem);
@@ -420,7 +429,7 @@
                     this.$forceUpdate();
                 }
                 else if(queType=='fb'){
-
+                    this.queType="填空题";
                     this.fbMainAllQueInfo=JSON.parse(this.$route.params.fbMainAllQueInfo);
                     this.$set(this.fbMainQueInfo,"id",this.fbMainAllQueInfo.id);
                     this.$set(this.fbMainQueInfo,"stem",this.fbMainAllQueInfo.stem);
@@ -444,7 +453,7 @@
                     this.$forceUpdate();
                 }
                 else if(queType=='qa'){
-
+                    this.queType="简答题";
                     this.qaMainAllQueInfo=JSON.parse(this.$route.params.qaMainAllQueInfo);
                     this.$set(this.qaMainQueInfo,"id",this.qaMainAllQueInfo.id);
                     this.$set(this.qaMainQueInfo,"stem",this.qaMainAllQueInfo.stem);
@@ -571,16 +580,15 @@
                 //console.log(this.$refs['knowsCascader'].getCheckedNodes());
 
                 //这里将数组类型转化为字符串类型
-                let ids=this.knowIds.join('|');
+                let ids=this.knowIds.join('@');
                 this.updateRightQueInfo.knowIds=ids;
 
             },
             strToKnows(){//把知识转化为数组类型方便显示
                 var idsArr=this.updateRightQueInfo.knowIds.split("|");
-                /*this.$set(this.knowIds,"knowIds",this.scMainAllQueInfo.knowIds);*/
                 this.knowIds=idsArr;
             },
-            selectQueTypeChanged(){
+            selectQueTypeChanged(){//当试题类型下拉框改变
                 this.initQue();
                 this.emptyRightInfo();
             },
@@ -631,6 +639,11 @@
                                         if(resp){
                                             this.emptyRightInfo();//刷新页面
                                             this.$refs.AddSC.emptyData();//调用组件中方法清空数据
+                                            var that = this;
+                                            setTimeout(function () {//跳转到试题查询页面
+                                                that.$router.push({ path:'/que/query'  });
+                                            },500);
+
                                         }
                                     })
                                 }else {//否则，为添加操作

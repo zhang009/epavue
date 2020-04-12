@@ -127,8 +127,9 @@
 
                                         </div>
                                         <div   style="border-top: 1px solid #f0f0f0 ;padding: 10px;margin-top: 5px"><!--5.底部信息-->
-                                            <el-button style="float: right;" icon="el-icon-edit" size="medium " @click="editSCQuestionInfo(scope.row)" circle></el-button>
+
                                             <el-button style="float: right; " icon="el-icon-delete" size="medium " @click="deleteSCQue(scope.row)" circle></el-button>
+                                            <el-button style="float: right;margin-right: 5px" icon="el-icon-edit" size="medium " @click="editSCQuestionInfo(scope.row)" circle></el-button>
                                         </div>
                                         </el-card>
                                     </div>
@@ -178,7 +179,7 @@
 
                                         <div  class="text item" @click="showMCHiddenView(scope.$index)" ><!--3.选项-->
 
-                                            <div v-for="(item,indexj) in scope.row.options">{{optionChar[indexj]}} {{item.optionNum}}</div><!--遍历多选题选项-->
+                                            <div v-for="(item,indexj) in scope.row.options">{{optionChar[indexj]}} {{item.optionContent}}</div><!--遍历多选题选项-->
 
                                         </div>
                                         <div v-show="mcViewStatus[scope.$index]" @click="showMCHiddenView(scope.$index)" ><!--4.隐藏详细信息-->
@@ -201,8 +202,9 @@
 
                                         </div>
                                         <div   style="border-top: 1px solid #f0f0f0 ;padding: 10px;margin-top: 5px"><!--5.底部信息-->
-                                            <el-button style="float: right;" icon="el-icon-edit" size="medium " @click="editMCQuestionInfo(scope.row)" circle></el-button>
+
                                             <el-button style="float: right; " icon="el-icon-delete" size="medium " @click="deleteMCQue(scope.row)" circle></el-button>
+                                            <el-button style="float: right;margin-right: 5px" icon="el-icon-edit" size="medium " @click="editMCQuestionInfo(scope.row)" circle></el-button>
                                         </div>
                                         </el-card>
                                     </div>
@@ -273,8 +275,9 @@
 
                                         </div>
                                         <div   style="border-top: 1px solid #f0f0f0 ;padding: 10px;margin-top: 5px"><!--5.底部信息-->
-                                            <el-button style="float: right;" icon="el-icon-edit" size="medium " @click="editTFQuestionInfo(scope.row)" circle></el-button>
+
                                             <el-button style="float: right; " icon="el-icon-delete" size="medium " @click="deleteTFQue(scope.row)" circle></el-button>
+                                            <el-button style="float: right;margin-right: 5px" icon="el-icon-edit" size="medium " @click="editTFQuestionInfo(scope.row)" circle></el-button>
                                         </div>
                                         </el-card>
                                     </div>
@@ -345,8 +348,9 @@
 
                                         </div>
                                         <div   style="border-top: 1px solid #f0f0f0 ;padding: 10px;margin-top: 5px"><!--5.底部信息-->
-                                            <el-button style="float: right;" icon="el-icon-edit" size="medium " @click="editFBQuestionInfo(scope.row)" circle></el-button>
+
                                             <el-button style="float: right; " icon="el-icon-delete" size="medium " @click="deleteFBQue(scope.row)" circle></el-button>
+                                            <el-button style="float: right;margin-right: 5px" icon="el-icon-edit" size="medium " @click="editFBQuestionInfo(scope.row)" circle></el-button>
                                         </div>
                                         </el-card>
                                     </div>
@@ -413,8 +417,9 @@
 
                                         </div>
                                         <div   style="border-top: 1px solid #f0f0f0 ;padding: 10px;margin-top: 5px"><!--5.底部信息-->
-                                            <el-button style="float: right;" icon="el-icon-edit" size="medium " @click="editQAQuestionInfo(scope.row)" circle></el-button>
+
                                             <el-button style="float: right; " icon="el-icon-delete" size="medium " @click="deleteQAQue(scope.row)" circle></el-button>
+                                            <el-button style="float: right;margin-right: 5px" icon="el-icon-edit" size="medium " @click="editQAQuestionInfo(scope.row)" circle></el-button>
                                         </div>
                                         </el-card>
                                     </div>

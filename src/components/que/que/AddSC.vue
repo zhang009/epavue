@@ -143,6 +143,7 @@
         components: {TinymceEditor,TinymceOptioneditor},
         props:{
             scMainQueInfo:{
+                id:'',
                 stem:'',
                 option1:'',
                 option2:'',

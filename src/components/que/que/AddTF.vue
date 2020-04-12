@@ -66,6 +66,7 @@
         components: {TinymceEditor,TinymceOptioneditor},
         props:{
             tfMainQueInfo:{
+                id:'',
                 stem:'',
                 answer:'',//设为答案的序号
                 analysis:'',

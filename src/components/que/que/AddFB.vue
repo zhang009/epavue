@@ -67,6 +67,7 @@
     import TinymceEditor from '../tinymce-editor'
     import TinymceOptioneditor from '../tinymce-optioneditor'
     export default {
+        id:'',
         name: "AddFB",
         components: {TinymceEditor,TinymceOptioneditor},
         props:{
