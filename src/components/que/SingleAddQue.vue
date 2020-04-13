@@ -202,6 +202,8 @@
                     option4:'',
                     answer:'A',//设为答案
                     analysis:'',
+                    status:'',
+                    updateTime:''
                 },
                 //把组件中的信息和右侧的信息合并到这里，也就是最后提交的数据信息
                 scMainAllQueInfo:{
@@ -218,6 +220,8 @@
                     knowIds:'',//获取用户选中的知识点
                     dot:'',//试题难度
                     checkTeacherId:[],//审核教师id
+                    status:'',
+                    updateTime:''
                 },
                 //需要传递给单选组件中的信息
                 mcMainQueInfo:{
@@ -229,6 +233,8 @@
                     }, ],
                     answer:'',//设为答案的序号
                     analysis:'',
+                    status:'',
+                    updateTime:''
                 },
                 //把组件中的信息和右侧的信息合并到这里，也就是最后提交的数据信息
                 mcMainAllQueInfo:{
@@ -246,12 +252,16 @@
                     knowIds:'',//获取用户选中的知识点
                     dot:'',//试题难度
                     checkTeacherId:[],//审核教师id
+                    status:'',
+                    updateTime:''
                 },
                 fbMainQueInfo:{
                     id:'',
                     stem:'',
                     answer:'',
                     analysis:'',
+                    status:'',
+                    updateTime:''
                 },
                 fbMainAllQueInfo:{
                     id:'',
@@ -264,12 +274,16 @@
                     knowIds:'',//获取用户选中的知识点
                     dot:'',//试题难度
                     checkTeacherId:[],//审核教师id
+                    status:'',
+                    updateTime:''
                 },
                 tfMainQueInfo:{
                     id:'',
                     stem:'',
                     answer:'',
                     analysis:'',
+                    status:'',
+                    updateTime:''
                 },
 
                 tfMainAllQueInfo:{
@@ -283,12 +297,16 @@
                     knowIds:'',//获取用户选中的知识点
                     dot:'',//试题难度
                     checkTeacherId:[],//审核教师id
+                    status:'',
+                    updateTime:''
                 },
                 qaMainQueInfo:{
                     id:'',
                     stem:'',
                     answer:'',
                     analysis:'',
+                    status:'',
+                    updateTime:''
                 },
 
                 qaMainAllQueInfo:{
@@ -302,6 +320,8 @@
                     knowIds:'',//获取用户选中的知识点
                     dot:'',//试题难度
                     checkTeacherId:[],//审核教师id
+                    status:'',
+                    updateTime:''
                 },
                 qlevel:[//试题难度下拉框选择值
                     {value:1,label:'简单'},{value:2,label: '适中'},{value:3,label:'偏难'},{value:4,label: '难'}
@@ -419,6 +439,7 @@
                     this.$set(this.updateRightQueInfo,"chapterId",this.tfMainAllQueInfo.chapterId);
                     this.selectChapterChanged();
                     this.$set(this.tfMainQueInfo,"dot",this.tfMainAllQueInfo.dot);
+                    this.$set(this.tfMainQueInfo,"status",this.tfMainAllQueInfo.status);
                     this.$set(this.updateRightQueInfo,"dot",this.tfMainAllQueInfo.dot);
                     this.$set(this.tfMainQueInfo,"knowIds",this.tfMainAllQueInfo.knowIds);
                     this.$set(this.updateRightQueInfo,"knowIds",this.tfMainAllQueInfo.knowIds);
@@ -640,9 +661,16 @@
                                             this.emptyRightInfo();//刷新页面
                                             this.$refs.AddSC.emptyData();//调用组件中方法清空数据
                                             var that = this;
-                                            setTimeout(function () {//跳转到试题查询页面
-                                                that.$router.push({ path:'/que/query'  });
-                                            },500);
+                                            if(this.scMainQueInfo.status==2){
+                                                setTimeout(function () {//跳转到试题查询页面
+                                                    that.$router.push({ path:'/que/check'  });
+                                                },500);
+                                            }else{
+                                                setTimeout(function () {//跳转到试题查询页面
+                                                    that.$router.push({ path:'/que/query'  });
+                                                },500);
+                                            }
+
 
                                         }
                                     })
@@ -674,12 +702,32 @@
                                 this.mcMainAllQueInfo.knowIds=this.updateRightQueInfo.knowIds;
                                 this.mcMainAllQueInfo.dot=this.updateRightQueInfo.dot;
                                 this.mcMainAllQueInfo.checkTeacherId=this.updateRightQueInfo.checkTeacherId;
-                                this.postRequest("/question/mcinput/add",this.mcMainAllQueInfo).then(resp=>{
-                                    if(resp){
-                                        this.emptyRightInfo();//刷新页面
-                                        this.$refs.AddMC.emptyData();//调用组件中方法清空数据
-                                    }
-                                })
+                                if(this.mcMainQueInfo.id){//不为空时为更新操作
+                                    this.putRequest("/question/mcinput/update",this.mcMainAllQueInfo).then(resp=>{
+                                        if(resp){
+                                            this.emptyRightInfo();//刷新页面
+                                            this.$refs.AddMC.emptyData();//调用组件中方法清空数据
+                                            var that = this;
+                                            if(this.mcMainQueInfo.status==2){//由审核页面跳转来的，跳转回审核页面
+                                                setTimeout(function () {//跳转到试题查询页面
+                                                    that.$router.push({ path:'/que/check'  });
+                                                },500);
+                                            }else{
+                                                setTimeout(function () {//跳转到试题查询页面
+                                                    that.$router.push({ path:'/que/query'  });
+                                                },500);
+                                            }
+                                        }
+                                    })
+                                }else {//否则，为添加操作
+                                    this.postRequest("/question/mcinput/add",this.mcMainAllQueInfo).then(resp=>{
+                                        if(resp){
+                                            this.emptyRightInfo();//刷新页面
+                                            this.$refs.AddMC.emptyData();//调用组件中方法清空数据
+                                        }
+                                    })
+                                }
+
                             }
                         });
                     }
@@ -698,12 +746,36 @@
                                 this.tfMainAllQueInfo.knowIds=this.updateRightQueInfo.knowIds;
                                 this.tfMainAllQueInfo.dot=this.updateRightQueInfo.dot;
                                 this.tfMainAllQueInfo.checkTeacherId=this.updateRightQueInfo.checkTeacherId;
-                                this.postRequest("/question/tfinput/add",this.tfMainAllQueInfo).then(resp=>{
-                                    if(resp){
-                                        this.emptyRightInfo();//刷新页面
-                                        this.$refs.AddTF.emptyData();//调用组件中方法清空数据
-                                    }
-                                })
+                                this.tfMainAllQueInfo.status=this.updateRightQueInfo.status;
+                                if(this.tfMainQueInfo.id){//更新操作
+                                  /*  console.log("this.tfMainQueInfo.status:"+this.tfMainQueInfo.status);*/
+                                    this.putRequest("/question/tfinput/update",this.tfMainAllQueInfo).then(resp=>{
+                                        if(resp){
+                                            this.emptyRightInfo();//刷新页面
+                                            this.$refs.AddTF.emptyData();//调用组件中方法清空数据
+                                            var that = this;
+
+                                            if(this.tfMainQueInfo.status==2){//由审核页面跳转来的，跳转回审核页面
+                                              /*  console.log(">>>>>>")*/
+                                                setTimeout(function () {//跳转到试题查询页面
+                                                    that.$router.push({ path:'/que/check'  });
+                                                },500);
+                                            }else{
+                                                setTimeout(function () {//跳转到试题查询页面
+                                                    that.$router.push({ path:'/que/query'  });
+                                                },500);
+                                            }
+                                        }
+                                    })
+                                }else{
+                                    this.postRequest("/question/tfinput/add",this.tfMainAllQueInfo).then(resp=>{
+                                        if(resp){
+                                            this.emptyRightInfo();//刷新页面
+                                            this.$refs.AddTF.emptyData();//调用组件中方法清空数据
+                                        }
+                                    })
+                                }
+
                             }
                         });
                     }
@@ -723,12 +795,32 @@
                                 this.fbMainAllQueInfo.knowIds=this.updateRightQueInfo.knowIds;
                                 this.fbMainAllQueInfo.dot=this.updateRightQueInfo.dot;
                                 this.fbMainAllQueInfo.checkTeacherId=this.updateRightQueInfo.checkTeacherId;
-                                this.postRequest("/question/fbinput/add",this.fbMainAllQueInfo).then(resp=>{
-                                    if(resp){
-                                        this.emptyRightInfo();//刷新页面
-                                        this.$refs.AddFB.emptyData();//调用组件中方法清空数据
-                                    }
-                                })
+                                if(this.fbMainQueInfo.id){//更新操作
+                                    this.putRequest("/question/fbinput/update",this.fbMainAllQueInfo).then(resp=>{
+                                        if(resp){
+                                            this.emptyRightInfo();//刷新页面
+                                            this.$refs.AddFB.emptyData();//调用组件中方法清空数据
+                                            var that = this;
+                                            if(this.fbMainQueInfo.status==2){//由审核页面跳转来的，跳转回审核页面
+                                                setTimeout(function () {//跳转到试题查询页面
+                                                    that.$router.push({ path:'/que/check'  });
+                                                },500);
+                                            }else{
+                                                setTimeout(function () {//跳转到试题查询页面
+                                                    that.$router.push({ path:'/que/query'  });
+                                                },500);
+                                            }
+                                        }
+                                    })
+                                }else{
+                                    this.postRequest("/question/fbinput/add",this.fbMainAllQueInfo).then(resp=>{
+                                        if(resp){
+                                            this.emptyRightInfo();//刷新页面
+                                            this.$refs.AddFB.emptyData();//调用组件中方法清空数据
+                                        }
+                                    })
+                                }
+
                             }
                         });
                     }
@@ -748,12 +840,32 @@
                                 this.qaMainAllQueInfo.knowIds = this.updateRightQueInfo.knowIds;
                                 this.qaMainAllQueInfo.dot = this.updateRightQueInfo.dot;
                                 this.qaMainAllQueInfo.checkTeacherId = this.updateRightQueInfo.checkTeacherId;
-                                this.postRequest("/question/qainput/add", this.qaMainAllQueInfo).then(resp => {
-                                    if (resp) {
-                                        this.emptyRightInfo();//刷新页面
-                                        this.$refs.AddQA.emptyData();//调用组件中方法清空数据
-                                    }
-                                })
+                                if(this.qaMainQueInfo.id){
+                                    this.putRequest("/question/qainput/update",this.qaMainAllQueInfo).then(resp=>{
+                                        if(resp){
+                                            this.emptyRightInfo();//刷新页面
+                                            this.$refs.AddQA.emptyData();//调用组件中方法清空数据
+                                            var that = this;
+                                            if(this.qaMainQueInfo.status==2){//由审核页面跳转来的，跳转回审核页面
+                                                setTimeout(function () {//跳转到试题查询页面
+                                                    that.$router.push({ path:'/que/check'  });
+                                                },500);
+                                            }else{
+                                                setTimeout(function () {//跳转到试题查询页面
+                                                    that.$router.push({ path:'/que/query'  });
+                                                },500);
+                                            }
+                                        }
+                                    })
+                                }else{
+                                    this.postRequest("/question/qainput/add", this.qaMainAllQueInfo).then(resp => {
+                                        if (resp) {
+                                            this.emptyRightInfo();//刷新页面
+                                            this.$refs.AddQA.emptyData();//调用组件中方法清空数据
+                                        }
+                                    })
+                                }
+
                             }
                         });
                     }
