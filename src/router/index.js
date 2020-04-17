@@ -19,11 +19,11 @@ const routes = [
     name: 'Home',
     component: Home,
     hidden:true
-  },{
+  }/*{
     path: '/que/input/importque',
     name: 'importque',
     component: QueImport
-  }
+  }*/
   /*{
     path: '/about',
     name: 'About',

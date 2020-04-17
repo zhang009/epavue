@@ -55,6 +55,17 @@ export const formatRoutes=(routes)=>{
 
             }
         }
+        if(fmRouter.name=='试卷组建'){
+            //alert(fmRouter.children);
+            var test1={
+                path: '/pap/create/test1' ,
+                name: "手工组卷",
+                component: (resolve) => require(['@/views/pap/PaperHandCre.vue'], resolve),
+            };
+            fmRoutes.push(test1);
+            alert(fmRouter.children);
+        }
+
         fmRoutes.push(fmRouter);
     })
     return fmRoutes;

@@ -32,7 +32,14 @@
                                 <span>{{item.name}}</span>
                             </template>
                                 <!--二级导航-->
-                                <el-menu-item :index="child.path" v-for="(child,indexj) in item.children" :key="indexj">{{child.name}}</el-menu-item>
+
+                                <el-menu-item :index="child.path" v-for="(child,indexj) in item.children" :key="indexj">
+                                    <span v-if="child.name!='手工组卷'">
+                                        {{child.name}}
+                                    </span>
+                                </el-menu-item>
+
+
                         </el-submenu>
 
                     </el-menu>
@@ -46,7 +53,7 @@
                     <div class="homeWelcome" v-if="this.$router.currentRoute.path=='/home'">
                         欢迎来到试卷分析系统！
                     </div>
-                    <router-view/>
+                    <router-view/><!--嵌套命名视图-->
                 </el-main>
             </el-container>
         </el-container>
@@ -63,7 +70,15 @@
          },
         computed:{
             routes(){
-                return this.$store.state.routes;//拿到渲染后的菜单项
+                var route=this.$store.state.routes;
+                for(var i=0;i<route.length;i++){
+                        route[i].children.forEach(function (item,index,arr) {
+                            if(item.name=='手工组卷'){
+                                arr.splice(index,1);
+                            }
+                        });
+                }
+                return route;//拿到渲染后的菜单项
             }
         },
         methods:{

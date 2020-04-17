@@ -19,7 +19,7 @@
            <!--第二行，条件搜索div-->
             <div  style="border :1px solid #409eff;border-radius: 5px;box-sizing: border-box;padding: 5px ;margin-top: 10px;"><!--条件搜索-->
                     <el-row>
-                        <el-col :span="15">
+                        <el-col :span="16">
                             题型:
                             <el-select v-model="searchValue.queType"
                                        placeholder="请选择题型"
@@ -65,7 +65,7 @@
                                 </el-option>
                             </el-select>
                         </el-col>
-                        <el-col :span="9">
+                        <el-col :span="8">
                             <el-button size="mini" @click="emptySearchValue">重置</el-button>
                             <el-button size="mini" icon="el-icon-search" type="primary" @click="queryQuestionsByCondition">搜索</el-button>
                         </el-col>
@@ -97,7 +97,10 @@
                                             </div>
                                         </div>
                                         <div @click="showSCHiddenView(scope.$index)"><!--2.题干-->
-                                            <span>{{scope.row.stem}}</span>
+                                            <div class="stem">
+                                                <span>{{scope.row.stem}}</span>
+                                            </div>
+
                                             <!--C语言程序从main()函数开始执行，所以这个函数要可以写在______。-->
                                         </div>
 
@@ -173,7 +176,10 @@
                                             </div>
                                         </div>
                                         <div @click="showMCHiddenView(scope.$index)"><!--2.题干-->
-                                            <span>{{scope.row.stem}}</span>
+                                            <div class="stem">
+                                                <span>{{scope.row.stem}}</span>
+                                            </div>
+
                                             <!--C语言程序从main()函数开始执行，所以这个函数要可以写在______。-->
                                         </div>
 
@@ -246,7 +252,10 @@
                                             </div>
                                         </div>
                                         <div @click="showTFHiddenView(scope.$index)"><!--2.题干-->
-                                            <span>{{scope.row.stem}}</span>
+                                            <div class="stem">
+                                                <span>{{scope.row.stem}}</span>
+                                            </div>
+
                                             <!--C语言程序从main()函数开始执行，所以这个函数要可以写在______。-->
                                         </div>
 
@@ -319,7 +328,10 @@
                                             </div>
                                         </div>
                                         <div @click="showFBHiddenView(scope.$index)"><!--2.题干-->
-                                            <span>{{scope.row.stem}}</span>
+                                            <div class="stem">
+                                                <span>{{scope.row.stem}}</span>
+                                            </div>
+
                                             <!--C语言程序从main()函数开始执行，所以这个函数要可以写在______。-->
                                         </div>
 
@@ -392,7 +404,10 @@
                                             </div>
                                         </div>
                                         <div @click="showQAHiddenView(scope.$index)"><!--2.题干-->
-                                            <span>{{scope.row.stem}}</span>
+                                            <div class="stem">
+                                                <span>{{scope.row.stem}}</span>
+                                            </div>
+
                                             <!--C语言程序从main()函数开始执行，所以这个函数要可以写在______。-->
                                         </div>
 
@@ -902,7 +917,9 @@
 </script>
 
 <style >
-    .el-table_2_column_2 {
-        padding-top:0px;
+
+    .stem span{
+        white-space:pre-line
     }
+
 </style>
