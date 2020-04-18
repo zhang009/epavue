@@ -58,12 +58,18 @@ export const formatRoutes=(routes)=>{
         if(fmRouter.name=='试卷组建'){
             //alert(fmRouter.children);
             var test1={
-                path: '/pap/create/test1' ,
+                path: '/pap/create/hand' ,
                 name: "手工组卷",
                 component: (resolve) => require(['@/views/pap/PaperHandCre.vue'], resolve),
             };
+            var test2={
+                path: '/pap/create/auto' ,
+                name: "自动组卷",
+                component: (resolve) => require(['@/views/pap/PaperAutoCre.vue'], resolve),
+            };
             fmRoutes.push(test1);
-            alert(fmRouter.children);
+            fmRoutes.push(test2);
+
         }
 
         fmRoutes.push(fmRouter);

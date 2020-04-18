@@ -34,9 +34,9 @@
                                 <!--二级导航-->
 
                                 <el-menu-item :index="child.path" v-for="(child,indexj) in item.children" :key="indexj">
-                                    <span v-if="child.name!='手工组卷'">
+
                                         {{child.name}}
-                                    </span>
+
                                 </el-menu-item>
 
 
@@ -71,12 +71,33 @@
         computed:{
             routes(){
                 var route=this.$store.state.routes;
-                for(var i=0;i<route.length;i++){
-                        route[i].children.forEach(function (item,index,arr) {
+                for(var i=0;i<route.length;i++){//这里将添加的路由从这里移除
+                    if(route[i].children){
+                        var arr=route[i].children;
+                        for(var j=0;j<arr.length;j++){
+                            if(arr[j].name=='手工组卷'){
+                                arr.splice(j,1);
+                                j--;
+                            }
+                            if(arr[j].name=='自动组卷'){
+                                arr.splice(j,1);
+                                j--;
+                            }
+                        }
+                    }
+
+                        /*route[i].children.forEach(function (item,index,arr) {
+                            console.log(item.name);
                             if(item.name=='手工组卷'){
+                                alert('手工');
+                                arr.splice(index,1);
+                                index--;
+                            }
+                            if(item.name=='自动组卷'){
+                                alert('自动');
                                 arr.splice(index,1);
                             }
-                        });
+                        });*/
                 }
                 return route;//拿到渲染后的菜单项
             }

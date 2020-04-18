@@ -1,10 +1,19 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
     <div>
-        试卷创建
-        <router-link to="/pap/create/test1">
-            <el-button  icon="el-icon-plus" type="primary">手工组卷</el-button>
-        </router-link>
-        <router-view/>
+        <el-divider></el-divider>
+        <div><h2>创建试卷</h2></div>
+       <div class="content2">
+
+
+            <!--<router-link to="/que/input/importque">-->
+            <router-link to="/pap/create/hand">
+                <el-button   type="primary" size="large" style="margin-right: 10px">手工组卷</el-button>
+            </router-link>
+            <router-link to="/pap/create/auto">
+           <el-button   type="primary" size="large">自动组卷</el-button>
+       </router-link>
+        </div>
+      <!--  <router-view/>-->
     </div>
 </template>
 
@@ -46,6 +55,19 @@
     }
 </script>
 
-<style scoped>
+<style >
+    .content2{
+     /*   background-color: #dedede;*/
+        display: flex;
+        align-items:center;
+        justify-content:center;
+
+
+        text-align: justify;
+        width: 300px;
+        height: 400px;
+        margin:0 auto;
+
+    }
 
 </style>
