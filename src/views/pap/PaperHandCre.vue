@@ -70,23 +70,23 @@
                                                 style="margin: 0px auto">
 
                                             <el-form-item label="单选题:">
-                                                已选<strong>{{selectPaper.sclist.length}}</strong>道
+                                                已选<strong>{{selectPaper.scIds.length}}</strong>道
                                                 <el-button @click="showDeleteSCQueListDialog" type="danger"  size="mini" style="padding:8px;margin-left: 20px" plain>清空</el-button>
                                             </el-form-item>
                                             <el-form-item label="多选题:">
-                                                已选<strong>{{selectPaper.mclist.length}}</strong>道
+                                                已选<strong>{{selectPaper.mcIds.length}}</strong>道
                                                 <el-button @click="showDeleteMCQueListDialog" type="danger"  size="mini" style="padding:8px;margin-left: 20px" plain>清空</el-button>
                                             </el-form-item>
                                             <el-form-item label="判断题:">
-                                                已选<strong>{{selectPaper.tflist.length}}</strong>道
+                                                已选<strong>{{selectPaper.tfIds.length}}</strong>道
                                                 <el-button @click="showDeleteTFQueListDialog" type="danger"  size="mini" style="padding:8px;margin-left: 20px" plain>清空</el-button>
                                             </el-form-item>
                                             <el-form-item label="填空题:">
-                                                已选<strong>{{selectPaper.fblist.length}}</strong>道
+                                                已选<strong>{{selectPaper.fbIds.length}}</strong>道
                                                 <el-button @click="showDeleteFBQueListDialog" type="danger"  size="mini" style="padding:8px;margin-left: 20px" plain>清空</el-button>
                                             </el-form-item>
                                             <el-form-item label="简答题:">
-                                                已选<strong>{{selectPaper.qalist.length}}</strong>道
+                                                已选<strong>{{selectPaper.qaIds.length}}</strong>道
                                                 <el-button @click="showDeleteQAQueListDialog" type="danger"  size="mini" style="padding:8px;margin-left: 20px" plain>清空</el-button>
                                             </el-form-item>
                                         </el-form>
@@ -103,9 +103,9 @@
                                             >
                                         <span>确定清空所有已选的【{{selectDeleteQueType}}】</span>
                                         <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogdDeleteQueListVisible = false">取 消</el-button>
-    <el-button type="primary" @click="deleteQueList">确 定</el-button>
-  </span>
+                                            <el-button @click="dialogdDeleteQueListVisible = false">取 消</el-button>
+                                            <el-button type="primary" @click="deleteQueList">确 定</el-button>
+                                        </span>
                                     </el-dialog>
                                 </div>
 
@@ -543,8 +543,356 @@
                             </div>
 
                         </div>
-                        <div v-show="activeItemIndex==2">
+                        <div v-show="activeItemIndex==2"><!--设置试题参数-->
 
+                            <div style="margin-top: 20px">
+                                <el-form
+                                    label-position="right"
+                                    label-width="100px"
+                                    style="margin: 0px auto"
+                                    >
+                                    <el-form-item label="试卷名称:">
+                                        <el-input size="medium"
+                                                  style="width: 300px"
+                                                  placeholder="请输入试卷的名称"
+                                                  v-model="paperName">
+
+                                        </el-input>
+                                    </el-form-item>
+                                </el-form>
+                            </div>
+                            <div><!--试题的分数设置-->
+                                <el-row>
+                                    <el-col :span="2" >
+                                        分数设置
+                                    </el-col>
+                                    <el-col :span="22">
+                                        <div  v-if="selectPaperInfo.sclist"><!--单选-->
+                                            <el-table
+                                                    :data="selectPaperInfo.sclist"
+                                                    style="width: 80%">
+                                                <el-table-column
+                                                        type="index"
+                                                        label="编号"
+                                                        fixed
+                                                        width="80"><!--   prop="id"-->
+                                                    <!--<template slot-scope="scope">
+                                                        <span>{{(page - 1) * size + scope.$index + 1}}</span>
+                                                    </template>-->
+                                                    <template slot-scope="scope">
+                                                        <span>{{scope.$index+1}}</span>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column
+                                                        label="题型"
+                                                        fixed
+                                                        align="left"
+                                                        width="120">单选题
+                                                </el-table-column>
+
+                                                <el-table-column
+                                                        prop="stem"
+                                                        label="题干"
+                                                        width="250"
+                                                        :show-overflow-tooltip='true'
+                                                        align="left">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="gender"
+                                                        label="试题难度"
+                                                        width="100"
+                                                        align="left">
+                                                    <template slot-scope="scope">
+                                                        {{qlevel[scope.row.dot-1].label}}
+                                                    </template>
+                                                </el-table-column>
+
+                                                <el-table-column
+
+                                                        label="分数设置"
+                                                        width="200"
+                                                        align="left">
+                                                    <template slot-scope="scope">
+                                                        <el-input style="width: 100px"
+                                                                  placeholder="0"
+
+                                                                  v-model.trim="selectQueScore.scScore">
+
+                                                        </el-input>&nbsp;分
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column
+                                                        label="操作">
+                                                    <template slot-scope="scope">
+                                                        <el-button size="small" :disabled="scope.$index===0"  @click="moveSCUp(scope.$index,scope.row)"><i class="el-icon-arrow-up"></i></el-button>
+                                                        <el-button size="small" :disabled="scope.$index===(selectPaperInfo.sclist.length-1)" @click="moveSCDown(scope.$index,scope.row)"><i class="el-icon-arrow-down"></i></el-button>
+                                                        <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                        <div  v-if="selectPaperInfo.mclist"><!--多选-->
+                                            <!-- 多选题-->
+                                            <el-table
+                                                    :data="selectPaperInfo.mclist"
+                                                    style="width: 80%">
+                                                <el-table-column
+                                                        type="index"
+
+                                                        fixed
+                                                        width="80"><!--   prop="id"-->
+                                                    <!--<template slot-scope="scope">
+                                                        <span>{{(page - 1) * size + scope.$index + 1}}</span>
+                                                    </template>-->
+                                                    <template slot-scope="scope">
+                                                        <span>{{scope.$index+1}}</span>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column
+
+                                                        fixed
+                                                        align="left"
+                                                        width="120">多选题
+                                                </el-table-column>
+
+                                                <el-table-column
+                                                        prop="stem"
+
+                                                        width="250"
+                                                        :show-overflow-tooltip='true'
+                                                        align="left">
+                                                </el-table-column>
+                                                <el-table-column
+
+                                                        width="100"
+                                                        align="left">
+                                                    <template slot-scope="scope">
+                                                        {{qlevel[scope.row.dot-1].label}}
+                                                    </template>
+                                                </el-table-column>
+
+                                                <el-table-column
+
+                                                        width="200"
+                                                        align="left">
+                                                    <template slot-scope="scope">
+                                                        <el-input style="width: 100px"
+                                                                  placeholder="0"
+
+                                                                  v-model.trim="selectQueScore.mcScore">
+
+                                                        </el-input>&nbsp;分
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column
+                                                >
+                                                    <template slot-scope="scope">
+                                                        <el-button size="small" :disabled="scope.$index===0"  @click="moveSCUp(scope.$index,scope.row)"><i class="el-icon-arrow-up"></i></el-button>
+                                                        <el-button size="small" :disabled="scope.$index===(selectPaperInfo.mclist.length-1)" @click="moveSCDown(scope.$index,scope.row)"><i class="el-icon-arrow-down"></i></el-button>
+                                                        <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                        <div  v-if="selectPaperInfo.tflist"><!--判断-->
+                                            <!--判断题-->
+                                            <el-table
+                                                    :data="selectPaperInfo.tflist"
+                                                    style="width: 80%">
+                                                <el-table-column
+                                                        type="index"
+
+                                                        fixed
+                                                        width="80"><!--   prop="id"-->
+                                                    <!--<template slot-scope="scope">
+                                                        <span>{{(page - 1) * size + scope.$index + 1}}</span>
+                                                    </template>-->
+                                                    <template slot-scope="scope">
+                                                        <span>{{scope.$index+1}}</span>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column
+
+                                                        fixed
+                                                        align="left"
+                                                        width="120">判断题
+                                                </el-table-column>
+
+                                                <el-table-column
+                                                        prop="stem"
+
+                                                        width="250"
+                                                        :show-overflow-tooltip='true'
+                                                        align="left">
+                                                </el-table-column>
+                                                <el-table-column
+
+                                                        width="100"
+                                                        align="left">
+                                                    <template slot-scope="scope">
+                                                        {{qlevel[scope.row.dot-1].label}}
+                                                    </template>
+                                                </el-table-column>
+
+                                                <el-table-column
+
+                                                        width="200"
+                                                        align="left">
+                                                    <template slot-scope="scope">
+                                                        <el-input style="width: 100px"
+                                                                  placeholder="0"
+
+                                                                  v-model.trim="selectQueScore.tfScore">
+
+                                                        </el-input>&nbsp;分
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column
+                                                >
+                                                    <template slot-scope="scope">
+                                                        <el-button size="small" :disabled="scope.$index===0"  @click="moveSCUp(scope.$index,scope.row)"><i class="el-icon-arrow-up"></i></el-button>
+                                                        <el-button size="small" :disabled="scope.$index===(selectPaperInfo.tflist.length-1)" @click="moveSCDown(scope.$index,scope.row)"><i class="el-icon-arrow-down"></i></el-button>
+                                                        <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                        <div  v-if="selectPaperInfo.fblist"><!--填空-->
+                                            <!--   填空题-->
+                                            <el-table
+                                                    :data="selectPaperInfo.fblist"
+                                                    style="width: 80%">
+                                                <el-table-column
+                                                        type="index"
+
+                                                        fixed
+                                                        width="80"><!--   prop="id"-->
+                                                    <!--<template slot-scope="scope">
+                                                        <span>{{(page - 1) * size + scope.$index + 1}}</span>
+                                                    </template>-->
+                                                    <template slot-scope="scope">
+                                                        <span>{{scope.$index+1}}</span>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column
+
+                                                        fixed
+                                                        align="left"
+                                                        width="120">填空题
+                                                </el-table-column>
+
+                                                <el-table-column
+                                                        prop="stem"
+
+                                                        width="250"
+                                                        :show-overflow-tooltip='true'
+                                                        align="left">
+                                                </el-table-column>
+                                                <el-table-column
+
+                                                        width="100"
+                                                        align="left">
+                                                    <template slot-scope="scope">
+                                                        {{qlevel[scope.row.dot-1].label}}
+                                                    </template>
+                                                </el-table-column>
+
+                                                <el-table-column
+
+                                                        width="200"
+                                                        align="left">
+                                                    <template slot-scope="scope">
+                                                        <el-input style="width: 100px"
+                                                                  placeholder="0"
+
+                                                                  v-model.trim="selectQueScore.fbScore[scope.$index]">
+
+                                                        </el-input>&nbsp;分
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column
+                                                >
+                                                    <template slot-scope="scope">
+                                                        <el-button size="small" :disabled="scope.$index===0"  @click="moveSCUp(scope.$index,scope.row)"><i class="el-icon-arrow-up"></i></el-button>
+                                                        <el-button size="small" :disabled="scope.$index===(selectPaperInfo.fblist.length-1)" @click="moveSCDown(scope.$index,scope.row)"><i class="el-icon-arrow-down"></i></el-button>
+                                                        <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                        <div  v-if="selectPaperInfo.qalist"><!--简答-->
+                                            <el-table
+                                                    :data="selectPaperInfo.qalist"
+                                                    style="width: 80%">
+                                                <el-table-column
+                                                        type="index"
+
+                                                        fixed
+                                                        width="80"><!--   prop="id"-->
+                                                    <!--<template slot-scope="scope">
+                                                        <span>{{(page - 1) * size + scope.$index + 1}}</span>
+                                                    </template>-->
+                                                    <template slot-scope="scope">
+                                                        <span>{{scope.$index+1}}</span>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column
+
+                                                        fixed
+                                                        align="left"
+                                                        width="120">简答题
+                                                </el-table-column>
+
+                                                <el-table-column
+                                                        prop="stem"
+
+                                                        width="250"
+                                                        :show-overflow-tooltip='true'
+                                                        align="left">
+                                                </el-table-column>
+                                                <el-table-column
+
+                                                        width="100"
+                                                        align="left">
+                                                    <template slot-scope="scope">
+                                                        {{qlevel[scope.row.dot-1].label}}
+                                                    </template>
+                                                </el-table-column>
+
+                                                <el-table-column
+
+                                                        width="200"
+                                                        align="left">
+                                                    <template slot-scope="scope">
+                                                        <el-input style="width: 100px"
+                                                                  placeholder="0"
+
+                                                                  v-model.trim="selectQueScore.qaScore[scope.$index]">
+
+                                                        </el-input>&nbsp;分
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column
+                                                >
+                                                    <template slot-scope="scope">
+                                                        <el-button size="small" :disabled="scope.$index===0"  @click="moveSCUp(scope.$index,scope.row)"><i class="el-icon-arrow-up"></i></el-button>
+                                                        <el-button size="small" :disabled="scope.$index===(selectPaperInfo.qalist.length-1)" @click="moveSCDown(scope.$index,scope.row)"><i class="el-icon-arrow-down"></i></el-button>
+                                                        <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                    </el-col>
+                                </el-row>
+                                <div>
+                                    总分：{{totalScore}}
+                                </div>
+                            </div>
+                            <div><!--展示试题的章节分布柱状图-->
+                                <div>
+                                    <chart  :options="options" :auto-resize="true"></chart>
+                                </div>
+                            </div>
 
                         </div>
                     </el-form>
@@ -557,8 +905,8 @@
                     <router-link to="/pap/create" v-if="activeItemIndex==0" style="margin-right: 10px">
                         <el-button   type="primary" >返回</el-button>
                     </router-link>
-                    <el-button @click="preStep" v-if="activeItemIndex!=0">{{activeItemIndex==3?'取消':'上一步'}}</el-button>
-                    <el-button type="primary" @click="nextStep">{{activeItemIndex==2?'完成':'下一步'}}</el-button>
+                    <el-button @click="preStep" v-if="activeItemIndex!=0">{{activeItemIndex==3?'上一步':'上一步'}}</el-button>
+                    <el-button type="primary" @click="nextStep">{{activeItemIndex==3?'完成':'下一步'}}</el-button>
                    </span>
             </div>
         </div>
@@ -566,8 +914,19 @@
 </template>
 
 <script>
+    // 柱状图
+    import 'echarts/lib/chart/bar'
+    // 提示
+    import 'echarts/lib/component/tooltip'
+    // 图例
+    import 'echarts/lib/component/legend'
+    // 标题
+    import 'echarts/lib/component/title'
+
     export default {
         name: "PaperHandCre",
+        component() {
+        },
         data(){
             return{
                 courseId:'',
@@ -585,11 +944,21 @@
                 qlevel:[//试题难度下拉框选择值
                     {value:1,label:'简单'},{value:2,label: '适中'},{value:3,label:'偏难'},{value:4,label: '难'}
                 ],
-                sclist:[],//存放后台查询到的不同类型的试题列表
+                sclist:[],//第二个步骤，存放后台查询到的不同类型的试题列表，供手工选题
                 mclist:[],
                 tflist:[],
                 fblist:[],
                 qalist:[],
+                selectPaper:{//存储第二步骤，挑选的试题的id数组
+                    scIds:[],
+                    mcIds:[],
+                    tfIds:[],
+                    fbIds:[],
+                    qaIds:[],
+                },
+                selectPaperInfo:{//存放第三步，挑选的试题的详细信息
+
+                },
                 optionChar:['A.',"B.", "C.","D.","E.","F.","G.","H.","I.","J."],//这是为了对应多选题的选项序号
                 scViewStatus:[],//这里主要用来存放每个试题的隐藏div的标记
                 scAddStatus:[],//这里用来存放试题添加到试卷的标记
@@ -605,32 +974,195 @@
                 page:1,//设置第几页
                 size:10,//设置每页的数据
                 isShowPagination:false,//是否显示分页
-                selectPaper:{
-                    sclist:[],
-                    mclist:[],
-                    tflist:[],
-                    fblist:[],
-                    qalist:[],
-                },
+
                 dialogdDeleteQueListVisible:false,
                 selectDeleteQueType:'',
+                paperName:'',//存储试卷名称
+                selectQueScore:{//存储试题的分数信息
+                    scScore:'',
+                    mcScore:'',
+                    tfScore:'',
+                    fbScore:[],
+                    qaScore:[],
+                },
+                options:{
+                    title: {
+                        text: '基本信息',
+                        subtext: '虚假数据'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    color: ['rgba(31,13,230,0.95)', '#ff475d', '#49ef18', '#efeb23'],
+                    legend: [
+                        {
+                            data: ['学历层次', '职业技能'],
+                        },
+                        {
+                            top: 20,
+                            data: ['业绩成果', '专业经历'],
+                        }
 
+                    ],
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            dataView: {
+                                show: true, readOnly: true,
+                                optionToContent: function (opt) {
+                                    let axisData = opt.xAxis[0].data; //坐标数据
+                                    let series = opt.series; //折线图数据
+                                    let tdHeads = '<td  style="padding: 0 10px">时间</td>'; //表头
+                                    let tdBodys = ''; //数据
+                                    series.forEach(function (item) {
+                                        //组装表头
+                                        tdHeads += `<td style="padding: 0 10px">${item.name}</td>`;
+                                    });
+                                    let table = `<table border="1" style="margin-left:20px;border-collapse:collapse;font-size:14px;text-align:center"><tbody><tr>${tdHeads} </tr>`;
+                                    for (let i = 0, l = axisData.length; i < l; i++) {
+                                        for (let j = 0; j < series.length; j++) {
+                                            //组装表数据
+                                            tdBodys += `<td>${series[j].data[i]}</td>`;
+                                        }
+                                        table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`;
+                                        tdBodys = '';
+                                    }
+                                    table += '</tbody></table>';
+                                    return table;
+                                }
+                            },
+                            magicType: {show: true, type: ['line', 'bar']},
+                            restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    calculable: true,
+                    xAxis: [
+                        {
+                            type: 'category',
+                            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '学历层次',
+                            type: 'bar',
+                            stack: '个人信息',
+                            data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
+                            markPoint: {
+                                data: [
+                                    {type: 'max', name: '最大值'},
+                                    {type: 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
+                            }
+                        },
+                        {
+                            name: '职业技能',
+                            type: 'bar',
+                            stack: '个人信息',
+                            data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
+                            markPoint: {
+                                data: [
+                                    {name: '年最高', value: 182.2, xAxis: 7, yAxis: 183},
+                                    {name: '年最低', value: 2.3, xAxis: 11, yAxis: 3}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
+                            }
+                        },
+                        {
+                            name: '业绩成果',
+                            type: 'bar',
+                            stack: '个人信息',
+                            data: [2.0, 6.0, 7.0, 20.4, 21.7, 60.7, 135.6, 152.2, 56.7, 15.8, 7.0, 2.3],
+                            markPoint: {
+                                data: [
+                                    {name: '年最高', value: 152.2, xAxis: 7, yAxis: 153},
+                                    {name: '年最低', value: 2.0, xAxis: 1, yAxis: 2}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
+                            }
+                        },
+                        {
+                            name: '专业经历',
+                            type: 'bar',
+                            stack: '个人信息',
+                            data: [1.0, 6.9, 9.0, 36.4, 48.7, 90.7, 100.6, 122.2, 40.7, 8.8, 6.0, 2.3],
+                            markPoint: {
+                                data: [
+                                    {name: '年最高', value: 122.2, xAxis: 7, yAxis: 123},
+                                    {name: '年最低', value: 1.0, xAxis: 1, yAxis: 1}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
+                            }
+                        }
+                    ]
+                },
 
 
             }
         },
         computed:{
-            selectPaperQueNum() {//试卷中试题的总数
-                return this.selectPaper.sclist.length+
-                        this.selectPaper.mclist.length+
-                        this.selectPaper.fblist.length+
-                        this.selectPaper.tflist.length+
-                        this.selectPaper.qalist.length;
+            selectPaperQueNum:function() {//试卷中试题的总数
+                return this.selectPaper.scIds.length+
+                        this.selectPaper.mcIds.length+
+                        this.selectPaper.fbIds.length+
+                        this.selectPaper.tfIds.length+
+                        this.selectPaper.qaIds.length;
+            },
+            totalScore:function () {
+                let total=0;
+                let scListLen=0;
+                let mcListLen=0;
+                let tfListLen=0;
+                if(this.selectPaperInfo.sclist){
+                    scListLen=this.selectPaperInfo.sclist.length;
+                }
+                if(this.selectPaperInfo.mclist){
+                    mcListLen=this.selectPaperInfo.mclist.length;
+                }
+                if(this.selectPaperInfo.tflist){
+                    tfListLen=this.selectPaperInfo.tflist.length;
+                }
+                if(this.selectQueScore.fbScore.length>0){
+                    for (let i = 0; i < this.selectQueScore.fbScore.length; i++) {
+                        total+=Number(this.selectQueScore.fbScore[i]);
+                    }
+                }
+                if(this.selectQueScore.qaScore.length>0){
+                    for (let i = 0; i < this.selectQueScore.qaScore.length; i++) {
+                        total+=Number(this.selectQueScore.qaScore[i]);
+                    }
+                }
+                return Number(this.selectQueScore.scScore)*Number(scListLen)
+                            +Number(this.selectQueScore.mcScore)*Number(mcListLen)
+                            +Number(this.selectQueScore.tfScore)*Number(tfListLen)
+                            +Number(total);
             }
         },
         mounted() {
             this.initCourse();
-
         },
         methods:{
             initCourse(){//初始化课程列表
@@ -668,6 +1200,7 @@
                         }
                     })
                 }else if(this.searchValue.queType=='多选题'){
+
                     let url = '/question/mcinput/?page=' + this.page + '&size=' + this.size;
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
@@ -681,7 +1214,6 @@
                         if(resp){
 
                             this.mclist=resp.data;
-
                             this.total=resp.total;
                             if(this.total>10){
                                 this.isShowPagination=true;
@@ -752,6 +1284,11 @@
                         }
                     })
                 }
+                //3.初始化试题隐藏标记数组，初始化添加移出试卷标记数组
+                var that = this;
+                setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
+                    that.initShowCardHidden();
+                },1000);
 
             },
             preStep() {
@@ -759,17 +1296,34 @@
                     return;
 
                 } else if (this.activeItemIndex == 3) {
-                    return;
+
                 }
                 this.activeItemIndex--;
             },
             nextStep() {
-                if (this.activeItemIndex == 2) {
-                    this.checkTeacherId='';
-                    this.courseId='';
-                    this.activeItemIndex=0;
-                }
                 this.activeItemIndex++;
+                if (this.activeItemIndex == 2) {//根据id数组获取试题详细信息
+                    if(this.selectPaperQueNum==0){
+                        this.$message.error('请先选择试题！');
+                    }
+
+                /*  if(Object.keys(this.selectPaperInfo).length==0){*/
+
+                      this.getRequest('/question/input/getQueByIds?scIds='+this.selectPaper.scIds
+                                            +'&mcIds='+this.selectPaper.mcIds
+                                            +'&tfIds='+this.selectPaper.tfIds
+                                            +'&fbIds='+this.selectPaper.fbIds
+                                            +'&qaIds='+this.selectPaper.qaIds).then(resp => {
+                          if (resp) {
+                              this.selectPaperInfo = resp;
+                          }else{
+                              /*this.$message.error('数据初始化错误');*/
+                          }
+                      })
+
+                 /* }*/
+                }
+
             },
             initShowCardHidden(){//初始化试题隐藏标记数组，构造一个和list集合一样大的数组，里面都为false的boolean类型
 
@@ -843,12 +1397,8 @@
                 }
                 //2.初始化试题
                 this.initQuestions();
-                //3.初始化试题隐藏标记数组，初始化添加移出试卷标记数组
-                var that = this;
-                setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
-                    that.initShowCardHidden();
-                },1000);
-                //4.初始化章节数组
+
+                //3.初始化章节数组
                 this.getRequest("/baseinfo/chapter/?courseId="+this.searchValue.qcourse).then(resp=> {
                     if (resp) {
                         this.chapters=resp;
@@ -900,14 +1450,14 @@
                 var status=!this.scAddStatus[index]
                 this.$set(this.scAddStatus,index,status);
                 //将试题的id,加入数组
-                this.selectPaper.sclist.push(data.id);
+                this.selectPaper.scIds.push(data.id);
 
             },
             deleteSCQueFromPap(index,data){
                 var status=!this.scAddStatus[index]
                 this.$set(this.scAddStatus,index,status);
 
-                var sclist=this.selectPaper.sclist;
+                var sclist=this.selectPaper.scIds;
                 for(var i=0;i<sclist.length;i++){
                     if(sclist[i]==data.id){
                         sclist.splice(i,1);
@@ -919,13 +1469,13 @@
                 var status=!this.mcAddStatus[index]
                 this.$set(this.mcAddStatus,index,status);
 
-                this.selectPaper.mclist.push(data.id);
+                this.selectPaper.mcIds.push(data.id);
             },
             deleteMCQueFromPap(index,data){
                 var status=!this.mcAddStatus[index]
                 this.$set(this.mcAddStatus,index,status);
 
-                var mclist=this.selectPaper.mclist;
+                var mclist=this.selectPaper.mcIds;
                 for(var i=0;i<mclist.length;i++){
                     if(mclist[i]==data.id){
                         mclist.splice(i,1);
@@ -937,14 +1487,14 @@
                 var status=!this.tfAddStatus[index]
                 this.$set(this.tfAddStatus,index,status);
 
-                this.selectPaper.tflist.push(data.id);
+                this.selectPaper.tfIds.push(data.id);
             },
 
             deleteTFQueFromPap(index,data){
                 var status=!this.tfAddStatus[index]
                 this.$set(this.tfAddStatus,index,status);
 
-                var tflist=this.selectPaper.tflist;
+                var tflist=this.selectPaper.tfIds;
                 for(var i=0;i<tflist.length;i++){
                     if(tflist[i]==data.id){
                         tflist.splice(i,1);
@@ -956,13 +1506,13 @@
             addFBQueToPap(index,data){
                 var status=!this.fbAddStatus[index]
                 this.$set(this.fbAddStatus,index,status);
-                this.selectPaper.fblist.push(data.id);
+                this.selectPaper.fbIds.push(data.id);
             },
 
             deleteFBQueFromPap(index,data){
                 var status=!this.fbAddStatus[index]
                 this.$set(this.fbAddStatus,index,status);
-                var fblist=this.selectPaper.fblist;
+                var fblist=this.selectPaper.fbIds;
                 for(var i=0;i<fblist.length;i++){
                     if(fblist[i]==data.id){
                         fblist.splice(i,1);
@@ -973,13 +1523,13 @@
             addQAQueToPap(index,data){
                 var status=!this.qaAddStatus[index]
                 this.$set(this.qaAddStatus,index,status);
-                this.selectPaper.qalist.push(data.id);
+                this.selectPaper.qaIds.push(data.id);
             },
             deleteQAQueFromPap(index,data){
                 var status=!this.qaAddStatus[index]
                 this.$set(this.qaAddStatus,index,status);
 
-                var qalist=this.selectPaper.qalist;
+                var qalist=this.selectPaper.qaIds;
                 for(var i=0;i<qalist.length;i++){
                     if(qalist[i]==data.id){
                         qalist.splice(i,1);
@@ -1017,23 +1567,23 @@
                 this.dialogdDeleteQueListVisible=true;
             },
             deleteSCQueList(){//清空选中的所有单选题
-                this.selectCourse.sclist=[];
+                this.selectPaper.scIds=[];
                 this.dialogdDeleteQueListVisible=false;
             },
             deleteMCQueList(){//清空选中的所有多选题
-                this.selectCourse.mclist=[];
+                this.selectPaper.mcIds=[];
                 this.dialogdDeleteQueListVisible=false;
             },
             deleteTFQueList(){//清空选中的所有判断题
-                this.selectCourse.tflist=[];
+                this.selectPaper.tfIds=[];
                 this.dialogdDeleteQueListVisible=false;
             },
             deleteFBQueList(){//清空选中的所有填空题
-                this.selectCourse.fblist=[];
+                this.selectPaper.fbIds=[];
                 this.dialogdDeleteQueListVisible=false;
             },
             deleteQAQueList(){//清空选中的所有简答题
-                this.selectCourse.qalist=[];
+                this.selectPaper.qaIds=[];
                 this.dialogdDeleteQueListVisible=false;
             },
             deleteQueList(){
@@ -1048,7 +1598,43 @@
                 }else if(this.selectDeleteQueType=='简答题'){
                     this.deleteQAQueList();
                 }
+                this.initShowCardHidden();
+            },
+            deleteScQue(index,data){//设置试题参数中，删除单选题
+
+            },
+            moveSCUp(index,data){
+                var that = this;
+                console.log('上移', index, data);
+                if (index > 0) {
+                    let upData = that.selectPaperInfo.sclist[index - 1];
+                    that.selectPaperInfo.sclist.splice(index - 1, 1);
+                    that.selectPaperInfo.sclist.splice(index, 0, upData);
+                } else {
+                    alert('已经是第一条，不可上移');
+                }
+            },
+            moveSCDown(index,data){
+                var that = this;
+                console.log('下移', index, data);
+                if ((index + 1) === that.selectPaperInfo.sclist.length) {
+                    alert('已经是最后一条，不可下移');
+                } else {
+                    console.log(index);
+                    // 保存下一条数据
+                    let downData = that.selectPaperInfo.sclist[index + 1];
+                    // 删除下一条数据
+                    that.selectPaperInfo.sclist.splice(index + 1, 1);
+                    // 增添被删除的那一条数据
+                    that.selectPaperInfo.sclist.splice(index, 0, downData);
+                }
+            },
+
+            change(e){
+                this.$forceUpdate();
             }
+
+
         }
     }
 </script>
@@ -1065,6 +1651,9 @@
         display:table-cell;
         vertical-align:middle;
         text-align:center;
+    }
+    .stem span{
+        white-space:pre-line
     }
 
 </style>

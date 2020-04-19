@@ -12,7 +12,7 @@ import {getRequest} from "./utils/api";
 import {deleteRequest} from "./utils/api";
 import {initMenu} from "./utils/menus";
 import 'font-awesome/css/font-awesome.min.css'
-
+import ECharts from 'vue-echarts/components/ECharts'
 Vue.prototype.postRequest=postRequest;//这里是引用，不是方法调用
 Vue.prototype.postKeyValueRequest=postKeyValueRequest;
 Vue.prototype.putRequest=putRequest;
@@ -24,6 +24,8 @@ Vue.config.productionTip = false
 //全局设置elementUI的样式，把所有size改成small大小
 Vue.use(ElementUI,{size:'small'});
 
+
+Vue.component('chart', ECharts);
 router.beforeEach((to,from,next)=>{//前置导航守卫
     /* console.log(to);
      console.log(from);
