@@ -1,4 +1,4 @@
-<template>
+<template xmlns:el-col="http://www.w3.org/1999/html">
     <div>
         <el-divider></el-divider>
         <!--<h2>手工组卷</h2>-->
@@ -18,7 +18,7 @@
                             <div class="divtable">
                                 <div class="innerdivtable">
                                     <el-form-item  prop="courseId"  >
-                                        <el-select v-model="searchValue.qcourse"
+                                        <el-select v-model="updatePaperInfo.courseId"
                                                    filterable
                                                    placeholder="请选择课程(可搜索）"
                                                    @change="selectCourseChanged"
@@ -35,7 +35,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div v-show="activeItemIndex==1" >
 
                           <!--  <el-form-item  prop="checkTeacherId"  >
@@ -544,8 +543,8 @@
 
                         </div>
                         <div v-show="activeItemIndex==2"><!--设置试题参数-->
-
-                            <div style="margin-top: 20px">
+                            <el-divider content-position="left">基本信息</el-divider>
+                            <div style="margin-top: 20px"><!--试卷信息填写（试卷名称、学院、专业、学期-->
                                 <el-form
                                     label-position="right"
                                     label-width="100px"
@@ -555,26 +554,78 @@
                                         <el-input size="medium"
                                                   style="width: 300px"
                                                   placeholder="请输入试卷的名称"
-                                                  v-model="paperName">
-
+                                                  v-model="updatePaperInfo.paperName">
                                         </el-input>
                                     </el-form-item>
+                                    <el-row>
+                                        <el-col :span="6">
+                                            <el-form-item label="学院:">
+                                                <el-select v-model="updatePaperInfo.schoolId"
+                                                           @change="selectSchoolChanged"
+                                                           placeholder="选择学院"
+                                                           size="small"
+                                                           style="width: 230px;">
+                                                    <el-option
+                                                            v-for="item in schools"
+                                                            :key="item.id"
+                                                            :label="item.name"
+                                                            :value="item.id">
+                                                    </el-option>
+                                                </el-select>
+                                            </el-form-item >
+                                        </el-col>
+                                        <el-col :span="6">
+                                            <el-form-item label="专业:">
+                                                <el-select
+                                                    placeholder="选择专业"
+                                                    size="small"
+                                                    @change="selectMajorChanged"
+                                                    v-model="updatePaperInfo.majorId"
+                                                    style="margin-left: 5px;width: 210px">
+                                                    <el-option
+                                                            v-for="item in majors"
+                                                            :key="item.id"
+                                                            :label="item.name"
+                                                            :value="item.id">
+                                                    </el-option>
+                                                </el-select>
+                                            </el-form-item >
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="学期:">
+                                                <el-select
+                                                        placeholder="选择学期"
+                                                        size="small"
+                                                        v-model="updatePaperInfo.semester"
+                                                        style="margin-left: 5px;width: 200px">
+                                                    <el-option
+                                                            v-for="item in semester"
+                                                            :key="item.name"
+                                                            :label="item.name"
+                                                            :value="item.name">
+                                                    </el-option>
+                                                </el-select>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
                                 </el-form>
                             </div>
                             <div><!--试题的分数设置-->
                                 <el-row>
-                                    <el-col :span="2" >
-                                        分数设置
-                                    </el-col>
-                                    <el-col :span="22">
+                                    <el-divider content-position="left">分数设置</el-divider>
+
+                                     <el-col :span="2">
+
+                                     </el-col>
+                                    <el-col :span="22" style="margin-left: 100px">
                                         <div  v-if="selectPaperInfo.sclist"><!--单选-->
                                             <el-table
                                                     :data="selectPaperInfo.sclist"
-                                                    style="width: 80%">
+                                                    style="width: 90%">
                                                 <el-table-column
                                                         type="index"
                                                         label="编号"
-                                                        fixed
+
                                                         width="80"><!--   prop="id"-->
                                                     <!--<template slot-scope="scope">
                                                         <span>{{(page - 1) * size + scope.$index + 1}}</span>
@@ -585,7 +636,7 @@
                                                 </el-table-column>
                                                 <el-table-column
                                                         label="题型"
-                                                        fixed
+
                                                         align="left"
                                                         width="120">单选题
                                                 </el-table-column>
@@ -635,11 +686,11 @@
                                             <!-- 多选题-->
                                             <el-table
                                                     :data="selectPaperInfo.mclist"
-                                                    style="width: 80%">
+                                                    style="width: 90%">
                                                 <el-table-column
                                                         type="index"
 
-                                                        fixed
+
                                                         width="80"><!--   prop="id"-->
                                                     <!--<template slot-scope="scope">
                                                         <span>{{(page - 1) * size + scope.$index + 1}}</span>
@@ -650,7 +701,7 @@
                                                 </el-table-column>
                                                 <el-table-column
 
-                                                        fixed
+
                                                         align="left"
                                                         width="120">多选题
                                                 </el-table-column>
@@ -698,11 +749,11 @@
                                             <!--判断题-->
                                             <el-table
                                                     :data="selectPaperInfo.tflist"
-                                                    style="width: 80%">
+                                                    style="width: 90%">
                                                 <el-table-column
                                                         type="index"
 
-                                                        fixed
+
                                                         width="80"><!--   prop="id"-->
                                                     <!--<template slot-scope="scope">
                                                         <span>{{(page - 1) * size + scope.$index + 1}}</span>
@@ -713,7 +764,7 @@
                                                 </el-table-column>
                                                 <el-table-column
 
-                                                        fixed
+
                                                         align="left"
                                                         width="120">判断题
                                                 </el-table-column>
@@ -761,11 +812,11 @@
                                             <!--   填空题-->
                                             <el-table
                                                     :data="selectPaperInfo.fblist"
-                                                    style="width: 80%">
+                                                    style="width: 90%">
                                                 <el-table-column
                                                         type="index"
 
-                                                        fixed
+
                                                         width="80"><!--   prop="id"-->
                                                     <!--<template slot-scope="scope">
                                                         <span>{{(page - 1) * size + scope.$index + 1}}</span>
@@ -776,7 +827,7 @@
                                                 </el-table-column>
                                                 <el-table-column
 
-                                                        fixed
+
                                                         align="left"
                                                         width="120">填空题
                                                 </el-table-column>
@@ -823,11 +874,11 @@
                                         <div  v-if="selectPaperInfo.qalist"><!--简答-->
                                             <el-table
                                                     :data="selectPaperInfo.qalist"
-                                                    style="width: 80%">
+                                                    style="width: 90%">
                                                 <el-table-column
                                                         type="index"
 
-                                                        fixed
+
                                                         width="80"><!--   prop="id"-->
                                                     <!--<template slot-scope="scope">
                                                         <span>{{(page - 1) * size + scope.$index + 1}}</span>
@@ -838,7 +889,7 @@
                                                 </el-table-column>
                                                 <el-table-column
 
-                                                        fixed
+
                                                         align="left"
                                                         width="120">简答题
                                                 </el-table-column>
@@ -883,17 +934,181 @@
                                             </el-table>
                                         </div>
                                     </el-col>
+
+
+
+
                                 </el-row>
-                                <div>
-                                    总分：{{totalScore}}
+                                <div style="margin-top: 20px">
+                                    <el-row>
+                                        <el-col :span="15"><div>&nbsp;</div>
+                                        </el-col>
+                                        <el-col :span="3">
+                                            <strong>总试题数：</strong>{{selectPaperQueNum}}
+                                        </el-col>
+                                        <el-col :span="3">
+                                            <strong>总分值：</strong>{{totalScore}}<strong>分</strong>
+                                        </el-col>
+                                        <el-col :span="3">
+                                            <strong>及格分：</strong>{{passScore}}<strong>分</strong>
+                                        </el-col>
+                                    </el-row>
+
+
                                 </div>
                             </div>
                             <div><!--展示试题的章节分布柱状图-->
-                                <div>
+                                <!--<div>
                                     <chart  :options="options" :auto-resize="true"></chart>
+                                </div>-->
+                                <!-- ECharts图表测试 -->
+                                <el-row>
+                                    <el-col :span="24">
+                                        <div ref="barEcharts">
+                                            <div id="charts1" style="width:100%; height:400px;padding-top:40px"></div>
+                                        </div>
+
+                                    </el-col>
+                                </el-row>
+
+                            </div>
+                        </div>
+                        <div v-show="activeItemIndex==3"><!--生成展示试卷-->
+                            <div style="display: flex;justify-content: space-between;margin-top: 20px">
+                                <div></div>
+
+
+                            </div>
+                            <el-divider content-position="left">试卷预览</el-divider>
+                            <!--<div style=" box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)">-->
+                            <div style="border-radius: 4px;border: 1px solid #dedede;width: 80%;margin:0 auto" >
+                                <div ><!--试卷标题展示-->
+                                    <div style="display: flex;justify-content: center">
+                                        <h3>{{updatePaperInfo.semester}}</h3>
+                                    </div>
+                                    <div style="display: flex;justify-content: center">
+                                        <h4>{{schoolName}}{{majorName}}{{courseName}}{{updatePaperInfo.paperName}}</h4>
+                                    </div>
+
+                                </div>
+                                <!--单选题-->
+                                <div v-show="selectPaperInfo.sclist&&(selectPaperInfo.sclist.length>0)">
+                                    <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
+                                        <strong>单选题</strong>
+                                        <div v-for="(scque,index) in selectPaperInfo.sclist" style="margin-top: 20px">
+                                            <div>
+                                                <div><!--题干-->
+                                                    <div class="stem">
+                                                        {{index+1}}. <span>{{scque.stem}}</span>
+                                                    </div>
+                                                </div>
+                                                <div ><!--选项-->
+                                                    <div>A. {{scque.option1}}</div>
+                                                    <div>B. {{scque.option2}} </div>
+                                                    <div>C. {{scque.option3}}</div>
+                                                    <div>D. {{scque.option4}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--多选题-->
+                                <div v-show="selectPaperInfo.mclist&&(selectPaperInfo.mclist.length>0)" style="margin-top: 20px">
+                                    <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
+                                        <strong>多选题</strong>
+                                        <div v-for="(mcque,index) in selectPaperInfo.mclist">
+                                            <div>
+                                                <div><!--题干-->
+                                                    <div class="stem">
+                                                        {{index+1}}. <span>{{mcque.stem}}</span>
+                                                    </div>
+                                                </div>
+                                                <div ><!--选项-->
+                                                    <div v-for="(item,indexj) in mcque.options"><!--遍历多选题选项-->
+                                                        {{optionChar[indexj]}} {{item.optionContent}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--判断题-->
+                                <div v-show="selectPaperInfo.tflist&&(selectPaperInfo.tflist.length>0)" style="margin-top: 20px">
+                                    <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
+                                        <strong>判断题</strong>
+                                        <div v-for="(tfque,index) in selectPaperInfo.tflist">
+                                            <div>
+                                                <div><!--题干-->
+                                                    <div class="stem">
+                                                        {{index+1}}. <span>{{tfque.stem}}</span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--填空题-->
+                                <div v-show="selectPaperInfo.fblist&&(selectPaperInfo.fblist.length>0)" style="margin-top: 20px">
+                                    <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
+                                        <strong>填空题</strong>
+                                        <div v-for="(fbque,index) in selectPaperInfo.fblist">
+                                            <div>
+                                                <div><!--题干-->
+                                                    <div class="stem">
+                                                        {{index+1}}. <span>{{fbque.stem}}</span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--简答题-->
+                                <div v-show="selectPaperInfo.qalist&&(selectPaperInfo.qalist.length>0)" style="margin-top: 20px">
+                                    <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
+                                        <strong>简答题</strong>
+                                        <div v-for="(qaque,index) in selectPaperInfo.qalist">
+                                            <div>
+                                                <div><!--题干-->
+                                                    <div class="stem">
+                                                        {{index+1}}. <span>{{qaque.stem}}</span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <div><!--底部信息-->
+                                <div style="display: flex;justify-content: space-between;width:80%; margin-top: 20px" ><!--审核人-->
 
+                                    <div style="margin-left: 100px">
+                                        <el-form label-position="right"
+                                                 label-width="150px">
+                                            <el-form-item label="选择试卷审核人：">
+                                                <el-select v-model="updatePaperInfo.checkTeacherId"
+                                                           placeholder="请选择审核人(课程负责人）"
+                                                           size="small"
+                                                           filterable
+                                                           style="width: 200px;">
+                                                    <el-option
+                                                            v-for="item in checkTeachers"
+                                                            :key="item.id"
+                                                            :label="item.name"
+                                                            :value="item.id"><!--这里knows.children为课程列表-->
+                                                    </el-option>
+                                                </el-select>
+                                            </el-form-item>
+                                        </el-form>
+                                    </div>
+                                    <div>
+                                        <div> <el-button size="small" type="primary" @click="exportPapToWord">下载试卷</el-button>
+                                            <el-button size="small" type="primary" @click="submitTestPaper">保存提交</el-button>
+                                        </div></div>
+                                </div>
+                            </div>
                         </div>
                     </el-form>
                 </div>
@@ -914,33 +1129,35 @@
 </template>
 
 <script>
-    // 柱状图
-    import 'echarts/lib/chart/bar'
-    // 提示
-    import 'echarts/lib/component/tooltip'
-    // 图例
-    import 'echarts/lib/component/legend'
-    // 标题
-    import 'echarts/lib/component/title'
+    import axios from 'axios'
+    var echarts = require('echarts');
 
+    inject:['reload']//注入home页面的依赖，页面刷新的时候使用
     export default {
         name: "PaperHandCre",
         component() {
+
         },
         data(){
             return{
                 courseId:'',
                 courses:[],
+                schools:[],
+                majors:[],
+                semester:[],/*学期*/
+                checkTeachers:[],
                 selectCourse:{},
                 chapters:[],/*存放根据关键词查找的课程列表*/
                 activeItemIndex: 0,
                 queTypes:['单选题','多选题','判断题','填空题','简答题'],
                 searchValue:{
-                    qcourse:'',
                     queType:'单选题',
                     qlevel:'',//搜索条件试题难度
                     qchapter:''//搜索条件试题章节
                 },
+                schoolName:'',//因为传到后端的是id,所以为了展示，这里设置临时的名称
+                majorName:'',//因为传到后端的是id,所以为了展示，这里设置临时的名称
+                courseName:'',//因为传到后端的是id,所以为了展示，这里设置临时的名称
                 qlevel:[//试题难度下拉框选择值
                     {value:1,label:'简单'},{value:2,label: '适中'},{value:3,label:'偏难'},{value:4,label: '难'}
                 ],
@@ -956,7 +1173,7 @@
                     fbIds:[],
                     qaIds:[],
                 },
-                selectPaperInfo:{//存放第三步，挑选的试题的详细信息
+                selectPaperInfo:{//存放第三步，挑选的试题的详细信息,动态赋值
 
                 },
                 optionChar:['A.',"B.", "C.","D.","E.","F.","G.","H.","I.","J."],//这是为了对应多选题的选项序号
@@ -977,7 +1194,30 @@
 
                 dialogdDeleteQueListVisible:false,
                 selectDeleteQueType:'',
-                paperName:'',//存储试卷名称
+                updatePaperInfo:{
+                    courseId:'',
+                    paperName:'',//存储试卷名称
+                    schoolId:'',
+                    majorId:'',
+                    semester:'',
+                    checkTeacherId:'',
+                    totalScore:'',
+                    passScore:'',
+                    queTypes:'',//试题类型
+                    chapterIds:'',//所有章节
+                    knowIds:'',//所有知识点
+                    sclist:[],
+                    mclist:[],
+                    tflist:[],
+                    fblist:[],
+                    qalist:[],
+                    scScore:'',
+                    mcScore:'',
+                    fbScore:[],
+                    tfScore:'',
+                    qaScore:[]
+                },
+
                 selectQueScore:{//存储试题的分数信息
                     scScore:'',
                     mcScore:'',
@@ -985,142 +1225,27 @@
                     fbScore:[],
                     qaScore:[],
                 },
-                options:{
-                    title: {
-                        text: '基本信息',
-                        subtext: '虚假数据'
-                    },
-                    tooltip: {
-                        trigger: 'axis'
-                    },
-                    color: ['rgba(31,13,230,0.95)', '#ff475d', '#49ef18', '#efeb23'],
-                    legend: [
-                        {
-                            data: ['学历层次', '职业技能'],
-                        },
-                        {
-                            top: 20,
-                            data: ['业绩成果', '专业经历'],
-                        }
 
-                    ],
-                    toolbox: {
-                        show: true,
-                        feature: {
-                            dataView: {
-                                show: true, readOnly: true,
-                                optionToContent: function (opt) {
-                                    let axisData = opt.xAxis[0].data; //坐标数据
-                                    let series = opt.series; //折线图数据
-                                    let tdHeads = '<td  style="padding: 0 10px">时间</td>'; //表头
-                                    let tdBodys = ''; //数据
-                                    series.forEach(function (item) {
-                                        //组装表头
-                                        tdHeads += `<td style="padding: 0 10px">${item.name}</td>`;
-                                    });
-                                    let table = `<table border="1" style="margin-left:20px;border-collapse:collapse;font-size:14px;text-align:center"><tbody><tr>${tdHeads} </tr>`;
-                                    for (let i = 0, l = axisData.length; i < l; i++) {
-                                        for (let j = 0; j < series.length; j++) {
-                                            //组装表数据
-                                            tdBodys += `<td>${series[j].data[i]}</td>`;
-                                        }
-                                        table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`;
-                                        tdBodys = '';
-                                    }
-                                    table += '</tbody></table>';
-                                    return table;
-                                }
-                            },
-                            magicType: {show: true, type: ['line', 'bar']},
-                            restore: {show: true},
-                            saveAsImage: {show: true}
-                        }
-                    },
-                    calculable: true,
-                    xAxis: [
-                        {
-                            type: 'category',
-                            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-                        }
-                    ],
-                    yAxis: [
-                        {
-                            type: 'value'
-                        }
-                    ],
-                    series: [
-                        {
-                            name: '学历层次',
-                            type: 'bar',
-                            stack: '个人信息',
-                            data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
-                            markPoint: {
-                                data: [
-                                    {type: 'max', name: '最大值'},
-                                    {type: 'min', name: '最小值'}
-                                ]
-                            },
-                            markLine: {
-                                data: [
-                                    {type: 'average', name: '平均值'}
-                                ]
-                            }
-                        },
-                        {
-                            name: '职业技能',
-                            type: 'bar',
-                            stack: '个人信息',
-                            data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
-                            markPoint: {
-                                data: [
-                                    {name: '年最高', value: 182.2, xAxis: 7, yAxis: 183},
-                                    {name: '年最低', value: 2.3, xAxis: 11, yAxis: 3}
-                                ]
-                            },
-                            markLine: {
-                                data: [
-                                    {type: 'average', name: '平均值'}
-                                ]
-                            }
-                        },
-                        {
-                            name: '业绩成果',
-                            type: 'bar',
-                            stack: '个人信息',
-                            data: [2.0, 6.0, 7.0, 20.4, 21.7, 60.7, 135.6, 152.2, 56.7, 15.8, 7.0, 2.3],
-                            markPoint: {
-                                data: [
-                                    {name: '年最高', value: 152.2, xAxis: 7, yAxis: 153},
-                                    {name: '年最低', value: 2.0, xAxis: 1, yAxis: 2}
-                                ]
-                            },
-                            markLine: {
-                                data: [
-                                    {type: 'average', name: '平均值'}
-                                ]
-                            }
-                        },
-                        {
-                            name: '专业经历',
-                            type: 'bar',
-                            stack: '个人信息',
-                            data: [1.0, 6.9, 9.0, 36.4, 48.7, 90.7, 100.6, 122.2, 40.7, 8.8, 6.0, 2.3],
-                            markPoint: {
-                                data: [
-                                    {name: '年最高', value: 122.2, xAxis: 7, yAxis: 123},
-                                    {name: '年最低', value: 1.0, xAxis: 1, yAxis: 1}
-                                ]
-                            },
-                            markLine: {
-                                data: [
-                                    {type: 'average', name: '平均值'}
-                                ]
-                            }
-                        }
-                    ]
+                scoreChapterData:{
+                    chapterIds:[],
+                    chapters:[],
+                    score:[]
                 },
-
-
+                scoreKnowData:{//存储试卷中的知识点信息
+                  knowIds:[],
+                  knows:[],//知识点名称
+                  score:[]
+                },
+                scSortNum:[],
+                mcSortNum:[],
+                tfSortNum:[],
+                fbSortNum:[],
+                qaSortNum:[],
+            }
+        },
+        watch:{
+            totalScore(val, oldVal){
+                    this.drawBar();
             }
         },
         computed:{
@@ -1131,7 +1256,7 @@
                         this.selectPaper.tfIds.length+
                         this.selectPaper.qaIds.length;
             },
-            totalScore:function () {
+            totalScore:function () {//计算试卷设置的总分数
                 let total=0;
                 let scListLen=0;
                 let mcListLen=0;
@@ -1159,12 +1284,477 @@
                             +Number(this.selectQueScore.mcScore)*Number(mcListLen)
                             +Number(this.selectQueScore.tfScore)*Number(tfListLen)
                             +Number(total);
+            },
+            passScore:function(){
+                var num=this.totalScore;
+                return num.toFixed(2);
             }
         },
         mounted() {
             this.initCourse();
+            this.initSchools();
+            this.initSemester();//学年学期
+            this.initCheckTeachers();
         },
         methods:{
+
+            getPaperChapter(){
+                //这里需要计算出试卷中的章节，由于在scoreChapterData中已经计算出章节，所以这里需要转成字符串类型
+                if(this.scoreChapterData.chapterIds.length>0){
+                    this.updatePaperInfo.chapterIds=this.scoreChapterData.chapterIds.join("@");
+                }
+
+            },
+            getPaperKnows(){
+                if(this.scoreKnowData.knowIds.length>0){
+                    this.updatePaperInfo.knowIds=this.scoreKnowData.knowIds.join("@");
+                }
+            },
+
+            exportPapToWord(){//导出试卷到word
+                //這一個方法写着比较艰难，没有使用之前封装的请求方法
+               /* window.open('/pap/create/getDoc','_parent');*/
+                let data={
+                    schoolName:this.schoolName,
+                    majorName:this.majorName,
+                    courseName: this.courseName,
+                    testPaperName:this.updatePaperInfo.paperName,
+                    scScore:this.selectQueScore.scScore,
+                    sclist:this.selectPaperInfo.sclist,
+                    mcScore:this.selectQueScore.mcScore,
+                    mclist:this.selectPaperInfo.mclist,
+                    tfScore:this.selectQueScore.tfScore,
+                    tflist:this.selectPaperInfo.tflist,
+                    fbScore:this.selectQueScore.fbScore,
+                    fblist:this.selectPaperInfo.fblist,
+                    qaScore:this.selectQueScore.qaScore,
+                    qalist:this.selectPaperInfo.qalist,
+                    totalScore:this.totalScore,
+                    semester:this.updatePaperInfo.semester,
+
+                };
+                axios.post(
+                    '/pap/create/getDoc', data, {responseType: 'blob'})
+                    .then(res=> {
+                            /*if (headers['content-type'] === 'application/octet-stream;charset=utf-8') {*/
+
+                                const content = res
+                                const blob = new Blob([content])
+                                const fileName = '导出信息.docx'
+                                if ('download' in document.createElement('a')) { // 非IE下载
+                                    const elink = document.createElement('a')
+                                    elink.download = fileName
+                                    elink.style.display = 'none'
+                                    elink.href = URL.createObjectURL(blob)
+                                    document.body.appendChild(elink)
+                                    elink.click()
+                                    URL.revokeObjectURL(elink.href) // 释放URL 对象
+                                    document.body.removeChild(elink)
+                                } else { // IE10+下载
+                                    navigator.msSaveBlob(blob, fileName)
+                                }
+                        },
+                        error => {
+
+                        })
+                      /*  console.log(res.status);
+                       /!* if (res.status == 200) {*!/
+                            let url = window.URL.createObjectURL(new Blob([res.data]))
+                            let link = document.createElement('a')
+                            link.style.display = 'none'
+                            link.href = url
+                            link.setAttribute('download', 'demo.docx')    // 自定义下载文件名（如exemple.txt）
+                            document.body.appendChild(link)
+                            link.click()
+                        /!*}*!/
+                    });*/
+
+
+
+            },
+            submitTestPaper(){//提交试卷
+                //提交前检查数据是否都已经填写正确，包括：课程、学院、专业、学期、试卷名称、
+                //试题分数、章节、知识点、审核教师id,总分,及格分
+                this.updatePaperInfo.totalScore=this.totalScore;
+                this.updatePaperInfo.passScore=this.passScore;
+                this.updatePaperInfo.sclist=this.selectPaperInfo.sclist;
+                this.updatePaperInfo.mclist=this.selectPaperInfo.mclist;
+                this.updatePaperInfo.tflist=this.selectPaperInfo.tflist;
+                this.updatePaperInfo.fblist=this.selectPaperInfo.fblist;
+                this.updatePaperInfo.qalist=this.selectPaperInfo.qalist;
+                this.getPaperChapter();
+                this.getPaperKnows();
+                //每个试题类型的分数
+                this.updatePaperInfo.scScore=this.selectQueScore.scScore;
+                this.updatePaperInfo.mcScore=this.selectQueScore.mcScore;
+                this.updatePaperInfo.tfScore=this.selectQueScore.tfScore;
+                this.updatePaperInfo.qaScore=this.selectQueScore.qaScore;
+                this.updatePaperInfo.fbScore=this.selectQueScore.fbScore;
+
+                //获取完试卷的信息，提交到后端添加试卷
+                this.postRequest("/pap/create/add",this.updatePaperInfo).then(resp=> {
+                    if(resp){
+                        var that=this;
+                        setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
+                            that.reload();//刷新页面
+                        },1000);
+                    }
+                })
+
+            },
+            initCheckTeachers(){//
+                if(!window.sessionStorage.getItem("checkTeachers")){
+                    this.getRequest('/system/user/addQue').then(resp => {
+                        if (resp) {
+                            this.checkTeachers = resp;
+                            window.sessionStorage.setItem("checkTeachers", JSON.stringify(resp));
+                        }
+                    })
+                }else{
+                    this.checkTeachers=JSON.parse(window.sessionStorage.getItem("checkTeachers"));
+                }
+            },
+            initSchools(){
+                this.getRequest("/baseinfo/school/all").then(resp=>{
+                    if(resp){
+
+                        this.schools=resp;
+
+                    }
+                })
+            },
+            selectCourseChanged(){
+                //用户选择完课程后，系统根据课程id，查询出章节，并显示课程的名称
+                //1.查询出课程id对应的课程名称，用于在顶栏显示
+                for(var i=0;i<this.courses.length;i++){
+                    if(this.updatePaperInfo.courseId==this.courses[i].id){
+                        let target=JSON.parse(JSON.stringify(this.courses[i]));//对象的深拷贝
+                        this.selectCourse=target;
+                    }
+                }
+                //2.初始化试题
+                this.initQuestions();
+                //3.初始化章节数组
+                this.getRequest("/baseinfo/chapter/?courseId="+this.updatePaperInfo.courseId).then(resp=> {
+                    if (resp) {
+                        this.chapters=resp;
+                    }
+                })
+                for (let i = 0; i < this.courses.length; i++) {
+                    if(this.updatePaperInfo.courseId==this.courses[i].id){
+                        this.courseName=this.courses[i].name;
+                    }
+                }
+            },
+            selectMajorChanged(){
+                for (let i = 0; i < this.majors.length; i++) {
+                    if(this.updatePaperInfo.majorId==this.majors[i].id){
+                        this.majorName=this.majors[i].name;
+                    }
+                }
+            },
+            selectSchoolChanged(){//选择完学院后，触发
+                this.initMajors();
+                //为临时展示的学院名称赋值
+                for (let i = 0; i < this.schools.length; i++) {
+                    if(this.updatePaperInfo.schoolId==this.schools[i].id){
+                        this.schoolName=this.schools[i].name;
+                    }
+                }
+            },
+            initMajors(){
+                this.getRequest("/baseinfo/major/?schoolId="+this.updatePaperInfo.schoolId).then(resp=>{
+                    if(resp){
+                        this.majors=resp;
+                    }
+                })
+            },
+            initSemester(){
+                this.getRequest("/baseinfo/semester/").then(resp=>{
+                    if(resp){
+                        this.semester=resp;
+                    }
+                })
+            },
+            drawBar(){//绘制章节分数柱状图
+                //在这里需要将每个试题的对应章节取出来，并把分数和章节一一对应
+                //这里初始化两个数组，一个章节数组，另一个是分数数组
+
+               let charts1=document.getElementById('charts1');
+                charts1.style.width=this.$refs.barEcharts.offsetWidth+"px";//这里是为了解决，echarts只有左边100px的问题
+                var myChart = echarts.init(charts1);
+                myChart.resize();
+                this.scoreChapterData.chapterIds=[];
+                this.scoreChapterData.chapters=[];
+                this.scoreChapterData.score=[];
+
+
+
+
+
+                if(this.selectPaperInfo.sclist&&this.selectPaperInfo.sclist.length>0){
+                    //循环得出单选题章节
+                    if( this.selectQueScore.scScore==''){
+                        this.selectQueScore.scScore=0;
+                    }
+                    var sclist=this.selectPaperInfo.sclist;
+                    for(let i=0;i<sclist.length;i++){
+                        var scQue=sclist[i];//获取单选题
+                        var chapterId=scQue.chapter.id;
+                        var chapterName=scQue.chapter.name;
+                        if(this.scoreChapterData.chapterIds.length<1){
+                            this.scoreChapterData.chapterIds.push(chapterId);
+                            this.scoreChapterData.chapters.push(chapterName);
+                            this.scoreChapterData.score.push(this.selectQueScore.scScore);
+                        }else{
+                            let isExist=false;
+                            for (let j=0;j<this.scoreChapterData.chapterIds.length;j++){
+                                if(chapterId==this.scoreChapterData.chapterIds[j]){
+                                    //如果遇到id和数组中已有的相同，则把分数加到score
+                                    this.scoreChapterData.score[j]=
+                                        Number(this.scoreChapterData.score[j])
+                                        +Number(this.selectQueScore.scScore);
+                                    isExist=true;
+                                    break;
+                                }
+                            }
+                            if(isExist==false){
+                                this.scoreChapterData.chapterIds.push(chapterId);
+                                this.scoreChapterData.chapters.push(chapterName);
+                                this.scoreChapterData.score.push(this.selectQueScore.scScore);
+                            }
+                        }
+                    }
+                }
+                if(this.selectPaperInfo.mclist&&this.selectQueScore.mcScore!=''){
+                    //循环得出单选题章节
+                    if( this.selectQueScore.mcScore==''){
+                        this.selectQueScore.mcScore=0;
+                    }
+                    var mclist=this.selectPaperInfo.mclist;
+                    for(let i=0;i<mclist.length;i++){
+                        var mcQue=mclist[i];//获取单选题
+                        var chapterId=mcQue.chapter.id;
+                        var chapterName=mcQue.chapter.name;
+                        if(this.scoreChapterData.chapterIds.length<1){
+                            this.scoreChapterData.chapterIds.push(chapterId);
+                            this.scoreChapterData.chapters.push(chapterName);
+                            this.scoreChapterData.score.push(this.selectQueScore.mcScore);
+                        }else{
+                            let isExist=false;
+                            for (let j=0;j<this.scoreChapterData.chapterIds.length;j++){
+                                if(chapterId==this.scoreChapterData.chapterIds[j]){
+                                    //如果遇到id和数组中已有的相同，则把分数加到score
+                                    this.scoreChapterData.score[j]=
+                                        Number(this.scoreChapterData.score[j])
+                                        +Number(this.selectQueScore.scScore);
+                                    isExist=true;
+                                    break;
+                                }
+                            }
+                            if(isExist==false){
+                                this.scoreChapterData.chapterIds.push(chapterId);
+                                this.scoreChapterData.chapters.push(chapterName);
+                                this.scoreChapterData.score.push(this.selectQueScore.mcScore);
+                            }
+                        }
+                    }
+                }
+                if(this.selectPaperInfo.tflist&&this.selectQueScore.tfScore!=''){
+                    //循环得出单选题章节
+                    if( this.selectQueScore.tfScore==''){
+                        this.selectQueScore.tfScore=0;
+                    }
+                    var tflist=this.selectPaperInfo.tflist;
+                    for(let i=0;i<tflist.length;i++){
+                        var tfQue=tflist[i];//获取单选题
+                        var chapterId=tfQue.chapter.id;
+                        var chapterName=tfQue.chapter.name;
+                        if(this.scoreChapterData.chapterIds.length<1){
+                            this.scoreChapterData.chapterIds.push(chapterId);
+                            this.scoreChapterData.chapters.push(chapterName);
+                            this.scoreChapterData.score.push(this.selectQueScore.tfScore);
+                        }else{
+                            let isExist=false;
+                            for (let j=0;j<this.scoreChapterData.chapterIds.length;j++){
+                                if(chapterId==this.scoreChapterData.chapterIds[j]){
+                                    //如果遇到id和数组中已有的相同，则把分数加到score
+                                    this.scoreChapterData.score[j]=
+                                        Number(this.scoreChapterData.score[j])
+                                        +Number(this.selectQueScore.tfScore);
+                                    isExist=true;
+                                    break;
+                                }
+                            }
+                            if(isExist==false){
+                                this.scoreChapterData.chapterIds.push(chapterId);
+                                this.scoreChapterData.chapters.push(chapterName);
+                                this.scoreChapterData.score.push(this.selectQueScore.tfScore);
+                            }
+                        }
+                    }
+                }
+                if(this.selectPaperInfo.fblist){
+                    //循环得出单选题章节
+                    if( this.selectQueScore.fbScore.length==0){
+                        for(let i=0;i<this.selectPaperInfo.fblist.length;i++){
+                            this.selectQueScore.fbScore.push(0);
+                        }
+                    }
+                    var fblist=this.selectPaperInfo.fblist;
+                    for(let i=0;i<fblist.length;i++){
+                        var fbQue=fblist[i];//获取单选题
+                        var chapterId=fbQue.chapter.id;
+                        var chapterName=fbQue.chapter.name;
+                        if(this.scoreChapterData.chapterIds.length<1){
+                            this.scoreChapterData.chapterIds.push(chapterId);
+                            this.scoreChapterData.chapters.push(chapterName);
+                            this.scoreChapterData.score.push(this.selectQueScore.fbScore[i]);
+                        }else{
+                            let isExist=false;
+                            for (let j=0;j<this.scoreChapterData.chapterIds.length;j++){
+                                if(chapterId==this.scoreChapterData.chapterIds[j]){
+                                    //如果遇到id和数组中已有的相同，则把分数加到score
+                                    this.scoreChapterData.score[j]=
+                                        Number(this.scoreChapterData.score[j])
+                                        +Number(this.selectQueScore.fbScore[i]);
+                                    isExist=true;
+                                    break;
+                                }
+                            }
+                            if(isExist==false){
+                                this.scoreChapterData.chapterIds.push(chapterId);
+                                this.scoreChapterData.chapters.push(chapterName);
+                                this.scoreChapterData.score.push(this.selectQueScore.fbScore[i]);
+                            }
+                        }
+                    }
+                }
+                if(this.selectPaperInfo.qalist){
+                    //循环得出单选题章节
+                    if( this.selectQueScore.qaScore.length==0){
+                        for(let i=0;i<this.selectPaperInfo.qalist.length;i++){
+                            this.selectQueScore.qaScore.push(0);
+                        }
+                    }
+                    var qalist=this.selectPaperInfo.qalist;
+                    for(let i=0;i<qalist.length;i++){
+                        var qaQue=qalist[i];//获取单选题
+                        var chapterId=qaQue.chapter.id;
+                        var chapterName=qaQue.chapter.name;
+                        if(this.scoreChapterData.chapterIds.length<1){
+                            this.scoreChapterData.chapterIds.push(chapterId);
+                            this.scoreChapterData.chapters.push(chapterName);
+                            this.scoreChapterData.score.push(this.selectQueScore.qaScore[i]);
+                        }else{
+                            let isExist=false;
+                            for (let j=0;j<this.scoreChapterData.chapterIds.length;j++){
+                                if(chapterId==this.scoreChapterData.chapterIds[j]){
+                                    //如果遇到id和数组中已有的相同，则把分数加到score
+                                    this.scoreChapterData.score[j]=
+                                        Number(this.scoreChapterData.score[j])
+                                        +Number(this.selectQueScore.qaScore[i]);
+                                    isExist=true;
+                                    break;
+                                }
+                            }
+                            if(isExist==false){
+                                this.scoreChapterData.chapterIds.push(chapterId);
+                                this.scoreChapterData.chapters.push(chapterName);
+                                this.scoreChapterData.score.push(this.selectQueScore.qaScore[i]);
+                            }
+                        }
+                    }
+                }
+               /* console.log(this.scoreChapterData.chapterIds.length);
+                console.log(this.scoreChapterData.chapters);
+                console.log(this.scoreChapterData.score);*/
+                var options={
+                        title: {
+                            text: '章节分数分布',
+                        },
+                        tooltip: {//提示框，鼠标悬浮交互时的信息提示
+                            trigger: 'axis',
+                           /* formatter: function (params, ticket, callback) {
+                                var result = "";
+                                result += params.data + "分";
+                                return result;
+                            }*/
+                        },
+                        toolbox: {//工具栏。内置有导出图片，数据视图，动态类型切换，数据区域缩放，重置五个工具。
+                            show: true,
+                            feature: {
+                                /* dataZoom: {
+                                     yAxisIndex: 'none'
+                                 },
+                                 dataView: {readOnly: false},
+                                 magicType: {type: ['line', 'bar']},
+                                 restore: {},*/
+                                saveAsImage: {}
+                            }
+                        },
+                        calculable: true,
+                        xAxis: [
+                            {
+                                name:'章节',
+                                type: 'category',//类目轴，适用于离散的类目数据，为该类型时必须通过 data 设置类目数据
+                                data: this.scoreChapterData.chapters,
+                                axisLabel: {               //x轴参数旋转角度
+                                    interval: 0,
+                                    rotate: 10//标签倾斜的角度
+                                },
+                                grid: {
+                                    left: '10%',
+                                    bottom:'35%'
+                                },
+
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                name:'累计分数',
+                                type: 'value',//数值轴，适用于连续数据。
+                                axisLabel: {
+                                    formatter: '{value} 分'
+                                },
+
+                            }
+                        ],
+                        //sereis的数据: 用于设置图表数据之用。series是一个对象嵌套的结构；对象内包含对象
+                        series: [{
+                            data: this.scoreChapterData.score,
+                            type: 'bar',
+                            //系列中的数据标注内容
+                          /*  markPoint: {
+                                data: [
+                                    {type: 'max', name: '最大值'},
+                                    {type: 'min', name: '最小值'}
+                                ]
+                            },*/
+                            label:{                     //图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等，
+                                show:true,
+                                position:'top',
+                                fontSize:12,
+                                formatter: function(data) {
+                                    var result = "";
+                                    result += data.data + "分";
+                                    return result;
+                                },
+
+                            },
+                            showBackground: true,
+                            backgroundStyle: {
+                                color: 'rgba(220, 220, 220, 0.8)'
+                            },
+                            itemStyle:{
+                                color: '#409EFF',
+                            }
+
+                        }]
+
+                    };
+                myChart.setOption(options);
+            },
             initCourse(){//初始化课程列表
                 if(!window.sessionStorage.getItem("courses")){
                     this.getRequest('/baseinfo/course/all?classId='+'').then(resp => {
@@ -1182,8 +1772,8 @@
                     let url = '/question/scinput/?page=' + this.page + '&size=' + this.size;
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
-                    }else if (this.searchValue.qcourse) {
-                        url += '&courseId=' + this.searchValue.qcourse;
+                    }else if (this.updatePaperInfo.courseId) {
+                        url += '&courseId=' + this.updatePaperInfo.courseId;
                     }
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
@@ -1204,8 +1794,8 @@
                     let url = '/question/mcinput/?page=' + this.page + '&size=' + this.size;
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
-                    }else if (this.searchValue.qcourse) {
-                        url += '&courseId=' + this.searchValue.qcourse;
+                    }else if (this.updatePaperInfo.courseId) {
+                        url += '&courseId=' + this.updatePaperInfo.courseId;
                     }
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
@@ -1224,8 +1814,8 @@
                     let url = '/question/tfinput/?page=' + this.page + '&size=' + this.size;
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
-                    }else if (this.searchValue.qcourse) {
-                        url += '&courseId=' + this.searchValue.qcourse;
+                    }else if (this.updatePaperInfo.courseId) {
+                        url += '&courseId=' + this.updatePaperInfo.courseId;
                     }
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
@@ -1245,8 +1835,8 @@
                     let url = '/question/fbinput/?page=' + this.page + '&size=' + this.size;
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
-                    }else if (this.searchValue.qcourse) {
-                        url += '&courseId=' + this.searchValue.qcourse;
+                    }else if (this.updatePaperInfo.courseId) {
+                        url += '&courseId=' + this.updatePaperInfo.courseId;
                     }
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
@@ -1266,8 +1856,8 @@
                     let url = '/question/qainput/?page=' + this.page + '&size=' + this.size;
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
-                    }else if (this.searchValue.qcourse) {
-                        url += '&courseId=' + this.searchValue.qcourse;
+                    }else if (this.updatePaperInfo.courseId) {
+                        url += '&courseId=' + this.updatePaperInfo.courseId;
                     }
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
@@ -1316,10 +1906,15 @@
                                             +'&qaIds='+this.selectPaper.qaIds).then(resp => {
                           if (resp) {
                               this.selectPaperInfo = resp;
+                              this.drawBar();
                           }else{
                               /*this.$message.error('数据初始化错误');*/
                           }
                       })
+                   /* var that = this;
+                    setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
+                        that.drawBar();
+                    },2000);*/
 
                  /* }*/
                 }
@@ -1385,29 +1980,7 @@
 
 
             },
-            selectCourseChanged(){
-                //用户选择完课程后，系统根据课程id，查询出章节，并显示课程的名称
 
-                //1.查询出课程id对应的课程名称，用于在顶栏显示
-                for(var i=0;i<this.courses.length;i++){
-                    if(this.searchValue.qcourse==this.courses[i].id){
-                        let target=JSON.parse(JSON.stringify(this.courses[i]));//对象的深拷贝
-                        this.selectCourse=target;
-                    }
-                }
-                //2.初始化试题
-                this.initQuestions();
-
-                //3.初始化章节数组
-                this.getRequest("/baseinfo/chapter/?courseId="+this.searchValue.qcourse).then(resp=> {
-                    if (resp) {
-                        this.chapters=resp;
-                    }
-                })
-
-
-
-            },
             showSCHiddenView(index){
                 var status=!this.scViewStatus[index]
                 this.$set(this.scViewStatus,index,status);
@@ -1431,7 +2004,7 @@
 
 
             emptySearchValue(){
-                this.searchValue.qcourse='';
+                this.updatePaperInfo.courseId='';
                 this.searchValue.qchapter='';
                 this.searchValue.qlevel='';
                 this.searchValue.queType='单选题';
@@ -1605,7 +2178,7 @@
             },
             moveSCUp(index,data){
                 var that = this;
-                console.log('上移', index, data);
+             /*   console.log('上移', index, data);*/
                 if (index > 0) {
                     let upData = that.selectPaperInfo.sclist[index - 1];
                     that.selectPaperInfo.sclist.splice(index - 1, 1);
@@ -1616,11 +2189,11 @@
             },
             moveSCDown(index,data){
                 var that = this;
-                console.log('下移', index, data);
+             /*   console.log('下移', index, data);*/
                 if ((index + 1) === that.selectPaperInfo.sclist.length) {
                     alert('已经是最后一条，不可下移');
                 } else {
-                    console.log(index);
+                  /*  console.log(index);*/
                     // 保存下一条数据
                     let downData = that.selectPaperInfo.sclist[index + 1];
                     // 删除下一条数据
@@ -1655,5 +2228,10 @@
     .stem span{
         white-space:pre-line
     }
+    .echarts {
+        width: 100%;
+        height: 100%;
+    }
+
 
 </style>

@@ -53,7 +53,7 @@
                     <div class="homeWelcome" v-if="this.$router.currentRoute.path=='/home'">
                         欢迎来到试卷分析系统！
                     </div>
-                    <router-view/><!--嵌套命名视图-->
+                    <router-view v-if="isRouterAlive"/><!--嵌套命名视图-->
                 </el-main>
             </el-container>
         </el-container>
@@ -61,11 +61,27 @@
 </template>
 
 <script>
+
+    // 引入 ECharts 主模块
+    var echarts = require('echarts/lib/echarts');
+    // 引入柱状图
+    require('echarts/lib/chart/bar');
+    // 引入提示框和标题组件
+    require('echarts/lib/component/tooltip');
+    require('echarts/lib/component/title');
+    require('echarts/lib/component/toolbox');
+
     export default {//export default 表示只能导出一个默认模块，这个模块为匿名
         name: "Home",
+        provide(){
+            return{
+                reload:this.reload
+            }
+        },
         data(){
             return{
-                user:JSON.parse(window.sessionStorage.getItem("user"))//获取user,并转成json对象
+                user:JSON.parse(window.sessionStorage.getItem("user")),//获取user,并转成json对象
+                isRouterAlive:true,
             }
          },
         computed:{
@@ -108,6 +124,12 @@
                 console.log(indexPath);*!/
                this.$router.push(index);
             },*/
+           reload(){
+             this.isRouterAlive=false
+             this.$nextTick(function () {
+                this.isRouterAlive=true
+             })
+           },
             commandHandler(cmd){//顶栏下拉框处理事件
 
                 if(cmd=='logout'){
