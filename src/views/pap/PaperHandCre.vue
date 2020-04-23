@@ -554,7 +554,7 @@
                                         <el-input size="medium"
                                                   style="width: 300px"
                                                   placeholder="请输入试卷的名称"
-                                                  v-model="updatePaperInfo.paperName">
+                                                  v-model="updatePaperInfo.name">
                                         </el-input>
                                     </el-form-item>
                                     <el-row>
@@ -987,7 +987,7 @@
                                         <h3>{{updatePaperInfo.semester}}</h3>
                                     </div>
                                     <div style="display: flex;justify-content: center">
-                                        <h4>{{schoolName}}{{majorName}}{{courseName}}{{updatePaperInfo.paperName}}</h4>
+                                        <h4>{{schoolName}}{{majorName}}{{courseName}}{{updatePaperInfo.name}}</h4>
                                     </div>
 
                                 </div>
@@ -1112,7 +1112,6 @@
                         </div>
                     </el-form>
                 </div>
-
             </div>
             <el-divider></el-divider>
             <div style="display: flex;align-items: center;justify-content: center;padding: 0px;margin: 0px;">
@@ -1196,7 +1195,7 @@
                 selectDeleteQueType:'',
                 updatePaperInfo:{
                     courseId:'',
-                    paperName:'',//存储试卷名称
+                    name:'',//存储试卷名称
                     schoolId:'',
                     majorId:'',
                     semester:'',
@@ -1318,7 +1317,7 @@
                     schoolName:this.schoolName,
                     majorName:this.majorName,
                     courseName: this.courseName,
-                    testPaperName:this.updatePaperInfo.paperName,
+                    testPaperName:this.updatePaperInfo.name,
                     scScore:this.selectQueScore.scScore,
                     sclist:this.selectPaperInfo.sclist,
                     mcScore:this.selectQueScore.mcScore,
@@ -1396,7 +1395,7 @@
                     if(resp){
                         var that=this;
                         setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
-                            that.reload();//刷新页面
+                            location.reload();//刷新页面
                         },1000);
                     }
                 })
