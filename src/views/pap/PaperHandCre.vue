@@ -1391,7 +1391,7 @@
                 this.updatePaperInfo.fbScore=this.selectQueScore.fbScore;
 
                 //获取完试卷的信息，提交到后端添加试卷
-                this.postRequest("/pap/create/add",this.updatePaperInfo).then(resp=> {
+                this.postRequest("/pap/create/handAdd",this.updatePaperInfo).then(resp=> {
                     if(resp){
                         var that=this;
                         setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行

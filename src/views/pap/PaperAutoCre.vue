@@ -121,6 +121,8 @@
                                             :data="knows"
                                             :props="defaultProps"
                                             :expand-on-click-node="false"
+                                            @check="handleNodeClick"
+
                                             style="margin-top: 15px"
                                             ref="tree"><!--default-expanded-keys默认展开id为-1的节点，id为-1即为课程的节点-->
                                         <span class="custom-tree-node" style="display:flex;justify-content: space-between;width: 100%" slot-scope="{ node, data }"><!--node为当前的元素，data为服务端返回的当前的jsonOjbect（node的数据）-->
@@ -259,7 +261,7 @@
                                             </el-form>
 
                                             <div style="margin-top: 20px;">
-                                                <span>试卷共：100分</span> <span style="margin-left: 20px">已选择20分</span>
+                                                <span>试卷共：{{updatePaperInfo.totalScore}}分</span> <span style="margin-left: 20px">已选择{{allocationScore}}分</span>
                                             </div>
                                         </div>
                                     </div>
@@ -327,16 +329,18 @@
                             <div style="display: flex;justify-content: space-between;margin-top: 20px">
                                 <div>
                                   <!--  <el-button size="small" type="primary" @click="createTestPaper()">生成试卷</el-button>-->
+
                                 </div>
 
                             </div>
+                            <el-divider content-position="left">试卷预览</el-divider>
                             <div v-show="showTestPaper"
                                  v-loading="loading2"
                                  element-loading-text="正在生成试卷..."
                                  element-loading-spinner="el-icon-loading"
-                                 style="border-radius: 4px;border: 1px solid #dedede;width: 80%;margin:0 auto;height: 600px"
+                                 style="border-radius: 4px;border: 1px solid #dedede;width: 80%;margin:0 auto;"
                             ><!--试卷展示-->
-                                <el-divider content-position="left">试卷预览</el-divider>
+
                                 <div ><!--试卷标题展示-->
                                     <div style="display: flex;justify-content: center">
                                         <h3>{{updatePaperInfo.semester}}</h3>
@@ -347,10 +351,10 @@
 
                                 </div>
                                 <!--单选题-->
-                                <div v-show="testPaper.sclist&&(testPaper.sclist.length>0)">
+                                <div v-show="testPaper2.sclist&&(testPaper2.sclist.length>0)">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
                                         <strong>单选题</strong>
-                                        <div v-for="(scque,index) in testPaper.sclist" style="margin-top: 20px">
+                                        <div v-for="(scque,index) in testPaper2.sclist" style="margin-top: 20px">
                                             <div>
                                                 <div><!--题干-->
                                                     <div class="stem">
@@ -368,10 +372,10 @@
                                     </div>
                                 </div>
                                 <!--多选题-->
-                                <div v-show="testPaper.mclist&&(testPaper.mclist.length>0)" style="margin-top: 20px">
+                                <div v-show="testPaper2.mclist&&(testPaper2.mclist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
                                         <strong>多选题</strong>
-                                        <div v-for="(mcque,index) in testPaper.mclist">
+                                        <div v-for="(mcque,index) in testPaper2.mclist">
                                             <div>
                                                 <div><!--题干-->
                                                     <div class="stem">
@@ -388,10 +392,10 @@
                                     </div>
                                 </div>
                                 <!--判断题-->
-                                <div v-show="testPaper.tflist&&(testPaper.tflist.length>0)" style="margin-top: 20px">
+                                <div v-show="testPaper2.tflist&&(testPaper2.tflist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
                                         <strong>判断题</strong>
-                                        <div v-for="(tfque,index) in testPaper.tflist">
+                                        <div v-for="(tfque,index) in testPaper2.tflist">
                                             <div>
                                                 <div><!--题干-->
                                                     <div class="stem">
@@ -404,10 +408,10 @@
                                     </div>
                                 </div>
                                 <!--填空题-->
-                                <div v-show="testPaper.fblist&&(testPaper.fblist.length>0)" style="margin-top: 20px">
+                                <div v-show="testPaper2.fblist&&(testPaper2.fblist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
                                         <strong>填空题</strong>
-                                        <div v-for="(fbque,index) in testPaper.fblist">
+                                        <div v-for="(fbque,index) in testPaper2.fblist">
                                             <div>
                                                 <div><!--题干-->
                                                     <div class="stem">
@@ -420,10 +424,10 @@
                                     </div>
                                 </div>
                                 <!--简答题-->
-                                <div v-show="testPaper.qalist&&(testPaper.qalist.length>0)" style="margin-top: 20px">
+                                <div v-show="testPaper2.qalist&&(testPaper2.qalist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
                                         <strong>简答题</strong>
-                                        <div v-for="(qaque,index) in testPaper.qalist">
+                                        <div v-for="(qaque,index) in testPaper2.qalist">
                                             <div>
                                                 <div><!--题干-->
                                                     <div class="stem">
@@ -486,6 +490,8 @@
 </template>
 
 <script>
+    import axios from "axios";
+
     export default {
         name: "PaperAutoCre",
         data(){
@@ -501,7 +507,7 @@
                 ],
                 optionChar:['A.',"B.", "C.","D.","E.","F.","G.","H.","I.","J."],//这是为了对应多选题的选项序号
                 knows:[],/*后端传递过来的章节列表*/
-                activeItemIndex:1,
+                activeItemIndex:0,
                 courses:[],
                 schools:[],
                 majors:[],
@@ -519,6 +525,7 @@
                     schoolId:'',
                     majorId:'',
                     semester:'',
+                    remark:'',
                     checkTeacherId:'',
                     totalScore:'',
                     passScore:'',
@@ -532,9 +539,9 @@
                     qalist:[],
                     scScore:'',
                     mcScore:'',
-                    fbScore:[],
+                    fbScore2:'',
                     tfScore:'',
-                    qaScore:[]
+                    qaScore2:''
                 },
                 paperQueNums:{//第三步，选择试卷题型的数量和可用的试题数
                     scSelectNums:0,
@@ -548,17 +555,17 @@
                     qaSelectNums:0,
                     qaAvailableNums:0,
                 },
-                paperQueScores:{//选择的试卷的数量
+                paperQueScores:{//选择的试卷中每个题型试题的分数
                     scScore:0,
                     mcScore:0,
                     tfScore:0,
                     fbScore:0,
                     qaScore:0,
                 },
-                paperDotDis:[{
+                paperDotDis:[{//试题难度分布
                     queType:'',
-                    dot:1,
-                    queNum:0,
+                    dot:'',
+                    queNum:'',
                     totalNum:''
                 }],
                 rules:{
@@ -567,7 +574,52 @@
                     checkTeacherId:[{required: true, message: '请选择审核人', trigger: 'blur'}],
                 },
                 testPaper:{},//试卷对象，用于接收后端传来的数据
+                testPaper2:{},
                 showTestPaper:false,
+                testPaperReg:{//创建试卷时，传到后端的约束规则
+                    knowIds:[],
+                    courseId:'',
+                    scTotalNum:'',
+                    mcTotalNum:'',
+                    tfTotalNum:'',
+                    fbTotalNum:'',
+                    qaTotalNum:'',
+                    scQueReg:{//单选题规则
+                        scQueNum:'',
+                        dot1Num:'',
+                        dot2Num:'',
+                        dot3Num:'',
+                        dot4Num:'',
+                    },
+                    mcQueReg:{//多选题规则
+                        mcQueNum:'',
+                        dot1Num:'',
+                        dot2Num:'',
+                        dot3Num:'',
+                        dot4Num:'',
+                    },
+                    tfQueReg:{//判断题规则
+                        tfQueNum:'',
+                        dot1Num:'',
+                        dot2Num:'',
+                        dot3Num:'',
+                        dot4Num:'',
+                    },
+                    fbQueReg:{//填空题规则
+                        fbQueNum:'',
+                        dot1Num:'',
+                        dot2Num:'',
+                        dot3Num:'',
+                        dot4Num:'',
+                    },
+                    qaQueReg:{//简答题规则
+                        qaQueNum:'',
+                        dot1Num:'',
+                        dot2Num:'',
+                        dot3Num:'',
+                        dot4Num:'',
+                    }
+                }
             }
         },
         mounted() {
@@ -576,10 +628,202 @@
             this.initSemester();//学年学期
             this.initCheckTeachers();
         },
+        computed:{
+            allocationScore:function () {
+                return Number(this.paperQueScores.scScore)*Number(this.paperQueNums.scSelectNums)+
+                        Number(this.paperQueScores.mcScore)*Number(this.paperQueNums.mcSelectNums)+
+                        Number(this.paperQueScores.tfScore)*Number(this.paperQueNums.tfSelectNums)+
+                        Number(this.paperQueScores.fbScore)*Number(this.paperQueNums.fbSelectNums)+
+                        Number(this.paperQueScores.qaScore)*Number(this.paperQueNums.qaSelectNums);
+            }
+        },
         methods:{
+            handleNodeClick(){//树形章节知识点结构，选中事件
+
+                let res = this.$refs.tree.getCheckedKeys(true);//获取所有叶节点id
+                //console.log(res);
+                this.testPaperReg.knowIds=res;
+
+
+            },
+            submitTestPaper(){//提交保存试卷
+                //提交前检查数据是否都已经填写正确，包括：课程、学院、专业、学期、试卷名称、
+                //试题分数、章节、知识点、审核教师id,总分,及格分
+
+
+                this.updatePaperInfo.passScore=(Number(this.updatePaperInfo.passScore)*0.6).toFixed(2);
+                this.updatePaperInfo.sclist=this.testPaper2.sclist;
+                this.updatePaperInfo.mclist=this.testPaper2.mclist;
+                this.updatePaperInfo.tflist=this.testPaper2.tflist;
+                this.updatePaperInfo.fblist=this.testPaper2.fblist;
+                this.updatePaperInfo.qalist=this.testPaper2.qalist;
+               /* this.getPaperChapter();*/
+              /*  this.updatePaperInfo.knowIds=this.testPaper2.knowIds;*/
+                //每个试题类型的分数
+                this.updatePaperInfo.scScore=this.paperQueScores.scScore;
+                this.updatePaperInfo.mcScore=this.paperQueScores.mcScore;
+                this.updatePaperInfo.tfScore=this.paperQueScores.tfScore;
+                this.updatePaperInfo.qaScore2=this.paperQueScores.qaScore;
+                this.updatePaperInfo.fbScore2=this.paperQueScores.fbScore;
+
+                //获取完试卷的信息，提交到后端添加试卷
+                this.postRequest("/pap/create/autoAdd",this.updatePaperInfo).then(resp=> {
+                    if(resp){
+                        var that=this;
+                        setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
+                            location.reload();//刷新页面
+                        },1000);
+                    }
+                })
+            },
+            exportPapToWord(){//导出word文档
+                let data={
+                    schoolName:this.schoolName,
+                    majorName:this.majorName,
+                    courseName: this.courseName,
+                    testPaperName:this.updatePaperInfo.name,
+                    scScore:this.paperQueScores.scScore,
+                    sclist:this.testPaper2.sclist,
+                    mcScore:this.paperQueScores.mcScore,
+                    mclist:this.testPaper2.mclist,
+                    tfScore:this.paperQueScores.tfScore,
+                    tflist:this.testPaper2.tflist,
+                    fbScore2:this.paperQueScores.fbScore,
+                    fblist:this.testPaper2.fblist,
+                    qaScore2:this.paperQueScores.qaScore,
+                    qalist:this.testPaper2.qalist,
+                    totalScore:this.updatePaperInfo.totalScore,
+                    semester:this.updatePaperInfo.semester,
+
+                };
+                axios.post(
+                    '/pap/create/getDoc2', data, {responseType: 'blob'})
+                    .then(res=> {
+                            /*if (headers['content-type'] === 'application/octet-stream;charset=utf-8') {*/
+
+                            const content = res
+                            const blob = new Blob([content])
+                            const fileName = '导出信息.docx'
+                            if ('download' in document.createElement('a')) { // 非IE下载
+                                const elink = document.createElement('a')
+                                elink.download = fileName
+                                elink.style.display = 'none'
+                                elink.href = URL.createObjectURL(blob)
+                                document.body.appendChild(elink)
+                                elink.click()
+                                URL.revokeObjectURL(elink.href) // 释放URL 对象
+                                document.body.removeChild(elink)
+                            } else { // IE10+下载
+                                navigator.msSaveBlob(blob, fileName)
+                            }
+                        },
+                        error => {
+
+                        })
+            },
             createTestPaper(){//生成试卷
-                this.showTestPaper=true;
-                this.loading2=true;
+                //需要传到后端的数据有：课程id,知识点id,题型及数量，每个题型的难度数量,知识点id，用数组接收,
+                //1.获取试题题型数目
+                this.testPaperReg.scTotalNum=this.paperQueNums.scSelectNums;
+                this.testPaperReg.mcTotalNum=this.paperQueNums.mcSelectNums;
+                this.testPaperReg.tfTotalNum=this.paperQueNums.tfSelectNums;
+                this.testPaperReg.fbTotalNum=this.paperQueNums.fbSelectNums;
+                this.testPaperReg.qaTotalNum=this.paperQueNums.qaSelectNums;
+
+                //2.获取试题难度分布
+                let paperDotDis=this.paperDotDis;
+                if(paperDotDis!=null){
+                    for (let i = 0; i < this.paperDotDis.length; i++) {
+                           let queDotDis= this.paperDotDis[i];
+                           if(queDotDis.queType="单选题"){
+                               if(queDotDis.dot==1){
+                                   this.testPaperReg.scQueReg.dot1Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==2){
+                                   this.testPaperReg.scQueReg.dot2Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==3){
+                                   this.testPaperReg.scQueReg.dot3Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==4){
+                                   this.testPaperReg.scQueReg.dot4Num+=Number(queDotDis.queNum);
+                               }
+                           }
+                           if(queDotDis.queType="多选题"){
+                               if(queDotDis.dot==1){
+                                   this.testPaperReg.mcQueReg.dot1Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==2){
+                                   this.testPaperReg.mcQueReg.dot2Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==3){
+                                   this.testPaperReg.mcQueReg.dot3Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==4){
+                                   this.testPaperReg.mcQueReg.dot4Num+=Number(queDotDis.queNum);
+                               }
+                           }
+                           if(queDotDis.queType="判断题"){
+                               if(queDotDis.dot==1){
+                                   this.testPaperReg.tfQueReg.dot1Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==2){
+                                   this.testPaperReg.tfQueReg.dot2Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==3){
+                                   this.testPaperReg.tfQueReg.dot3Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==4){
+                                   this.testPaperReg.tfQueReg.dot4Num+=Number(queDotDis.queNum);
+                               }
+                           }
+                           if(queDotDis.queType="填空题"){
+                               if(queDotDis.dot==1){
+                                   this.testPaperReg.fbQueReg.dot1Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==2){
+                                   this.testPaperReg.fbQueReg.dot2Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==3){
+                                   this.testPaperReg.fbQueReg.dot3Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==4){
+                                   this.testPaperReg.fbQueReg.dot4Num+=Number(queDotDis.queNum);
+                               }
+                           }
+                           if(queDotDis.queType="简答题"){
+                               if(queDotDis.dot==1){
+                                   this.testPaperReg.qaQueReg.dot1Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==2){
+                                   this.testPaperReg.qaQueReg.dot2Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==3){
+                                   this.testPaperReg.qaQueReg.dot3Num+=Number(queDotDis.queNum);
+                               }
+                               if(queDotDis.dot==4){
+                                   this.testPaperReg.qaQueReg.dot4Num+=Number(queDotDis.queNum);
+                               }
+                           }
+                    }
+                }
+                //3.获取知识点数组（已经自动赋值获取）
+               /* this.handleNodeClick();*/
+
+                //4.获取课程id
+                this.testPaperReg.courseId=this.updatePaperInfo.courseId;
+                this.showTestPaper=true;//显示试卷div
+                this.loading2=true;//加载进度
+                //4.发送post请求
+                this.postRequest("/pap/create/autoGet",this.testPaperReg).then(resp=> {
+                    if (resp) {
+                        this.testPaper2=resp;
+
+                        this.loading2 = false;
+                    }
+                })
+
+
 
             },
             initQueNums(){//根据课程获取题目类型和数量
@@ -685,13 +929,6 @@
                         }
                     });
 
-                    /* var that = this;
-                     setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
-                         that.drawBar();
-                     },2000);*/
-
-                    /* }*/
-
                 }
                 if(this.activeItemIndex==2){
 
@@ -702,7 +939,6 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-
                        this.createTestPaper();
 
                     }).catch(() => {
