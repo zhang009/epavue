@@ -643,6 +643,7 @@
                 let res = this.$refs.tree.getCheckedKeys(true);//获取所有叶节点id
                 //console.log(res);
                 this.testPaperReg.knowIds=res;
+                this.updatePaperInfo.knowIds=res.join("@");
 
 
             },
@@ -651,7 +652,7 @@
                 //试题分数、章节、知识点、审核教师id,总分,及格分
 
 
-                this.updatePaperInfo.passScore=(Number(this.updatePaperInfo.passScore)*0.6).toFixed(2);
+                this.updatePaperInfo.passScore=(Number(this.updatePaperInfo.totalScore)*0.6).toFixed(2);
                 this.updatePaperInfo.sclist=this.testPaper2.sclist;
                 this.updatePaperInfo.mclist=this.testPaper2.mclist;
                 this.updatePaperInfo.tflist=this.testPaper2.tflist;
@@ -669,10 +670,7 @@
                 //获取完试卷的信息，提交到后端添加试卷
                 this.postRequest("/pap/create/autoAdd",this.updatePaperInfo).then(resp=> {
                     if(resp){
-                        var that=this;
-                        setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
-                            location.reload();//刷新页面
-                        },1000);
+
                     }
                 })
             },
@@ -947,6 +945,12 @@
                             message: '已取消删除'
                         });
                     });
+                }
+                if(this.activeItemIndex==4){
+                    var that=this;
+                    setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
+                        location.reload();//刷新页面
+                    },1000);
                 }
 
 
