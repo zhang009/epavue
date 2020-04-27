@@ -11,7 +11,11 @@ import {putRequest} from "./utils/api";
 import {getRequest} from "./utils/api";
 import {deleteRequest} from "./utils/api";
 import {initMenu} from "./utils/menus";
-import 'font-awesome/css/font-awesome.min.css'
+import 'font-awesome/css/font-awesome.min.css';
+import axios from 'axios';  //引入axios
+import echarts from 'echarts';//引入echarts
+Vue.prototype.$http = axios;//
+Vue.prototype.$echarts = echarts //引入组件
 
 Vue.prototype.postRequest=postRequest;//这里是引用，不是方法调用
 Vue.prototype.postKeyValueRequest=postKeyValueRequest;
