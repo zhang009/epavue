@@ -2,20 +2,20 @@
     <div>
         <el-container>
             <el-header class="homeHeader">
-                <div class="title">
-                    试卷分析系统
-                </div>
-                <el-dropdown class="userInfo" @command="commandHandler">
+            <div class="title">
+                试卷分析系统
+            </div>
+            <el-dropdown class="userInfo" @command="commandHandler">
                       <span class="el-dropdown-link">
                           {{user.name}}<i ><img :src="user.userface"> </i><!--：为v-module的简写-->
                       </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="userInfo">个人中心</el-dropdown-item>
-                        <el-dropdown-item command="setting">设置</el-dropdown-item>
-                        <el-dropdown-item command="logout" divided>注销登录</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-            </el-header>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="userInfo">个人中心</el-dropdown-item>
+                    <el-dropdown-item command="setting">设置</el-dropdown-item>
+                    <el-dropdown-item command="logout" divided>注销登录</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+        </el-header>
             <el-container>
                 <el-aside width="200px">
                     <!--<el-menu @select="menuClick">-->
