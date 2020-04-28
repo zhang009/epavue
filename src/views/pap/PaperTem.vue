@@ -581,7 +581,7 @@
                         url += '&courseId=' + this.searchValue.courseId;
                     }
                     if (this.searchValue.createTeacherId) {
-                        url += '&createTeacherId=' + this.searchValue.createTeacherId;
+                        url += '&postTeacherId=' + this.searchValue.createTeacherId;
                     }
                 }else{//普通搜索
                     url+="&name="+this.keyword;

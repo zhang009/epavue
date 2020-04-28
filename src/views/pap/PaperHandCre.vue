@@ -2201,7 +2201,7 @@
             },
 
             change(e){
-                this.$forceUpdate();
+                this.$forceUpdate();//强制刷新
             }
 
 

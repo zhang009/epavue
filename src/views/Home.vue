@@ -49,6 +49,7 @@
                     <el-breadcrumb separator-class="el-icon-arrow-right" v-if="this.$router.currentRoute.path!='/home'">
                         <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
                         <el-breadcrumb-item>{{this.$router.currentRoute.name}}</el-breadcrumb-item>
+
                     </el-breadcrumb>
                     <div class="homeWelcome" v-if="this.$router.currentRoute.path=='/home'">
                         欢迎来到试卷分析系统！
@@ -96,6 +97,10 @@
                                 j--;
                             }
                             if(arr[j].name=='自动组卷'){
+                                arr.splice(j,1);
+                                j--;
+                            }
+                            if(arr[j].name=='试卷详情'){
                                 arr.splice(j,1);
                                 j--;
                             }

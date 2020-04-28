@@ -350,9 +350,9 @@
                     }
                 })
             },
-                handleSelectionChange(){
+            handleSelectionChange(){
 
-                },
+            },
                 showDetailView(data){
                     let target=JSON.parse(JSON.stringify(data));/*对象的深拷贝*/
                     this.questionCheckInfo=target;

@@ -67,8 +67,15 @@ export const formatRoutes=(routes)=>{
                 name: "自动组卷",
                 component: (resolve) => require(['@/views/pap/PaperAutoCre.vue'], resolve),
             };
+            var test3={
+                path: '/pap/library/info' ,
+                name: "试卷详情",
+                component: (resolve) => require(['@/views/pap/PaperInfo.vue'], resolve),
+            };
+
             fmRoutes.push(test1);
             fmRoutes.push(test2);
+            fmRoutes.push(test3);
 
         }
 

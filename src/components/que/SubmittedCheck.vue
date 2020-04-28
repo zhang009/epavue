@@ -336,7 +336,8 @@
             currentChange(currentPage) {//里面的参数为当前页
                 this.page = currentPage;
                 this.initData();
-            },updateQuestion(data){
+            }
+            ,updateQuestion(data){
                 if(data.questionType=='sc'){
                     this.$router.push({
                         path: '/que/input',

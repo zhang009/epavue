@@ -19,7 +19,7 @@
            <!--第二行，条件搜索div-->
             <div  style="border :1px solid #409eff;border-radius: 5px;box-sizing: border-box;padding: 5px ;margin-top: 10px;"><!--条件搜索-->
                     <el-row>
-                        <el-col :span="16">
+                        <el-col :span="17">
                             题型:
                             <el-select v-model="searchValue.queType"
                                        placeholder="请选择题型"
@@ -65,7 +65,7 @@
                                 </el-option>
                             </el-select>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="7">
                             <el-button size="mini" @click="emptySearchValue">重置</el-button>
                             <el-button size="mini" icon="el-icon-search" type="primary" @click="queryQuestionsByCondition">搜索</el-button>
                         </el-col>
