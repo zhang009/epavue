@@ -76,8 +76,6 @@
             <div style="width: 80%;border:1px solid #f0f0f0;margin-left: auto;margin-right: auto" ><!--内容面板展示-->
 
                 <div style="margin-bottom: 15px" v-show="searchValue.queType=='单选题'"><!--当选择题型框中为单选时，展示-->
-
-
                         <el-table
                                 class="el-table"
                                 :data="sclist">

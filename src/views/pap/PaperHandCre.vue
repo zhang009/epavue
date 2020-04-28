@@ -1483,12 +1483,10 @@
                 charts1.style.width=this.$refs.barEcharts.offsetWidth+"px";//这里是为了解决，echarts只有左边100px的问题
                 var myChart = echarts.init(charts1);
                 myChart.resize();
+
                 this.scoreChapterData.chapterIds=[];
                 this.scoreChapterData.chapters=[];
                 this.scoreChapterData.score=[];
-
-
-
 
 
                 if(this.selectPaperInfo.sclist&&this.selectPaperInfo.sclist.length>0){

@@ -210,8 +210,7 @@
                                                                分数:
                                                                     <el-input-number
                                                                             size="mini"
-                                                                            :min="1"
-                                                                            :max="updateTemplate.totalScore"
+
                                                                             v-model="queInfo.score"
                                                                             style="width: 100px">
                                                                     </el-input-number>
@@ -235,7 +234,7 @@
                                                             考查知识点：
                                                             <el-cascader
                                                                     placeholder="请选择知识点"
-                                                                    style="width: 280px;"
+                                                                    style="width: 275px;"
                                                                     size="small"
                                                                     :options="knows"
                                                                     v-model="queInfo.knowIds"
@@ -278,6 +277,7 @@
                                 </div>
 
                             </el-form>
+
                         </div>
 
                     </div>
@@ -287,6 +287,7 @@
                     </span>
                 </el-dialog>
                 <!--添加试卷模板对话框---end-->
+
                 <div style="margin-top: 20px">
                     <el-table
                         :data="paperTemplates"
@@ -350,6 +351,107 @@
                             </template>
                         </el-table-column>
                     </el-table>
+                    <div style="text-align: right;width: 90%">
+                        <el-pagination
+                                background
+                                @size-change="sizeChange"
+                                @current-change="currentChange"
+                                layout="sizes, prev, pager, next, jumper, total, slot"
+                                :total="total">
+                        </el-pagination>
+                    </div>
+                    <el-dialog
+                            title="试卷模板详情"
+                            :visible.sync="detailTemplateDialogVisible"
+                            width="60%"><!--试卷模板详情-->
+                        <el-form label-position="right" inline class="demo-table-expand">
+                            <el-divider content-position="left">基本信息</el-divider>
+                            <el-form-item label="试卷名称:">
+                                <span>{{ templateDetailInfo.name }}</span>
+                            </el-form-item>
+                            <el-form-item label="学  院:">
+                                <span>{{ templateDetailInfo.schoolName }}</span>
+                            </el-form-item>
+                            <el-form-item label="专  业:">
+                                <span>{{ templateDetailInfo.majorName }}</span>
+                            </el-form-item>
+                            <el-form-item label="学  期:">
+                                <span>{{ templateDetailInfo.semester }}</span>
+                            </el-form-item>
+                            <el-form-item label="课  程:">
+                                <span>{{ templateDetailInfo.courseName }}</span>
+                            </el-form-item>
+                        </el-form>
+                        <el-divider content-position="left">题目信息</el-divider>
+                        <el-row  style="margin-left: 120px">
+                            <el-col :span="4">
+                                大题数量：&nbsp;&nbsp;{{templateDetailInfo.largeQues.length}}
+                            </el-col>
+                           <!-- <el-col :span="6">
+                                小题数量{{templateDetailInfo.queNum}}
+                            </el-col>-->
+                            <el-col :span="4">
+                                总分：&nbsp;&nbsp;{{templateDetailInfo.totalScore}}&nbsp;&nbsp;分
+                            </el-col>
+                            <el-col :span="4">
+                                及格分：{{templateDetailInfo.passScore}}&nbsp;&nbsp;分
+                            </el-col>
+                        </el-row>
+                        <div  style="margin-left: 100px;margin-top: 20px">
+                            <div v-for="(largeQue,indexi) in templateDetailInfo.largeQues" :key="indexi" style="margin-top: 20px;">
+                                <div v-if="largeQue.queType!=null&&largeQue.queType!=''" style="margin-bottom: 10px"><!--大题标题-->
+                                    第{{largeQueTypeNum[indexi]}}大题、<strong>{{largeQue.queType}}</strong>
+                                    （共{{largeQue.smallQues.length}}小题，{{largeQue.queScores}}分）
+                                </div>
+                                <div v-for="(smallQue,indexj) in largeQue.smallQues" :key="indexj">
+                                    <el-row>
+                                        <el-col :span="4" style="padding-top: 2px;" align="center">
+                                            <el-tag  effect="plain">试题{{indexj+1}}.</el-tag><!--小题序号-->
+                                        </el-col>
+                                        <el-col :span="3" style="">
+                                            分数:{{smallQue.queScore}} 分
+                                        </el-col>
+                                        <el-col :span="17" style="">
+                                            <span v-if="smallQue.chapter">
+                                                考查章节：&nbsp;
+                                                <el-tag type="info">{{smallQue.chapter.name}}</el-tag>
+                                            </span>
+                                        </el-col>
+
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="17" :offset="7">
+
+                                                考查知识点：
+                                                <span v-for="(know,indexk) in smallQue.knows" :key="indexk">
+                                                    <el-tag>{{know.name}}</el-tag>
+                                                </span>
+
+                                        </el-col>
+                                    </el-row>
+                                </div>
+                            </div>
+                        </div>
+                        <el-divider></el-divider>
+                        <div >
+                                <el-row >
+                                    <el-col :span="6" :offset="6">
+                                        创建教师：{{templateDetailInfo.postTeacherName}}
+                                    </el-col>
+                                    <el-col :span="6">
+                                        创建日期：{{templateDetailInfo.createTime}}
+                                    </el-col>
+                                    <el-col :span="6">
+                                        更新日期：{{templateDetailInfo.updateTime}}
+                                    </el-col>
+                                </el-row>
+                        </div>
+
+                        <span slot="footer" class="dialog-footer">
+                           <!-- <el-button @click="dialogVisible2 = false">取 消</el-button>-->
+                            <el-button type="primary" @click="detailTemplateDialogVisible = false">确 定</el-button>
+                          </span>
+                    </el-dialog>
                 </div>
             </div>
         </div>
@@ -365,6 +467,7 @@
                 loading1:false,
                 dialogVisible:false,
                 dialogQueTypeVisible:false,
+                detailTemplateDialogVisible:false,
                 keyword:'',
                 schools:[],
                 courses:[],
@@ -374,6 +477,29 @@
                 queTypes:[],
                 chapters:[],
                 /*knowIds:[],*/
+                templateDetailInfo:{//查看模板详情信息
+                    name:'',//试卷名称
+                    schoolName:'',//学院名称
+                    courseName:'',//课程名称
+                    majorName:'',//专业名称
+                    semester:'',//学期
+                    totalScore:'',//总分
+                    passScore:'',//及格分
+                    postTeacherName:'',//创建教师
+                    createTime:'',//创建时间
+                    updateTime:'',//更新时间
+                    queNum:'',//小题数量
+                    largeQues:[{
+                        queType:'',
+                        queScores:0,//该道大题的总分值
+                        smallQues:[{
+                            queScore:'',//小题分数
+                            chapter:null,
+                            knows:[],
+                        }]
+                    }]
+                },
+
                 knows:[],//后端根据课程id传过来的章节列表（包含知识点）
                 searchValue:{//条件搜索
                     courseId:'',
@@ -389,6 +515,7 @@
                 },
                 queTypeName:'',//添加新题型的名称
                 updateTemplate:{
+                    id:'',
                     name:'',
                     schoolId:'',
                     majorId:'',
@@ -403,7 +530,6 @@
                             score:'',
                             chapterId:'',
                             knowIds:[],
-
                         }]
                     }]
 
@@ -421,9 +547,6 @@
                 total:0,
                 page:1,
                 size:10,
-
-
-
             }
         }
         ,mounted() {
@@ -466,7 +589,7 @@
                 this.getRequest(url).then(resp=>{
                     if(resp){
                         this.loading = false;
-                        console.log(resp.data);
+                      /*  console.log(resp.data);*/
                         this.paperTemplates=resp.data;
                         this.total=resp.total;
                     }
@@ -495,7 +618,7 @@
                 this.getRequest('/pap/template/getQueTypes').then(resp => {
                     if (resp) {
                         this.queTypes = resp;
-                        console.log(this.queTypes)
+                       /* console.log(this.queTypes)*/
                     }
                 })
             },
@@ -528,8 +651,7 @@
             clickKeyQuery(){
 
             },
-            selectCourseChanged(){
-                //选择课程，初始化章节知识点
+            initChapterAndKnowsByCourseId(){
                 //获取章节列表
                 this.getRequest("/baseinfo/chapter/?courseId="+this.updateTemplate.courseId).then(resp=> {
                     if (resp) {
@@ -543,16 +665,130 @@
                         this.knows=resp[0].children;
                     }
                 })
-
-
+            },
+            selectCourseChanged(){
+                //选择课程，初始化章节知识点
+                this.initChapterAndKnowsByCourseId();
             },
             selectTeacherChanged(){
 
             },
-            showInfoView(data){
+            showInfoView(data){//查看试卷模板详情
+                this.templateDetailInfo.largeQues=[];
+                console.log(data);
+                //这里需要把后端传来的TestPaper对象转为前端需要展示的templateDetailInfo对象
+                this.templateDetailInfo.name=data.name;
+                this.templateDetailInfo.schoolName=data.school.name;
+                this.templateDetailInfo.courseName=data.course.name;
+                this.templateDetailInfo.majorName=data.major.name;
+                this.templateDetailInfo.semester=data.semester;
+                this.templateDetailInfo.totalScore=data.totalScore;
+                this.templateDetailInfo.passScore=data.passScore;
+                this.templateDetailInfo.postTeacherName=data.teacher.name;
+                this.templateDetailInfo.createTime=data.createTime;
+                this.templateDetailInfo.updateTime=data.updateTime;
+
+                if(data.questionScores!=null&& data.questionScores.length>0){
+                    this.templateDetailInfo.queNum=data.questionScores.length;
+                    let queTypes=data.queTypes.split('@');//取出题型数组
+                    let largeQues=[];
+                    for (let i = 0; i < queTypes.length; i++) {//首先根据题型的数量，新建大题
+                        this.templateDetailInfo.largeQues.push({
+                            queType:queTypes[i],
+                            queScores:0,
+                            smallQues:[]
+                        })
+                    }
+                    let questionScores=data.questionScores;//获取试题数组
+
+                    for (let i = 0; i < questionScores.length; i++) {
+                        let qs=questionScores[i];//单个试题
+                        for (let j = 0; j < this.templateDetailInfo.largeQues.length; j++) {//遍历大题，把小题放入大题
+                            if(qs.queType==this.templateDetailInfo.largeQues[j].queType){
+                                this.templateDetailInfo.largeQues[j].smallQues.push({
+                                    queScore:qs.queScore,
+                                    chapter:qs.chapter,
+                                    knows:qs.knows
+                                })
+                                this.templateDetailInfo.largeQues[j].queScores+=Number(qs.queScore);//累计每小题的分值
+                            }
+                        }
+
+                    }
+                }
+                this.detailTemplateDialogVisible=true;
+
+
 
             },
-            showEditView(data){
+            showEditView(data){//编辑试题模板，首先验证是否是创建者进行编辑，否则没有权限操作
+                let user=window.sessionStorage.getItem("user");
+                let userObj=JSON.parse(user);//这里把用户的json消息转为对象
+                if(userObj.id!=data.teacher.id){
+                    this.$alert('您没有修改权限！模板必须由创建者修改', '提示', {
+                        confirmButtonText: '确定',
+
+                        callback: action => {
+                          /*  this.$message({
+                                type: 'warning',
+                                message: `action: ${ action }`
+                            });*/
+                        }
+                    });
+                   /* this.$notify({
+                        title: '提示',
+                        message: '您没有修改权限！模板必须由创建者修改',
+                        type: 'warning'
+                    });*/
+                }else{
+                    //展示修改对话框
+                    this.title="修改试卷模板";
+                    this.dialogVisible=true;
+                    this.emptyUpdateInfo(data);
+                    //这里需要将TestPaper对象转化为前端需要的updateTemplate对象
+                    this.updateTemplate.id=data.id;
+                    this.updateTemplate.name=data.name;
+                    this.updateTemplate.schoolId=data.schoolId;
+                    this.initMajors();
+                    this.updateTemplate.majorId=data.majorId;
+                    this.updateTemplate.semester=data.semester;
+                    this.updateTemplate.courseId=data.courseId;
+
+                    this.initChapterAndKnowsByCourseId();
+                    this.updateTemplate.totalScore=data.totalScore;
+                    this.updateTemplate.passScore=data.passScore;
+                    this.updateTemplate.remark=data.remark;
+
+                    if(data.questionScores!=null&& data.questionScores.length>0){
+                        let queTypes=data.queTypes.split('@');//取出题型数组
+
+                        for (let i = 0; i < queTypes.length; i++) {//首先根据题型的数量，新建大题
+
+                            if(queTypes[i]!=null&&queTypes[i]!=''){
+                                this.updateTemplate.questions.push({
+                                    queType:queTypes[i],
+                                    queInfo:[]
+                                })
+                            }
+
+                        }
+
+                        let questionScores=data.questionScores;//获取试题数组
+                        for (let i = 0; i < questionScores.length; i++) {
+                            let qs=questionScores[i];//单个试题
+                            for (let j = 0; j < this.updateTemplate.questions.length; j++) {//遍历大题，把小题放入大题
+                                if(qs.queType==this.updateTemplate.questions[j].queType){
+                                    this.updateTemplate.questions[j].queInfo.push({
+                                        score:qs.queScore,
+                                        chapterId:qs.chapterId,
+                                        knowIds:qs.knowIds.split('@'),
+                                    })
+                                }
+                            }
+
+                        }
+                    }
+                }
 
             },
             showAddQueTypeView(){//展示添加新题型对话框
@@ -566,8 +802,7 @@
 
                     this.postRequest("/pap/template/addQueType?name="+value).then(resp=>{
                         if(resp){
-                            this.dialogVisible=false;
-                            this.emptyUpdateInfo();
+
                             this.initQueTypes();//初始化刷新页面
 
                         }
@@ -585,7 +820,42 @@
                 });
             },
             deleteHandler(data){
+                let user=window.sessionStorage.getItem("user");
+                let userObj=JSON.parse(user);//这里把用户的json消息转为对象
+                if(userObj.id!=data.teacher.id){
+                    this.$alert('您没有删除权限！模板必须由创建者进行修改', '提示', {
+                        confirmButtonText: '确定',
 
+                        callback: action => {
+                            /*  this.$message({
+                                  type: 'warning',
+                                  message: `action: ${ action }`
+                              });*/
+                        }
+                    });
+                    /* this.$notify({
+                         title: '提示',
+                         message: '您没有修改权限！模板必须由创建者修改',
+                         type: 'warning'
+                     });*/
+                }else{
+                    this.$confirm('此操作将永久删除【'+data.name+'】试卷模板, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.deleteRequest("/pap/template/"+data.id).then(resp=>{
+                            if(resp){
+                                this.initPaperTemplate();
+                            }
+                        })
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
+                }
             },
             showAddTemplateView(){
                 this.dialogVisible=true;
@@ -596,19 +866,40 @@
                 this.searchValue.createTeacherId='';
             },
             doAddTestPaperTemplate(){//添加试卷模板
-                this.updateTemplate.passScore=(Number(this.updateTemplate.totalScore)*0.6).toFixed(2);//及格分
-                this.$refs['templateForm'].validate((valid) => {
-                    if (valid) {
-                        this.postRequest("/pap/template/addTemplate",this.updateTemplate).then(resp=>{
-                            if(resp){
-                                this.initQueTypes();//初始化刷新页面
-                            }
-                        })
-                    } else {
+                if(this.updateTemplate.id!=null){//编辑保存
+                    this.updateTemplate.passScore=(Number(this.updateTemplate.totalScore)*0.6).toFixed(2);//及格分
+                    this.$refs['templateForm'].validate((valid) => {
+                        if (valid) {
+                            this.putRequest("/pap/template/updateTemplate",this.updateTemplate).then(resp=>{
+                                if(resp){
+                                    this.dialogVisible=false;
+                                    this.emptyUpdateInfo();
+                                    this.initPaperTemplate();
+                                }
+                            })
+                        } else {
 
 
-                    }
-                });
+                        }
+                    });
+                }else{//添加保存
+                    this.updateTemplate.passScore=(Number(this.updateTemplate.totalScore)*0.6).toFixed(2);//及格分
+                    this.$refs['templateForm'].validate((valid) => {
+                        if (valid) {
+                            this.postRequest("/pap/template/addTemplate",this.updateTemplate).then(resp=>{
+                                if(resp){
+                                    this.dialogVisible=false;
+                                    this.emptyUpdateInfo();
+                                    this.initPaperTemplate();
+                                }
+                            })
+                        } else {
+
+
+                        }
+                    });
+                }
+
             },
 
             deleteLargeQue(index){   //删除题型中的大题
@@ -657,7 +948,7 @@
             deleteSmallQue(indexi,indexj){//删除小题，indexi为大题的下标,indexj为小题的下标
                 this.updateTemplate.questions[indexi].queInfo.splice(indexj,1);
             },
-            emptyUpdateInfo(){
+            emptyUpdateInfo(data){
                 this.updateTemplate.name='';
                 this.updateTemplate.schoolId='';
                 this.updateTemplate.majorId='';
@@ -665,15 +956,28 @@
                 this.updateTemplate.courseId='';
                 this.updateTemplate.totalScore=0;
                 this.updateTemplate.remark='';
-                this.updateTemplate.questions=[{
-                    queType:'',
-                    queInfo:[{
-                        score:'',
-                        chapterId:'',
-                        knowIds: [],
-                    }]
-                }]
+                //这里清空数据，判断是否为添加时清空、编辑时清空
 
+                if(data.id!=null){//编辑时清空
+                    this.updateTemplate.questions=[]
+                }else{//其他清空
+                    this.updateTemplate.questions=[{
+                        queType:'',
+                        queInfo:[{
+                            score:'',
+                            chapterId:'',
+                            knowIds: [],
+                        }]
+                    }]
+                }
+            },
+            sizeChange(currentSize){
+                this.size=currentSize;
+                this.initPaperTemplate();
+            },
+            currentChange(currentPage){//里面的参数为当前页
+                this.page=currentPage;
+                this.initPaperTemplate();
             }
 
 
@@ -681,6 +985,17 @@
     }
 </script>
 
-<style scoped>
-
+<style >
+    .demo-table-expand {
+        font-size: 0;
+    }
+    .demo-table-expand label {
+        width: 180px;
+        color: #99a9bf;
+    }
+    .demo-table-expand .el-form-item {
+        margin-right: 0;
+        margin-bottom: 0;
+        width: 50%;
+    }
 </style>

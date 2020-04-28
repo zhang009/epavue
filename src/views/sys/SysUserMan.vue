@@ -355,7 +355,6 @@
                     if(reg.test(value)) {
                         //工号格式正确
                        // alert(value);
-
                         this.getRequest("/system/user/workID/"+value).then(resp=>{
                             if(resp){
                               //  alert(resp.result);
