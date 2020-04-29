@@ -315,7 +315,29 @@
                 size:10,
                 createPaperTypes:[{id:0,name:'手动组卷'},{id:1,name:'自动组卷'}],
                 optionChar:['A.',"B.", "C.","D.","E.","F.","G.","H.","I.","J."],//这是为了对应多选题的选项序号
-
+                updateHandTestPaperInfo:{//当用户编辑的时候，传到修改页面的对象信息(手工组卷）
+                    courseId:'',
+                    name:'',//存储试卷名称
+                    schoolId:'',
+                    majorId:'',
+                    semester:'',
+                    checkTeacherId:'',
+                    totalScore:'',
+                    passScore:'',
+                    queTypes:'',//试题类型
+                    chapterIds:'',//所有章节
+                    knowIds:'',//所有知识点
+                    sclist:[],
+                    mclist:[],
+                    tflist:[],
+                    fblist:[],
+                    qalist:[],
+                    scScore:'',
+                    mcScore:'',
+                    fbScore:[],
+                    tfScore:'',
+                    qaScore:[]
+                }
             }
         },
         mounted() {
@@ -422,7 +444,17 @@
                          type: 'warning'
                      });*/
                 }else{
-                    //
+                    //这里需要跳转到修改页面，试卷分为手动组卷和自动组卷，所以这里需要进行判断
+
+                        this.$router.push({//跳转到页面详情页面，把对象转为字符串
+                            path: '/pap/library/update',
+                            name: '试卷修改',
+                            params: {
+                                updateTestPaperInfo: JSON.stringify(data),
+                            }
+                        });
+
+
                 }
             }
             ,deleteHandler(data){//删除试卷

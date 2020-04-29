@@ -72,10 +72,16 @@ export const formatRoutes=(routes)=>{
                 name: "试卷详情",
                 component: (resolve) => require(['@/views/pap/PaperInfo.vue'], resolve),
             };
+            var test4={
+                path: '/pap/library/update' ,
+                name: "试卷修改",
+                component: (resolve) => require(['@/views/pap/PaperUpdate.vue'], resolve),
+            };
 
             fmRoutes.push(test1);
             fmRoutes.push(test2);
             fmRoutes.push(test3);
+            fmRoutes.push(test4);
 
         }
 

@@ -1242,6 +1242,9 @@
                 qaSortNum:[],
             }
         },
+        created() {
+
+        },
         watch:{
             totalScore(val, oldVal){
                     this.drawBar();

@@ -104,6 +104,10 @@
                                 arr.splice(j,1);
                                 j--;
                             }
+                            if(arr[j].name=='试卷修改'){
+                                arr.splice(j,1);
+                                j--;
+                            }
                         }
                     }
 

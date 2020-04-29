@@ -713,7 +713,6 @@
                                 this.templateDetailInfo.largeQues[j].queScores+=Number(qs.queScore);//累计每小题的分值
                             }
                         }
-
                     }
                 }
                 this.detailTemplateDialogVisible=true;
