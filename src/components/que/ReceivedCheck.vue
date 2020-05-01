@@ -7,7 +7,7 @@
                         stripe
                         @selection-change="handleSelectionChange"
                         size="small"
-                        style="width: 75%">
+                        style="width: 80%">
                     <el-table-column
                             type="selection"
                             width="55">
@@ -160,10 +160,10 @@
 
                 >
                     <el-row :gutter="5" style="margin-bottom: 8px"><!--带间隔的布局-->
-                        <el-col :span="4" style="text-align: right;">
+                        <el-col :span="5" style="text-align: right;">
                             <strong>题型：</strong>
                         </el-col>
-                        <el-col :span="20">
+                        <el-col :span="19">
 
                             <span v-if="questionCheckInfo.questionType=='sc'">单选题</span>
                             <span v-else-if="questionCheckInfo.questionType=='mc'">多选题</span>
@@ -173,10 +173,10 @@
                         </el-col>
                     </el-row>
                     <el-row :gutter="5" style="margin-bottom: 8px"><!--带间隔的布局-->
-                        <el-col :span="4" style="text-align: right;">
+                        <el-col :span="5" style="text-align: right;">
                             <strong>题干：</strong>
                         </el-col>
-                        <el-col :span="20">
+                        <el-col :span="19">
                             <div class="stem"><!--这里的样式是为了显示题干中的换行符-->
                                 <span  v-if="questionCheckInfo.questionType=='sc'">{{questionCheckInfo.scQuestion.stem}}</span>
                                 <span v-else-if="questionCheckInfo.questionType=='mc'">{{questionCheckInfo.mcQuestion.stem}}</span>
@@ -187,10 +187,10 @@
                         </el-col>
                     </el-row>
                     <el-row :gutter="5" v-if="questionCheckInfo.questionType=='sc'||questionCheckInfo.questionType=='mc'" style="margin-bottom: 8px"><!--带间隔的布局-->
-                        <el-col :span="4" style="text-align: right;">
+                        <el-col :span="5" style="text-align: right;">
                             <strong>选项：</strong>
                         </el-col>
-                        <el-col :span="20">
+                        <el-col :span="19">
                             <div class="stem"><!--这里的样式是为了显示题干中的换行符-->
                                 <div v-if="questionCheckInfo.questionType=='sc'"><!--单选选项-->
                                      <div>A.{{questionCheckInfo.scQuestion.option1}}</div>
@@ -209,10 +209,10 @@
                         </el-col>
                     </el-row>
                     <el-row :gutter="5" style="margin-bottom: 8px"><!--带间隔的布局-->
-                        <el-col :span="4" style="text-align: right;">
+                        <el-col :span="5" style="text-align: right;">
                             <strong>答案：</strong>
                         </el-col>
-                        <el-col :span="20">
+                        <el-col :span="19">
                             <div class="stem"><!--这里的样式是为了显示题干中的换行符-->
                                 <span  v-if="questionCheckInfo.questionType=='sc'">{{questionCheckInfo.scQuestion.answer}}</span>
                                 <span v-else-if="questionCheckInfo.questionType=='mc'">{{questionCheckInfo.mcQuestion.answer}}</span>
@@ -223,10 +223,10 @@
                         </el-col>
                     </el-row>
                     <el-row :gutter="5" style="margin-bottom: 8px"><!--带间隔的布局-->
-                        <el-col :span="4" style="text-align: right;">
+                        <el-col :span="5" style="text-align: right;">
                             <strong>解析：</strong>
                         </el-col>
-                        <el-col :span="20">
+                        <el-col :span="19">
                             <div class="stem"><!--这里的样式是为了显示题干中的换行符-->
                                 <span  v-if="questionCheckInfo.questionType=='sc'">{{questionCheckInfo.scQuestion.analysis}}</span>
                                 <span v-else-if="questionCheckInfo.questionType=='mc'">{{questionCheckInfo.mcQuestion.analysis}}</span>
@@ -237,36 +237,36 @@
                         </el-col>
                     </el-row>
                     <el-row :gutter="5" style="margin-bottom: 8px"><!--带间隔的布局-->
-                        <el-col :span="4" style="text-align: right;">
+                        <el-col :span="5" style="text-align: right;">
                             <strong>提交审核时间：</strong>
                         </el-col>
-                        <el-col :span="20">
+                        <el-col :span="19">
                                 <span >{{questionCheckInfo.postTime}}</span>
                         </el-col>
                     </el-row>
                     <el-row :gutter="5" style="margin-bottom: 8px"><!--带间隔的布局-->
-                        <el-col :span="4" style="text-align: right;">
+                        <el-col :span="5" style="text-align: right;">
                             <strong>提交人：</strong>
                         </el-col>
-                        <el-col :span="20">
+                        <el-col :span="19">
                                 <span v-if="questionCheckInfo.postTeacher!=null">{{questionCheckInfo.postTeacher.name}}</span>
                         </el-col>
                     </el-row>
                     <el-row :gutter="5" style="margin-bottom: 8px"><!--带间隔的布局-->
-                        <el-col :span="4" style="text-align: right;">
+                        <el-col :span="5" style="text-align: right;">
                             <strong>审核状态：</strong>
                         </el-col>
-                        <el-col :span="20">
+                        <el-col :span="19">
                                 <span v-if="questionCheckInfo.checkStatus==0">未审核</span>
                                 <span v-else-if="questionCheckInfo.checkStatus==1">通过</span>
                                 <span v-else-if="questionCheckInfo.checkStatus==2">拒绝</span>
                         </el-col>
                     </el-row>
                     <el-row :gutter="5" v-if="questionCheckInfo.checkStatus==2" style="margin-bottom: 8px"><!--带间隔的布局-->
-                        <el-col :span="4" style="text-align: right;">
+                        <el-col :span="5" style="text-align: right;">
                             <strong>拒绝原因：</strong>
                         </el-col>
-                        <el-col :span="20">
+                        <el-col :span="19">
                            <span>{{questionCheckInfo.refuseReason}}</span>
                         </el-col>
                     </el-row>

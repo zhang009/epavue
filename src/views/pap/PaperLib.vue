@@ -125,7 +125,7 @@
                         </el-table-column>
                         <el-table-column
                                 prop="teacher"
-                                label="组卷人"
+                                label="创建人"
                                 width="100">
                             <template slot-scope="scope">
                                 {{scope.row.teacher.name}}

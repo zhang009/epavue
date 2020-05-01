@@ -269,7 +269,7 @@
                 })
             },
             selectClassChanged(){
-                this.initCourseByClassIdId();
+
             },
 
             showAddClassView(){
