@@ -42,16 +42,15 @@
                             label="出卷人">
                     </el-table-column>
                 </el-table>
-                <el-dialog title="整体成绩分析" :visible.sync="column_value">
+                <el-dialog title="柱状图" :visible.sync="column_value">
                     <div id="column" :style="{width: '600px', height: '300px'}" ></div>
-                    <div id="line_chart" :style="{width: '600px', height: '300px'}" ></div>
                 </el-dialog>
-<!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
-<!--                    <el-collapse-item v-for="(item,index) in papers" :title="item" :name="index">-->
-<!--                        <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>-->
-<!--                        <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>-->
-<!--                    </el-collapse-item>-->
-<!--                </el-collapse>-->
+                <!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
+                <!--                    <el-collapse-item v-for="(item,index) in papers" :title="item" :name="index">-->
+                <!--                        <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>-->
+                <!--                        <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>-->
+                <!--                    </el-collapse-item>-->
+                <!--                </el-collapse>-->
 
             </el-col>
         </el-row>
@@ -69,23 +68,9 @@
 
 <script>
     export default {
-        name: "score_distribution",
+        name: "AnaScoringRateOfQuestionType",
         data(){
             return{
-                //折线图数据
-                line_chart_option : {
-                    xAxis: {
-                        type: 'category',
-                        data: ['60以下', '60-69', '70-79', '80-89', '90-100']
-                    },
-                    yAxis: {
-                        type: 'value'
-                    },
-                    series: [{
-                        data: [10, 52, 200, 334, 390],
-                        type: 'line'
-                    }]
-                },
                 //发送请求后返回的试卷数组
                 list_oftestpaper:null,
                 //总共有多少条数据被返回
@@ -155,10 +140,8 @@
                         }
                     ]
                 }
-
             }
         },
-
         methods:{
             //搜索框回车按钮监听
             center_search(){
@@ -199,11 +182,9 @@
                     this.drawLine()
                 },300)
             },
-            //画柱状图和折线图的函数
+            //画柱状图的函数
             drawLine(){
-                let myChart = this.$echarts.init(document.getElementById("column"))
-                let line_chart = this.$echarts.init(document.getElementById("line_chart"))
-                line_chart.setOption(this.line_chart_option)
+                var myChart = this.$echarts.init(document.getElementById("column"))
                 myChart.setOption(this.option)
             }
         },
@@ -221,7 +202,6 @@
                 console.log(err)
             })
         },
-
     }
 </script>
 
