@@ -21,7 +21,6 @@
                                        filterable
                                        prop="courseId"
                                        placeholder="请选择考试课程"
-                                       @change="selectCourseChanged"
                                        size="small"
                                        style="width: 240px;">
                                 <el-option
@@ -586,6 +585,7 @@
                 }else{//普通搜索
                     url+="&name="+this.keyword;
                 }
+                console.log(url);
                 this.getRequest(url).then(resp=>{
                     if(resp){
                         this.loading = false;
@@ -658,7 +658,7 @@
                         this.chapters=resp;
                     }
                 })
-                //获取知识点列表
+                //获取该课程下的所有知识点列表
                 this.getRequest("/baseinfo/knows/all?courseId="+this.updateTemplate.courseId).then(resp=> {
                     if (resp) {
                         //this.knows=JSON.parse(JSON.stringify(resp));
@@ -668,7 +668,11 @@
             },
             selectCourseChanged(){
                 //选择课程，初始化章节知识点
-                this.initChapterAndKnowsByCourseId();
+                console.log(this.updateTemplate.courseId)
+                if(this.updateTemplate.courseId!=''){
+                    this.initChapterAndKnowsByCourseId();
+                }
+
             },
             selectTeacherChanged(){
 
@@ -865,20 +869,19 @@
                 this.searchValue.createTeacherId='';
             },
             doAddTestPaperTemplate(){//添加试卷模板
-                if(this.updateTemplate.id!=null){//编辑保存
+                if(this.updateTemplate.id!=null&&this.updateTemplate.id!=''){//编辑保存
                     this.updateTemplate.passScore=(Number(this.updateTemplate.totalScore)*0.6).toFixed(2);//及格分
                     this.$refs['templateForm'].validate((valid) => {
                         if (valid) {
                             this.putRequest("/pap/template/updateTemplate",this.updateTemplate).then(resp=>{
                                 if(resp){
+                                    console.log("编辑试卷")
                                     this.dialogVisible=false;
                                     this.emptyUpdateInfo();
                                     this.initPaperTemplate();
                                 }
                             })
                         } else {
-
-
                         }
                     });
                 }else{//添加保存
@@ -888,8 +891,10 @@
                             this.postRequest("/pap/template/addTemplate",this.updateTemplate).then(resp=>{
                                 if(resp){
                                     this.dialogVisible=false;
-                                    this.emptyUpdateInfo();
+                                    console.log("添加试卷")
                                     this.initPaperTemplate();
+                                    this.emptyUpdateInfo();
+
                                 }
                             })
                         } else {
@@ -957,7 +962,7 @@
                 this.updateTemplate.remark='';
                 //这里清空数据，判断是否为添加时清空、编辑时清空
 
-                if(data.id!=null){//编辑时清空
+                if(data!=null&&data.id!=null){//编辑时清空
                     this.updateTemplate.questions=[]
                 }else{//其他清空
                     this.updateTemplate.questions=[{

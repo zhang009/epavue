@@ -55,7 +55,7 @@
             <transition name="fade"><!--第二行，条件搜索div-->
                 <div v-show="showAdvanceSearchView" style="border :1px solid #409eff;border-radius: 5px;box-sizing: border-box;padding: 5px ;margin: 10px 0px;"><!--条件搜索-->
                     <el-row>
-                        <el-col :span="14" style="margin-left: 10px;">
+                        <el-col :span="15" style="margin-left: 10px;">
                             学院:
                             <el-select v-model="searchValue.schoolId"
                                        placeholder="请选择学院"
@@ -102,7 +102,7 @@
                             <el-button size="mini" @click="emptySearchValue">取消</el-button>
                             <el-button size="mini" icon="el-icon-search" type="primary" @click="initStudents('advanced')">搜索</el-button>
                         </el-col>
-                        <el-col :span="4" >
+                        <el-col :span="3" >
                         </el-col>
 
                     </el-row>
@@ -196,8 +196,60 @@
                         label-position="right"
                         label-width="100px"
                         style="margin: 0px auto">
-                    <el-row >
-                        <el-col :span="24">
+                    <el-row  >
+                        <el-col :span="20" :offset="4">
+                            <el-form-item label="所在学院">
+                                <el-select v-model="searchAddStudentValue.schoolId"
+                                           placeholder="请选择学院"
+                                           @change="selectSchool2Changed"
+                                           size="mini"
+                                           style="width: 220px;">
+                                    <el-option
+                                            v-for="item in allSchools"
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.id">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="20" :offset="4">
+                            <el-form-item label="所在专业">
+                                <el-select v-model="searchAddStudentValue.majorId"
+                                           placeholder="请选择专业"
+                                           @change="selectMajor2Changed"
+                                           size="mini"
+                                           style="width: 220px;">
+                                    <el-option
+                                            v-for="item in allMajors"
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.id">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+
+                            <el-col :span="20" :offset="4">
+                                <el-form-item label="班级:" prop="jobLevelId">
+                                    <el-select v-model="updateStu.classId"
+                                               placeholder="请选择学生所在班级"
+
+                                               size="mini" style="width: 180px;"><!--  @change="selectAddClassChanged"-->
+                                        <el-option
+                                                v-for="item in allClasses2"
+                                                :key="item.id"
+                                                :label="item.name"
+                                                :value="item.id">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <!--<el-col :span="6">
+                                <div></div>&lt;!&ndash;填充&ndash;&gt;
+                            </el-col>-->
+
+                        <el-col :span="20" :offset="4">
                             <el-form-item label="姓名:" prop="name"  >
                                 <el-input size="mini" style="width: 180px" prefix-icon="el-icon-edit" v-model="updateStu.name"
                                           placeholder="请输入学生姓名"></el-input>
@@ -205,7 +257,7 @@
                         </el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="24">
+                        <el-col :span="20" :offset="4">
                             <el-form-item label="学号" prop="studentNum">
                                 <el-input size="mini" style="width: 180px" prefix-icon="el-icon-edit"
                                           v-model="updateStu.studentNum" placeholder="请输入学生学号" ></el-input>
@@ -214,7 +266,7 @@
                     </el-row>
 
                     <el-row>
-                        <el-col :span="24">
+                        <el-col :span="20" :offset="4">
                             <el-form-item label="性别:" prop="gender">
                                 <el-radio-group v-model="updateStu.gender">
                                     <el-radio label="男">男</el-radio>
@@ -222,32 +274,6 @@
                                 </el-radio-group>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-
-                    <el-row>
-                        <el-col :span="24">
-                            <el-form-item label="班级:" prop="jobLevelId">
-                                <el-input size="mini"
-                                          style="width: 120px"
-                                          v-model="searchClassName"
-                                          @blur="selectAddClassChanged"
-                                          placeholder="关键词搜索"></el-input>
-                                <el-select v-model="updateStu.classId"
-                                           placeholder="请选择学生所在班级"
-
-                                           size="mini" style="width: 180px;"><!--  @change="selectAddClassChanged"-->
-                                    <el-option
-                                            v-for="item in allClasses2"
-                                            :key="item.id"
-                                            :label="item.name"
-                                            :value="item.id">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <!--<el-col :span="6">
-                            <div></div>&lt;!&ndash;填充&ndash;&gt;
-                        </el-col>-->
                     </el-row>
                 </el-form>
             </div>
@@ -271,6 +297,11 @@
                     schoolId:'',
                     majorId:'',
                     classId:''
+                },
+                searchAddStudentValue:{//添加学生条件选择
+                    schoolId:'',
+                    majorId:'',
+
                 },
                 updateStu:{/*添加和更新学生信息*/
                     name:'',
@@ -363,13 +394,19 @@
                     this.allClasses2=JSON.parse(window.sessionStorage.getItem("classes"));
                 }
             },
-            selectSchoolChanged(){
+            selectSchoolChanged(){//条件搜索
                 //学院下拉框改变
                 this.initMajors();
+            },
+            selectSchool2Changed(){//添加学生学院选择
+                this.initMajors2();
             },
             selectMajorChanged(){
                 //专业下拉框改变
                 this.initClassByMajorId();
+            },
+            selectMajor2Changed(){//添加学生专业下拉框改变
+                this.initClassByMajorId2();
             },
             selectClassChanged(){
                 //班级下拉框改变
@@ -390,6 +427,14 @@
                     }
                 })
             },
+            initClassByMajorId2(){/*根据专业id获取班级列表*/
+                //  alert(this.searchValue.majorId);
+                this.getRequest("/baseinfo/class/all?majorId="+this.searchAddStudentValue.majorId).then(resp=>{
+                    if(resp){
+                        this.allClasses2=resp;
+                    }
+                })
+            },
             initMajors(){/*根据学院id获取专业列表*/
                 //
                 this.getRequest("/baseinfo/major/?schoolId="+this.searchValue.schoolId).then(resp=>{
@@ -398,6 +443,16 @@
                     }
                 })
             },
+            initMajors2(){/*根据学院id获取专业列表（添加学生）*/
+                //
+                this.getRequest("/baseinfo/major/?schoolId="+this.searchAddStudentValue.schoolId).then(resp=>{
+                    if(resp){
+                        this.allMajors=resp;
+                    }
+                })
+            },
+
+
             exportData(){
                 window.open('/baseinfo/stu/export','_parent');
             },
@@ -482,7 +537,7 @@
                 });
             },
             doAddStu(){
-                //添加学生
+                //添加或则编辑学生
                 if(this.updateStu.id){//更新
                     this.$refs.teaForm.validate(valid=>{
                         if(valid){//数据验证成功
