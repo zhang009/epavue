@@ -221,11 +221,12 @@
                 })
 
                 //300毫秒后执行画图函数
-                // console.log(row.id)
-                 setTimeout(() => {
-                     this.drawLine()
 
-                 },300)
+                console.log(row.id)
+                setTimeout(() => {
+                    this.drawLine()
+                },100)
+
             },
             //画柱状图和折线图的函数
             drawLine(){
@@ -249,7 +250,7 @@
             option:{
                 handler(newVal,oldVal){
                     console.log("heihehiwheihiwhehiwheiwhie")
-                    this.drawLine()
+
                 },deep:true
             },
 
