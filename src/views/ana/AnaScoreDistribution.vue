@@ -106,7 +106,7 @@
                             name: '直接访问',
                             type: 'bar',
                             barWidth: '60%',
-                            data: [10, 52, 200, 334, 390]
+                            data:[10, 52, 200, 334, 390],
                         }
                     ]
                 },
@@ -195,20 +195,16 @@
                 //向后台发送卷子id，获取该卷子分数区间和每个区间的人数
                 this.postRequest('http://localhost:8080/analysis/getTestPaperScoreById?id='+row.id).then(res=>{
                     if(res){
-                        let arr = new Array(res.length)
-                        for(let i=0;i<res.length;i++){
-                            arr[i] = res.section[i]
-                        }
-                        let people_num = new Array(res.people_num)
-                        for(let i=0;i<res.length;i++){
-                            people_num[i] = res.people_num[i]
-                        }
+                        let arr = res.section;
+                        let people_num = res.people_num;
 
-
-                            this.$set(that.option.xAxis,'data',arr)
-                            this.$set(that.option.series,'data',people_num)
-
-
+                      /*  that.$set(that.option.xAxis[0],'data',arr)
+                        that.$set(that.option.series[0],'data',people_num)*/
+                        that.option.xAxis[0].data=arr;
+                        that.option.series[0].data=people_num;
+                        console.log(that.option.xAxis[0].data)
+                        console.log(that.option.series[0].data)
+                        //this.$forceUpdate();
                         // that.option.xAxis.data = arr
                         // that.option.series.data = people_num
 
@@ -219,28 +215,32 @@
                         // that.line_chart_option.series[0].data = res.people_num
                         // that.$set(that.option.xAxis,'data',arr)
                         // that.$set(that.option.series,'data',res.people_num)
-                        // that.$forceUpdate()
+
 
                     }
                 })
 
                 //300毫秒后执行画图函数
                 // console.log(row.id)
-                // setTimeout(() => {
-                //     this.drawLine()
-                // },100)
+                 setTimeout(() => {
+                     this.drawLine()
+
+                 },300)
             },
             //画柱状图和折线图的函数
             drawLine(){
                 // document.getElementById("column").removeAttribute("_echarts_instance_");
                 this.myChart = this.$echarts.init(document.getElementById("column"))
                 this.line_chart = this.$echarts.init(document.getElementById("line_chart"))
-                this.$forceUpdate();
-                this.myChart.clear()
-                console.log(this.option.xAxis.data)
-                console.log(this.option.series.data)
+
+
+                console.log(this.option.xAxis[0].data)
+                console.log(this.option.series[0].data)
+
                 //this.line_chart.setOption(this.line_chart,true)
+                this.myChart.clear()
                 this.myChart.setOption(this.option,true)
+
 
 
             }
@@ -251,7 +251,8 @@
                     console.log("heihehiwheihiwhehiwheiwhie")
                     this.drawLine()
                 },deep:true
-            }
+            },
+
         },
         mounted() {
             let that = this

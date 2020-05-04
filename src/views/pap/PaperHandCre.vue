@@ -1482,6 +1482,7 @@
                 //在这里需要将每个试题的对应章节取出来，并把分数和章节一一对应
                 //这里初始化两个数组，一个章节数组，另一个是分数数组
 
+
                let charts1=document.getElementById('charts1');
                 charts1.style.width=this.$refs.barEcharts.offsetWidth+"px";//这里是为了解决，echarts只有左边100px的问题
                 var myChart = echarts.init(charts1);

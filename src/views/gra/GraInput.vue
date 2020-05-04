@@ -231,6 +231,7 @@
 
                 <div align="right" style="width: 80%">
                     <el-button size="small" type="primary" @click="showAddGradeView">添加成绩信息</el-button>
+                    <el-button size="small" type="primary" @click="showMultiAddGradeView">批量添加</el-button>
                 </div>
 
                 <el-table
@@ -388,10 +389,10 @@
                                 </div>
                                 <div v-for="(smallQue,indexj) in largeQue.smallQueGrade" :key="indexj">
                                     <el-row style="margin-top: 10px">
-                                        <el-col :span="4" style="padding-top: 2px;" align="center">
+                                        <el-col :span="4" style="" align="center">
                                             <el-tag  effect="plain">试题{{indexj+1}}.</el-tag><!--小题序号-->
                                         </el-col>
-                                        <el-col :span="5" style="">
+                                        <el-col :span="5" style="padding-top: 5px">
                                             原分值:{{smallQue.initScore}} 分
                                         </el-col>
                                         <el-col :span="8" style="">
@@ -417,6 +418,45 @@
 
 
 
+                </div>
+
+            </el-dialog>
+            <!--批量添加成绩对话框-->
+            <el-dialog
+                    title="批量添加学生成绩数据"
+                    :visible.sync="mutiAddStuDialogVisible"
+                    width="50%"
+
+                    @close="emptyMutiStudentInfo"
+                    :close-on-click-modal="false">
+                <div style="margin: 0 auto">
+                    <div style="display: flex;justify-content: center;align-items: center;width: 50%;">
+                        <p>导入数据前可以从这里<el-link type="primary" @click="exportData">下载模板</el-link>并将用户的信息整理到模板中，请使用模板给出的提示填写字段</p>
+
+                        <el-upload
+                                v-loading.fullscreen.lock="loading3"
+                                element-loading-text="拼命解析数据中..."
+                                element-loading-spinner="el-icon-loading"
+                                element-loading-background="rgba(0, 0, 0, 0.7)"
+                                :on-error="onError"
+                                :on-success="onSuccess"
+                                :show-file-list="false"
+                                :before-upload="beforeUpload"
+                                :disabled="importDataDisabled"
+                                style="display: inline-flex;margin-right: 8px"
+                                :data="importData"
+                                action="/gra/input/import">
+                            <el-button :disabled="importDataDisabled" type="primary" :icon="importDataBtnIcon">
+                                <!-- <i class="fa fa-level-up" aria-hidden="true" icon="el-icon-download"/>-->
+                                {{importDataBtnText}}<!--导入数据-->
+                            </el-button>
+                        </el-upload>
+                    </div>
+
+                </div>
+                <div style="display: flex;align-items: center;justify-content: center;padding: 0px;margin: 0px;">
+                   <span slot="footer" class="dialog-footer">
+                   </span>
                 </div>
 
             </el-dialog>
@@ -493,16 +533,23 @@
 </template>
 
 <script>
+    import axios from "axios";
+
     export default {
         name: "GraInput",
         data(){
             return{
                 loading1:false,//加载试卷列表
                 loading2:false,//选择班级，加载成绩列表
+                loading3:false,//导入数据加载
                 selectTestPaperDialogVisible:false,
                 showGradeInputDiv:false,
                 showAddClassVisible:false,//添加班级对话框
                 showAddGradeVisible:false,//添加成绩对话框
+                mutiAddStuDialogVisible:false,//批量添加成绩对话框
+                importDataBtnIcon:'el-icon-upload2',
+                importDataDisabled:false,
+                importDataBtnText:'导入数据',
                 schools:[],
                 majors:[],
                 classes:[],
@@ -563,6 +610,11 @@
                         }]
                     }]*/
                 largeQueTypeNum:["一","二","三","四","五","六","七","八","九","十","十一","十二","十三","十四","十五","十六","十七","十八","十九","二十"],
+                importData:{//批量导入时传递给后端的数据
+                    testPaperId:'',
+                    courseId:'',
+                    classId:'',
+                }
 
             }
         },created() {
@@ -866,6 +918,45 @@
                 }
 
             },
+            showMultiAddGradeView(){//批量添加成绩
+
+                if(this.searchValue2.classId!=''){
+                    //把testPaper中的小题成绩初始化为updateStudentGrade中的结构
+                    //需要把
+                    if(this.testPaper.questionScores!=null&& this.testPaper.questionScores.length>0){
+                        let queTypes=this.testPaper.queTypes.split('@');
+                        let largeQues=[];
+                        for (let i = 0; i <queTypes.length ; i++) {//初始化大题
+                            this.updateStudentGrade.largeQues.push({
+                                queType:queTypes[i],
+                                largeQueScore:'',
+                                smallQueGrade:[]
+                            })
+                        }
+                        let questionScores=this.testPaper.questionScores;//获取试题数组
+                        for (let i = 0; i < questionScores.length; i++) {
+                            let smallQue=questionScores[i];//单个试题
+                            for (let j = 0; j < this.updateStudentGrade.largeQues.length; j++) {
+                                //把小题放入大题数组中
+                                if(smallQue.queType==this.updateStudentGrade.largeQues[j].queType){
+                                    this.updateStudentGrade.largeQues[j].smallQueGrade.push({
+                                        initScore:smallQue.queScore,//初始分值
+                                        queGrade:'',//实际得分
+                                        questionScoreId:smallQue.id,//试卷小题分数id
+                                        sortNum:smallQue.sortNum,//试卷小题分数排序号
+                                    })
+                                    this.updateStudentGrade.largeQues[j].largeQueScore=Number(this.updateStudentGrade.largeQues[j].largeQueScore)+Number(smallQue.queScore);//累计每小题的分值
+                                }
+                            }
+
+                        }
+                    }
+                    this.showAddGradeVisible=true;
+                }else{
+                    this.$message.error('请先选择班级');
+                }
+
+            },
             doSaveStudentGrade(){//保存成绩信息
                 this.updateStudentGrade.testPaperId=this.testPaper.id;
                 this.updateStudentGrade.courseId=this.testPaper.courseId;
@@ -887,7 +978,49 @@
                 this.updateStudentGrade.studentNum='';
                 this.updateStudentGrade.totalGrade='';
                 this.updateStudentGrade.largeQues=[];
-            }
+            },
+            emptyMutiStudentInfo(){
+
+            },
+            exportData(){
+                if(this.testPaper.id!=''&&this.testPaper.courseId!=''&&this.searchValue2.classId){
+                    window.open('/question/input/getTem?testPaperId='+
+                        this.testPaper.id+'&courseId='+
+                        this.testPaper.courseId+'&classId='+this.searchValue2.classId,'_parent');
+                }
+            },
+            beforeUpload(){//上传成绩之前事件
+                this.updateStudentGrade.testPaperId=this.testPaper.id;
+                this.updateStudentGrade.courseId=this.testPaper.courseId;
+                this.updateStudentGrade.classId=this.searchValue2.classId;
+
+                this.importDataBtnText='正在导入';
+                this.importDataBtnIcon='el-icon-loading';
+                this.importDataDisabled=true;
+            },
+            onError(response,file,fileList){
+                this.loading3=false;
+                this.mutiAddStuDialogVisible=false;
+                this.$message.error('数据导入失败！');
+
+            },
+            onSuccess(response,file,fileList){
+                this.mutiAddStuDialogVisible=false;
+                this.importDataBtnText='导入数据';
+                this.importDataBtnIcon='el-icon-upload2';
+                this.importDataDisabled=false;
+                this.loading3=false;
+                this.mutiAddStuDialogVisible = false;
+                this.checkTeacherId='',
+                    this.courseId='',
+                    this.activeItemIndex=0;
+                this.$message({
+                    message: '导入数据成功！',
+                    type: 'success'
+                });
+
+                this.initStudentGrades();
+            },
         }
     }
 </script>
