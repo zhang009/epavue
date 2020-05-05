@@ -195,27 +195,18 @@
                 //向后台发送卷子id，获取该卷子分数区间和每个区间的人数
                 this.postRequest('http://localhost:8080/analysis/getTestPaperScoreById?id='+row.id).then(res=>{
                     if(res){
+
                         let arr = res.section;
                         let people_num = res.people_num;
 
                       /*  that.$set(that.option.xAxis[0],'data',arr)
                         that.$set(that.option.series[0],'data',people_num)*/
-                        that.option.xAxis[0].data=arr;
-                        that.option.series[0].data=people_num;
-                        console.log(that.option.xAxis[0].data)
-                        console.log(that.option.series[0].data)
-                        //this.$forceUpdate();
-                        // that.option.xAxis.data = arr
-                        // that.option.series.data = people_num
-
-                        //this.option_series_data = people_num
-
-
-                        // that.line_chart_option.xAxis[0].data = arr
-                        // that.line_chart_option.series[0].data = res.people_num
-                        // that.$set(that.option.xAxis,'data',arr)
-                        // that.$set(that.option.series,'data',res.people_num)
-
+                      for(let i =0;i<res.length;i++){
+                          that.option.xAxis[0].data[i]=arr[i];
+                          that.option.series[0].data[i]=people_num[i];
+                          that.line_chart_option.xAxis.data[i] = arr[i]
+                          that.line_chart_option.series[0].data[i] = people_num[i]
+                      }
 
                     }
                 })
@@ -225,7 +216,7 @@
                 console.log(row.id)
                 setTimeout(() => {
                     this.drawLine()
-                },100)
+                },300)
 
             },
             //画柱状图和折线图的函数
@@ -237,9 +228,9 @@
 
                 console.log(this.option.xAxis[0].data)
                 console.log(this.option.series[0].data)
-
-                //this.line_chart.setOption(this.line_chart,true)
+                this.line_chart.clear()
                 this.myChart.clear()
+                this.line_chart.setOption(this.line_chart_option,true)
                 this.myChart.setOption(this.option,true)
 
 
