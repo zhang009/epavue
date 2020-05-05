@@ -423,15 +423,15 @@
             </el-dialog>
             <!--批量添加成绩对话框-->
             <el-dialog
-                    title="批量添加学生成绩数据"
+                    title="导入数据"
                     :visible.sync="mutiAddStuDialogVisible"
-                    width="50%"
+                    width="40%"
 
                     @close="emptyMutiStudentInfo"
                     :close-on-click-modal="false">
                 <div style="margin: 0 auto">
-                    <div style="display: flex;justify-content: center;align-items: center;width: 50%;">
-                        <p>导入数据前可以从这里<el-link type="primary" @click="exportData">下载模板</el-link>并将用户的信息整理到模板中，请使用模板给出的提示填写字段</p>
+                    <div style="margin: 0 auto;width: 70%;">
+                        <p>导入数据前可以从这里<el-link type="primary" @click="exportData">下载模板</el-link>并将学生的成绩信息整理到模板中</p>
 
                         <el-upload
                                 v-loading.fullscreen.lock="loading3"
@@ -921,37 +921,9 @@
             showMultiAddGradeView(){//批量添加成绩
 
                 if(this.searchValue2.classId!=''){
-                    //把testPaper中的小题成绩初始化为updateStudentGrade中的结构
-                    //需要把
-                    if(this.testPaper.questionScores!=null&& this.testPaper.questionScores.length>0){
-                        let queTypes=this.testPaper.queTypes.split('@');
-                        let largeQues=[];
-                        for (let i = 0; i <queTypes.length ; i++) {//初始化大题
-                            this.updateStudentGrade.largeQues.push({
-                                queType:queTypes[i],
-                                largeQueScore:'',
-                                smallQueGrade:[]
-                            })
-                        }
-                        let questionScores=this.testPaper.questionScores;//获取试题数组
-                        for (let i = 0; i < questionScores.length; i++) {
-                            let smallQue=questionScores[i];//单个试题
-                            for (let j = 0; j < this.updateStudentGrade.largeQues.length; j++) {
-                                //把小题放入大题数组中
-                                if(smallQue.queType==this.updateStudentGrade.largeQues[j].queType){
-                                    this.updateStudentGrade.largeQues[j].smallQueGrade.push({
-                                        initScore:smallQue.queScore,//初始分值
-                                        queGrade:'',//实际得分
-                                        questionScoreId:smallQue.id,//试卷小题分数id
-                                        sortNum:smallQue.sortNum,//试卷小题分数排序号
-                                    })
-                                    this.updateStudentGrade.largeQues[j].largeQueScore=Number(this.updateStudentGrade.largeQues[j].largeQueScore)+Number(smallQue.queScore);//累计每小题的分值
-                                }
-                            }
 
-                        }
-                    }
-                    this.showAddGradeVisible=true;
+
+                    this.mutiAddStuDialogVisible=true;
                 }else{
                     this.$message.error('请先选择班级');
                 }
@@ -984,15 +956,15 @@
             },
             exportData(){
                 if(this.testPaper.id!=''&&this.testPaper.courseId!=''&&this.searchValue2.classId){
-                    window.open('/question/input/getTem?testPaperId='+
+                    window.open('/gra/input/getTem?testPaperId='+
                         this.testPaper.id+'&courseId='+
                         this.testPaper.courseId+'&classId='+this.searchValue2.classId,'_parent');
                 }
             },
             beforeUpload(){//上传成绩之前事件
-                this.updateStudentGrade.testPaperId=this.testPaper.id;
-                this.updateStudentGrade.courseId=this.testPaper.courseId;
-                this.updateStudentGrade.classId=this.searchValue2.classId;
+                this.importData.testPaperId=this.testPaper.id;
+                this.importData.courseId=this.testPaper.courseId;
+                this.importData.classId=this.searchValue2.classId;
 
                 this.importDataBtnText='正在导入';
                 this.importDataBtnIcon='el-icon-loading';
