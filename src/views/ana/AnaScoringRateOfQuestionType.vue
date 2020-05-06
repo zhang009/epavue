@@ -43,7 +43,7 @@
                     </el-table-column>
                 </el-table>
                 <el-dialog title="柱状图" :visible.sync="column_value">
-                    <div id="column" :style="{width: '600px', height: '300px'}" ></div>
+                    <div id="column" :style="{width: '700px', height: '300px'}" ></div>
                 </el-dialog>
                 <!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
                 <!--                    <el-collapse-item v-for="(item,index) in papers" :title="item" :name="index">-->
@@ -113,12 +113,13 @@
                     },
                     grid: {
                         left: '3%',
-                        right: '4%',
+                        right: '8%',
                         bottom: '3%',
                         containLabel: true
                     },
                     xAxis: [
                         {
+                            name:"知识点",
                             type: 'category',
                             data: ['60以下', '60-69', '70-79', '80-89', '90-100'],
                             axisTick: {
@@ -128,6 +129,7 @@
                     ],
                     yAxis: [
                         {
+                            name:"百分比",
                             type: 'value'
                         }
                     ],
@@ -136,7 +138,7 @@
                             name: '直接访问',
                             type: 'bar',
                             barWidth: '60%',
-                            data: [10, 52, 200, 334, 390]
+                            data: ['10', '52', '200', '334', '390']
                         }
                     ]
                 }
@@ -169,10 +171,11 @@
                 //true表示显示弹出框
                 this.column_value=true
                 //向后台发送请求获取数据
-                console.log(row.id)
-                this.postRequest('http://localhost:8080/analysis/getTestPaperScoreById?id='+row.id).then(res=>{
+                let that = this
+                this.postRequest('http://localhost:8080/teachingFeedback/getScoringRateOfQuestionType?id='+row.id).then(res=>{
                     if(res){
-                        console.log(res)
+                        that.option.xAxis[0].data = res.questionType
+                        that.option.series[0].data = res.scoringRate
                     }
                 })
 
