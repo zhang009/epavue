@@ -458,6 +458,14 @@
 </template>
 
 <script>
+    Array.prototype.pushNoRepeat = function(){
+        for(var i=0; i<arguments.length; i++){
+            var ele = arguments[i];
+            if(this.indexOf(ele) == -1){
+                this.push(ele);
+            }
+        }
+    };
     export default {
         name: "PaperTemplateMan",
         data(){
@@ -522,6 +530,8 @@
                     courseId:'',
                     totalScore:0,
                     passScore:'',
+                    chapterIds:'',
+                    knowIds:'',
                     remark:'',
                     questions:[{//大题
                         queType:'',
@@ -533,6 +543,8 @@
                     }]
 
                 },
+                chapterIds:[],
+                knowIds:[],
                 rules:{
                     name:[{required: true, message: '请输入试卷名称', trigger: 'blur' }],
                     courseId:[{required: true, message: '请选择课程', trigger: 'blur' }],
@@ -868,7 +880,28 @@
                 this.searchValue.courseId='';
                 this.searchValue.createTeacherId='';
             },
+           
+
             doAddTestPaperTemplate(){//添加试卷模板
+                //添加或者更新之前，求出章节和知识点
+                this.chapterIds=[];
+                this.knowIds=[];
+
+                for (let i = 0; i < this.updateTemplate.questions.length; i++) {
+                    let questions=this.updateTemplate.questions[i];//获取单个大题
+                    for (let j = 0; j < questions.queInfo.length; j++) {
+                        let queInfo=questions.queInfo[j];
+                        this.chapterIds.pushNoRepeat(queInfo.chapterId);
+                        if(queInfo.knowIds.length>0){
+                            for (let k = 0; k < queInfo.knowIds.length; k++) {
+                                this.knowIds.pushNoRepeat(queInfo.knowIds[k]);
+                            }
+                        }
+                    }
+                }
+                this.updateTemplate.chapterIds=this.chapterIds.join('@');
+                this.updateTemplate.knowIds=this.knowIds.join('@');
+
                 if(this.updateTemplate.id!=null&&this.updateTemplate.id!=''){//编辑保存
                     this.updateTemplate.passScore=(Number(this.updateTemplate.totalScore)*0.6).toFixed(2);//及格分
                     this.$refs['templateForm'].validate((valid) => {
