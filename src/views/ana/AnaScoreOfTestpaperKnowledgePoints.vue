@@ -50,11 +50,13 @@
                         style="font-size: 20px;margin: 0 auto;">
 
                     <el-table-column
+                            :width="350"
                             prop="knowledgePoints"
                             label="知识点名称"
                             width="180">
                     </el-table-column>
                     <el-table-column
+                            :width="350"
                             prop="scoringRate"
                             label="得分率"
                             width="180">
@@ -87,35 +89,8 @@
         name: "AnaScoreOfTestpaperKnowledgePoints",
         data(){
             return{
-                //
-                tableData_KnowledgePoints: [{
-                    knowledgePoints: '知识点1',
-                    scoringRate: '60%',
-                },{
-                    knowledgePoints: '知识点2',
-                    scoringRate: '60%',
-                },{
-                    knowledgePoints: '知识点3',
-                    scoringRate: '60%',
-                },{
-                    knowledgePoints: '知识点4',
-                    scoringRate: '60%',
-                },{
-                    knowledgePoints: '知识点5',
-                    scoringRate: '60%',
-                },{
-                    knowledgePoints: '知识点6',
-                    scoringRate: '60%',
-                },{
-                    knowledgePoints: '知识点7',
-                    scoringRate: '60%',
-                },{
-                    knowledgePoints: '知识点8',
-                    scoringRate: '60%',
-                },{
-                    knowledgePoints: '知识点9',
-                    scoringRate: '60%',
-                },],
+                //知识点表格
+                tableData_KnowledgePoints: [],
                 //发送请求后返回的试卷数组
                 list_oftestpaper:null,
                 //总共有多少条数据被返回
@@ -212,12 +187,23 @@
             },
             //列表点击事件
             list_click(row){
+                let that = this
                 //true表示显示弹出框
                 this.column_value=true
                 //向后台发送请求获取数据
-                this.postRequest('http://localhost:8080/teachingFeedback/getScoringRateOfQuestionType?id='+row.id).then(res=>{
+                this.postRequest('http://localhost:8080/teachingFeedback/getScoringRateOfKnowledgePoints?id='+row.id).then(res=>{
                     if(res){
                         // console.log(res)
+                        that.option.yAxis.data = res.knowledgePotins
+                        that.option.series[0].data = res.scoringRate
+                        for(let i=0;i<res.scoringRate.length;i++){
+                            let Data_KnowledgePoints = {
+                                knowledgePoints:res.knowledgePotins[i],
+                                scoringRate:res.scoringRate[i]
+                            }
+
+                            that.tableData_KnowledgePoints.push(Data_KnowledgePoints)
+                        }
                     }
                 })
 

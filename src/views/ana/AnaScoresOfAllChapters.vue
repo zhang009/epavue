@@ -168,12 +168,16 @@
             },
             //列表点击事件
             list_click(row){
+                let that  = this
                 //true表示显示弹出框
                 this.column_value=true
                 //向后台发送请求获取数据
                 this.postRequest('http://localhost:8080/teachingFeedback/getScoringRateOfAllChapters?id='+row.id).then(res=>{
                     if(res){
-                        // console.log(res)
+                        console.log(res.chapterName)
+                        console.log(res.scoringRate)
+                        that.option.yAxis.data = res.chapterName
+                        that.option.series[0].data = res.scoringRate;
                     }
                 })
 
