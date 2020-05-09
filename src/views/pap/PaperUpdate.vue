@@ -258,7 +258,7 @@
                                  }
                              }
                          }
-                         console.log(sclist1)
+                        // console.log(sclist1)
                      }else if(largeQue.queType=="多选题"){
                          mcScore=largeQue.smallQues[0].queScore;
 

@@ -168,6 +168,12 @@
                                <div style="display: flex;justify-content: center" v-if="updateTestPaperInfo.school&&updateTestPaperInfo.major&&updateTestPaperInfo.course">
                                    <h4>{{updateTestPaperInfo.school.name}}{{updateTestPaperInfo.major.name}}{{updateTestPaperInfo.course.name}}{{updateTestPaperInfo.name}}</h4>
                                </div>
+                               <div align="right" style="margin-right: 100px">
+                                   <div>
+                                       <h5>试卷整体难度：<span style="color:red">适中</span></h5>
+                                   </div>
+                               </div>
+
 
                            </div>
                            <!--单选题-->
@@ -366,7 +372,7 @@
                 this.getRequest(url).then(resp=>{
                     if(resp){
                         this.loading1 = false;
-                        /*  console.log(resp.data);*/
+                          console.log(resp.data);
                         this.testPapers=resp.data;
                         this.total=resp.total;
                     }

@@ -1132,6 +1132,15 @@
     var echarts = require('echarts');
 
     inject:['reload']//注入home页面的依赖，页面刷新的时候使用
+
+    Array.prototype.pushNoRepeat = function(){
+        for(var i=0; i<arguments.length; i++){
+            var ele = arguments[i];
+            if(this.indexOf(ele) == -1){
+                this.push(ele);
+            }
+        }
+    };
     export default {
         name: "PaperHandCre",
         component() {
@@ -1491,6 +1500,12 @@
                 this.scoreChapterData.chapterIds=[];
                 this.scoreChapterData.chapters=[];
                 this.scoreChapterData.score=[];
+
+               /* this.scoreKnowData.knowIds=[];
+                this.scoreKnowData.knows=[];
+                this.scoreKnowData.score=[];*/
+
+
 
 
                 if(this.selectPaperInfo.sclist&&this.selectPaperInfo.sclist.length>0){
