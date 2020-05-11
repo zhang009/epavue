@@ -42,8 +42,26 @@
                             label="出卷人">
                     </el-table-column>
                 </el-table>
-                <el-dialog title="柱状图" :visible.sync="column_value">
-                    <div id="column" :style="{width: '700px', height: '300px'}" ></div>
+                <el-dialog title="知识点分值分布" :visible.sync="column_value">
+                    <div id="column" :style="{width: '700px', height: '500px'}" ></div>
+                    <el-table
+                            :data="tableData_KnowledgePoints"
+                            border
+                            style="font-size: 20px;margin: 0 auto;">
+
+                        <el-table-column
+                                :width="350"
+                                prop="knowledgePoints"
+                                label="知识点名称"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                :width="350"
+                                prop="scoringRate"
+                                label="分值占比"
+                                width="180">
+                        </el-table-column>
+                    </el-table>
                 </el-dialog>
                 <!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
                 <!--                    <el-collapse-item v-for="(item,index) in papers" :title="item" :name="index">-->
@@ -68,9 +86,41 @@
 
 <script>
     export default {
-        name: "AnaScoringRateOfQuestionType",
+        name: "AnaScoreOfTestpaperKnowledgePoints",
         data(){
             return{
+                //知识点表格
+                tableData_KnowledgePoints: [{
+                    knowledgePoints:"c语言符合表达式",
+                    scoringRate:0.2
+                },{
+                    knowledgePoints:"宏常量",
+                    scoringRate:0.05
+                },{
+                    knowledgePoints:"自动类型转换",
+                    scoringRate:0.2
+                },{
+                    knowledgePoints:"强制类型转换",
+                    scoringRate:0.02
+                },{
+                    knowledgePoints:"格式化输入输出",
+                    scoringRate:0.02
+                },{
+                    knowledgePoints:"条件循环",
+                    scoringRate:0.01
+                },{
+                    knowledgePoints:"字符串常量",
+                    scoringRate:0.2
+                },{
+                    knowledgePoints:"字符指针",
+                    scoringRate:0.1
+                },{
+                    knowledgePoints:"一维数组",
+                    scoringRate:0.15
+                },{
+                    knowledgePoints:"二维数组",
+                    scoringRate:0.05
+                },],
                 //发送请求后返回的试卷数组
                 list_oftestpaper:null,
                 //总共有多少条数据被返回
@@ -102,44 +152,43 @@
                 search_data:'',      //搜索输入框的数据
                 papers:['15级JAVA期末测试','16级JAVA期末测试','17级JAVA期末测试','18级JAVA期末测试'],          //试卷
                 activeNames: ['1'],
-                //柱状图数据
+                //横向柱状图数据
                 option : {
-                    color: ['#3398DB'],
                     tooltip: {
                         trigger: 'axis',
-                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        axisPointer: {
+                            type: 'shadow'
                         }
                     },
+                    legend: {
+                        data: ['2011年']
+                    },
                     grid: {
+                        height:450,
                         left: '3%',
-                        right: '8%',
+                        right: '11%',
                         bottom: '3%',
                         containLabel: true
                     },
-                    xAxis: [
-                        {
-                            name:"知识点",
-                            type: 'category',
-                            data: ['60以下', '60-69', '70-79', '80-89', '90-100'],
-                            axisTick: {
-                                alignWithLabel: true
-                            }
-                        }
-                    ],
-                    yAxis: [
-                        {
-                            name:"百分比",
-                            type: 'value'
-                        }
-                    ],
+                    xAxis: {
+                        name : '百分比',
+                        nameTextStyle:{fontSize:20},
+                        type: 'value',
+                        boundaryGap: [0, 0.01]
+                    },
+                    yAxis: {
+                        name:'知识点名称',
+                        nameTextStyle:{fontSize:20},
+                        type: 'category',
+                        data: ['c语言符合表达式', '宏常量', '自动类型转换', '强制类型转换', '格式化输入输出', '条件循环', '字符串常量', '字符指针', '一维数组', '二维数组']
+                    },
                     series: [
                         {
-                            name: '直接访问',
+                            name: '百分比',
                             type: 'bar',
-                            barWidth: '60%',
-                            data: ['10', '52', '200', '334', '390']
-                        }
+                            data: [0.2,0.05,0.2,0.02,0.02,0.01,0.2,0.1,0.15,0.05,]
+                        },
+
                     ]
                 }
             }
@@ -170,14 +219,25 @@
             },
             //列表点击事件
             list_click(row){
+                let that = this
                 //true表示显示弹出框
                 this.column_value=true
                 //向后台发送请求获取数据
-                let that = this
-                this.postRequest('http://localhost:8080/teachingFeedback/getScoringRateOfQuestionType?id='+row.id).then(res=>{
+                this.getRequest('http://localhost:8080/analysis/getScoreDistributionOfKnowledgePointsInTestPaper?id='+row.id).then(res=>{
                     if(res){
-                        that.option.xAxis[0].data = res.questionType
-                        that.option.series[0].data = res.scoringRate
+                        console.log(res)
+                        // names
+                        // scoreDistribution
+                        that.option.yAxis.data = res.names
+                        that.option.series[0].data = res.scoreDistribution
+                        for(let i=0;i<res.scoreDistribution.length;i++){
+                            let Data_KnowledgePoints = {
+                                knowledgePoints:res.names[i],
+                                scoringRate:res.scoreDistribution[i]
+                            }
+
+                            that.tableData_KnowledgePoints.push(Data_KnowledgePoints)
+                        }
                     }
                 })
 
@@ -211,6 +271,10 @@
 </script>
 
 <style scoped>
+    /*知识点得分率表格字体设置*/
+    .scoringRateTableFont{
+        font-size: 20px;
+    }
     /*布局相关*/
     .el-row_margin{
         margin-top: 10px;

@@ -151,13 +151,15 @@
             },
             //搜索按钮点击事件
             click_search() {
-                console.log("点击了搜素按钮")
+                let that = this
                 //向后台发送请求
-                // this.postRequest('/url?name='+this.search_data).then(res=>{
-                //     if(res){
-                //
-                //     }
-                // })
+                this.getRequest('/analysis/getListOfTestPaperByName?name='+this.search_data).then(res=>{
+                    if(res){
+                        that.count_TestPaper = res.length
+                        that.list_oftestpaper = res
+                        that.setTableData()
+                    }
+                })
             },
             //上一页点击事件
             //下一页点击事件

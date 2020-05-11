@@ -42,9 +42,10 @@
                             label="出卷人">
                     </el-table-column>
                 </el-table>
-                <el-dialog title="整体成绩分析" :visible.sync="column_value" :destroy-on-close="true">
+                <el-dialog title="成绩区间人数分布" :visible.sync="column_value" :destroy-on-close="true">
                     <div id="column" :style="{width: '600px', height: '300px'}" ></div>
                     <div id="line_chart" :style="{width: '600px', height: '300px'}" ></div>
+                    <div style="font-size: 20px">成绩区间人数分布越接近正态分布曲线右半部分的形状，则试卷质量就越好。</div>
                 </el-dialog>
 <!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
 <!--                    <el-collapse-item v-for="(item,index) in papers" :title="item" :name="index">-->
@@ -171,13 +172,15 @@
             },
             //搜索按钮点击事件
             click_search() {
-                console.log("点击了搜素按钮")
+                let that = this
                 //向后台发送请求
-                // this.postRequest('/url?name='+this.search_data).then(res=>{
-                //     if(res){
-                //
-                //     }
-                // })
+                this.getRequest('/analysis/getListOfTestPaperByName?name='+this.search_data).then(res=>{
+                    if(res){
+                        that.count_TestPaper = res.length
+                        that.list_oftestpaper = res
+                        that.setTableData()
+                    }
+                })
             },
             //上一页点击事件
             //下一页点击事件

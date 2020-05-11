@@ -42,8 +42,8 @@
                             label="出卷人">
                     </el-table-column>
                 </el-table>
-                <el-dialog title="柱状图" :visible.sync="column_value">
-                    <div id="column" :style="{width: '700px', height: '300px'}" ></div>
+                <el-dialog title="章节分值分布" :visible.sync="column_value">
+                    <div id="column" :style="{width: '700px', height: '500px'}" ></div>
                 </el-dialog>
                 <!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
                 <!--                    <el-collapse-item v-for="(item,index) in papers" :title="item" :name="index">-->
@@ -68,7 +68,7 @@
 
 <script>
     export default {
-        name: "AnaScoringRateOfQuestionType",
+        name: "AnaScoreDistributionOfTestPaperChapters",
         data(){
             return{
                 //发送请求后返回的试卷数组
@@ -102,44 +102,44 @@
                 search_data:'',      //搜索输入框的数据
                 papers:['15级JAVA期末测试','16级JAVA期末测试','17级JAVA期末测试','18级JAVA期末测试'],          //试卷
                 activeNames: ['1'],
-                //柱状图数据
+                //横向柱状图数据
                 option : {
-                    color: ['#3398DB'],
+
                     tooltip: {
                         trigger: 'axis',
-                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        axisPointer: {
+                            type: 'shadow'
                         }
                     },
+                    legend: {
+                        data: ['2011年']
+                    },
                     grid: {
+                        height:450,
                         left: '3%',
-                        right: '8%',
+                        right: '11%',
                         bottom: '3%',
                         containLabel: true
                     },
-                    xAxis: [
-                        {
-                            name:"知识点",
-                            type: 'category',
-                            data: ['60以下', '60-69', '70-79', '80-89', '90-100'],
-                            axisTick: {
-                                alignWithLabel: true
-                            }
-                        }
-                    ],
-                    yAxis: [
-                        {
-                            name:"百分比",
-                            type: 'value'
-                        }
-                    ],
+                    xAxis: {
+                        name : '百分比',
+                        nameTextStyle:{fontSize:20},
+                        type: 'value',
+                        boundaryGap: [0, 0.01]
+                    },
+                    yAxis: {
+                        name:'章节名称',
+                        nameTextStyle:{fontSize:20},
+                        type: 'category',
+                        data: ['字符串', '常用类', '抽象与接口', '继承与多肽', '控制语句', '类与对象','数组','数据类型与变量','运算符与表达式','知识综合']
+                    },
                     series: [
                         {
-                            name: '直接访问',
+                            name: '百分比',
                             type: 'bar',
-                            barWidth: '60%',
-                            data: ['10', '52', '200', '334', '390']
-                        }
+                            data: [2,2,2,2,2,2,23,3,4,5,]
+                        },
+
                     ]
                 }
             }
@@ -170,14 +170,14 @@
             },
             //列表点击事件
             list_click(row){
+                let that  = this
                 //true表示显示弹出框
                 this.column_value=true
                 //向后台发送请求获取数据
-                let that = this
-                this.postRequest('http://localhost:8080/teachingFeedback/getScoringRateOfQuestionType?id='+row.id).then(res=>{
+                this.getRequest('http://localhost:8080/analysis/getScoreDistributionOfTestPaperChapters?id='+row.id).then(res=>{
                     if(res){
-                        that.option.xAxis[0].data = res.questionType
-                        that.option.series[0].data = res.scoringRate
+                        that.option.yAxis.data = res.names
+                        that.option.series[0].data = res.scoreDistribution;
                     }
                 })
 
