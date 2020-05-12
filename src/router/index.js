@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Home from '../views/Home.vue'
 import QueImport from "../views/que/QueImport";
+import TeacherInfo from "../views/TeacherInfo";
 
 
 
@@ -18,7 +19,16 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: Home,
-    hidden:true
+    hidden:true,
+    meta:{
+      roles:['admin','user']
+    },
+    children:[{
+      path:'/teacherinfo',
+      name:'教师用户个人中心',
+      component:TeacherInfo,
+      hidden:true
+    }]
   }/*{
     path: '/que/input/importque',
     name: 'importque',

@@ -442,6 +442,7 @@
                     size='26%'
                     style="overflow: scroll"
                     :before-close="handleClose"
+                    :modal="false"
                     :with-header="false">
                 <h3 align="center">成绩详情</h3>
                 <div style="padding-left:30px;padding-right:20px">
