@@ -122,13 +122,14 @@
                 this.getRequest("/baseinfo/department/").then(resp=> {
                     if (resp) {
                         this.deps=resp;
+                        console.log(this.deps);
                         this.loading = false;
                     }
                 })
             },addDep2Deps(deps,dep){//解决添加部门之后，弹窗收起问题
                 for(let i=0;i<deps.length;i++){
                     let d=deps[i];
-                    if(d.id=dep.parentId){
+                    if(d.id==dep.parentId){
                         d.children=d.children.concat(dep);
                         if(d.children.length>0){//解决添加完子部门的部门，可以删除的问题
                             d.parent=true;
@@ -146,7 +147,7 @@
             showAddDepView(node,data){/*展示添加部门对话框*/
                 console.log(node);
                 console.log(data);
-                this.pname=data.name;
+                this.pname=data.name;//（当前部门名称）相对添加为（上级部门）
                 this.dep.parentId=data.id;
                 this.dialogVisible=true;
             },
@@ -154,9 +155,13 @@
                 this.postRequest("/baseinfo/department/",this.dep).then(resp=> {
                     if(resp){
                         //this.initDeps();
+                       /* console.log("resp",resp)
+                        console.log("resp.obj",resp.obj)*/
+
                         this.addDep2Deps(this.deps,resp.obj);
                         this.dialogVisible=false;
                         this.initDep();//初始化添加弹窗变量
+
 
                     }
                 })

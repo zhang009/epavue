@@ -31,6 +31,10 @@
                     :data="majors"
                     stripe
                     border
+                    v-loading="loading"
+                    element-loading-text="正在加载..."
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-background="rgba(0, 0, 0, 0.7)"
                     style="width: 45%">
                 <el-table-column
                         type="selection"
@@ -67,6 +71,15 @@
                 <div>
                     <table>
                         <tr>
+                            <td> <el-tag>所选学院</el-tag></td>
+                            <td>
+                                <el-input size="small" disabled
+                                  v-model="schoolName"
+                                  style="margin-left: 5px;width: 300px">
+                                </el-input>
+                            </td>
+                        </tr>
+                        <tr>
                             <td> <el-tag>专业名称</el-tag></td>
                             <td>
                                 <el-input size="small"
@@ -92,11 +105,12 @@
             return{
                 dialogVisible:false,
                 title:'添加专业信息',
+                schoolName:'',//显示当前学院
                 updateMajor:{
                     schoolId:null,
                     name:''
-
                 },
+                loading:false,
                 page:1,
                 size:10,
                 keyword:'',
@@ -117,13 +131,20 @@
                 })
             },
             initMajors(){
+                this.loading=true;
                 this.getRequest("/baseinfo/major/?schoolId="+this.selectSchoolId).then(resp=>{
                     if(resp){
                         this.majors=resp;
+                        this.loading=false;
                     }
                 })
             },
             selectChanged(){/*当学院下拉框改变时，更新专业列表*/
+                for (let i = 0; i <this.schools.length ; i++) {
+                    if(this.selectSchoolId==this.schools[i].id){
+                        this.schoolName=this.schools[i].name;
+                    }
+                }
                this.initMajors();
             },
             doAddMajor(){
@@ -164,8 +185,14 @@
                     });
                 });
             },showAddSchoolView(){
-                this.title='添加专业信息'
-                this.dialogVisible=true;
+                if(this.schoolName==''||this.schoolName==null||this.selectSchoolId==null){
+                    this.$message.error('请先选择学院');
+                }else{
+
+                    this.title='添加专业信息'
+                    this.dialogVisible=true;
+                }
+
 
             },  showEditView(data){/*编辑专业点击事件，展示对话框*/
                 Object.assign(this.updateMajor,data)

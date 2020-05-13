@@ -21,7 +21,7 @@
                             title="导入数据"
                             :visible.sync="importDialogVisible"
                             width="30%"
-                            :before-close="handleClose">
+                            >
                         <p>导入数据前可以从这里<el-link type="primary" @click="exportData">下载模板</el-link>并将用户的信息整理到模板中，请使用模板给出的提示填写字段</p>
 
                          <el-upload
@@ -115,7 +115,7 @@
                     element-loading-spinner="el-icon-loading"
                     element-loading-background="rgba(0, 0, 0, 0.7)"
                     @selection-change="handleSelectionChange"
-                    style="width: 90%">
+                    style="width: 85%">
                 <el-table-column
                         type="selection"
                         width="55">
@@ -174,7 +174,8 @@
 
                 <el-table-column
                         fixed="right"
-                        width="200px"
+                        width="180px"
+                        align="center"
                         label="操作">
                     <template slot-scope="scope">
                         <el-popover
@@ -331,8 +332,9 @@
 
 
     var checkPhone = (rule,value,callback) => {
-        if(!value) {
-            return callback(new Error('请输入手机号码'));
+        if(!value) {//为空
+           // return callback(new Error('请输入手机号码'));
+            callback();
         }else{
             const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
             if(reg.test(value)) {
@@ -355,16 +357,21 @@
                     if(reg.test(value)) {
                         //工号格式正确
                        // alert(value);
-                        this.getRequest("/system/user/workID/"+value).then(resp=>{
-                            if(resp){
-                              //  alert(resp.result);
-                                if(resp.result=='yes'){//数据库存在工号
-                                    return callback(new Error('该工号已被使用，请重新输入'));
-                                }else{
-                                    callback();
+                        if(this.updateTea.id){//编辑用户信息的时候的时候不需要验证
+                            callback();
+                        }else{
+                            this.getRequest("/system/user/workID/"+value).then(resp=>{
+                                if(resp){
+                                    //  alert(resp.result);
+                                    if(resp.result=='yes'){//数据库存在工号
+                                        return callback(new Error('该工号已被使用，请重新输入'));
+                                    }else{
+                                        callback();
+                                    }
                                 }
-                            }
-                        })
+                            })
+                        }
+
                     }else{
                         return callback(new Error('请输入正确的工号'));
                     }
@@ -379,6 +386,7 @@
                     departmentId:''
 
                 },
+                isUpdate:false,//是否更新标记
                 tea: {/*添加用户*/
                     name: "testname",
                     gender: "男",
@@ -423,16 +431,16 @@
                     name: [{required: true, message: '请输入姓名', trigger: 'blur'}],
                     gender: [{required: true, message: '请输入性别', trigger: 'blur'}],
                     workID: [{validator:checkWorkID,required: true,  trigger: 'blur'}],
-                    email: [{required: true, message: '请输入邮箱地址', trigger: 'blur'}, {
+                    email: [{required: false, message: '请输入邮箱地址', trigger: 'blur'}, {
                         type: 'email',
                         message: '邮箱格式不正确',
                         trigger: 'blur'
                     }],
-                    phone: [{validator:checkPhone, required: true, trigger: 'blur'}],
+                    phone: [{validator:checkPhone, required: false, trigger: 'blur'}],
                     departmentId: [{required: true, message: '请选择部门', trigger: 'blur'}],
                     jobLevelId: [{required: true, message: '请选择职称', trigger: 'blur'}],
                 },
-                selectedRoles:[],
+                selectedRoles:[],//存放用户的角色
                 multipleSelection: [],//批量操作勾选数组
 
 
@@ -459,6 +467,7 @@
                 }else{//普通搜索
                     url+="&name="+this.keyword;
                 }
+                console.log("url:",url);
                 this.getRequest(url).then(resp=>{
                     if(resp){
                         this.loading = false;
@@ -508,23 +517,27 @@
                 this.importDialogVisible=true;
             },
             showEditTeaView(data){
-              /*  this.initPositions();*/
+
                 this.title='编辑教师用户信息';
-               // this.tea=data;
-                Object.assign(this.updateTea,data);
-                this.inputDepName=data.department.name;
-                this.dialogVisible=true;
+                Object.assign(this.updateTea,data);//拷贝数据
+                this.inputDepName=data.department.name;//手动为部门数据赋值
+                this.dialogVisible=true;//显示弹窗
+                if(this.updateTea.workID!=""){
+                    this.$refs['teaForm'].clearValidate();//清空表单验证
+                }
             },
             //修改用户角色弹出框
-            showPop(tea){
+            showPop(tea){//这里把用户的角色初始化到多选框
                 //this.initAllRoles();
                 let roles=tea.roles;
-                console.log('roles.length>>>>>>>>>>'+roles.length);
+                /*console.log('roles.length>>>>>>>>>>'+roles.length);
+                console.log('roles>>>>>>>>>>',roles);*/
                 this.selectedRoles=[];//先清空数据
                 roles.forEach(r=>{
-                    console.log('r.id>>>>>>>>>>'+r.rid);
-                    this.selectedRoles.push(r.rid);
+                  /*  console.log('r.id>>>>>>>>>>'+r.id);*/
+                    this.selectedRoles.push(r.id);
                 })
+              /*  console.log("this.selectedRoles",this.selectedRoles)*/
             },
             hidePop(tea){//关闭后，更新角色
                 let roles=[];
@@ -648,6 +661,7 @@
                 }else{//添加
 
                     this.$refs.teaForm.validate(valid=>{
+                       // alert(valid);
                         if(valid){//数据验证成功
                             this.postRequest("/system/user/",this.updateTea).then(resp=>{
                                 if(resp){
@@ -656,6 +670,7 @@
                                 }
                             })
                         }else{
+                           // alert(valid);
                         }
                     })
                 }
@@ -681,6 +696,10 @@
                 this.emptyTea();
                 this.title='添加教师';
                 this.dialogVisible=true;
+                if(this.updateTea.workID!=""){
+                    this.$refs['teaForm'].clearValidate();//清空表单验证
+                }
+
             },
             onError(response,file,fileList){
                 this.loading2=false;

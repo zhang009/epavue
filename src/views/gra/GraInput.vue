@@ -503,7 +503,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td> <el-tag>选择年级</el-tag></td>
+                            <td> <el-tag>选择班级</el-tag></td>
                             <td>
                                 <el-select v-model="addTestPaperClass.classId"
                                            @change="selectClassChanged"

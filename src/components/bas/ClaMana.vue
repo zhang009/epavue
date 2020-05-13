@@ -1,37 +1,53 @@
 <template>
     <div><!--班级管理-->
         <div style="display: flex;justify-content: space-between"><!--第一行工具栏-->
-            <div><!--第一行左侧搜索-->
-                <el-select v-model="searchValue.schoolId"
-                           @change="selectSchoolChanged"
-                           placeholder="请选择学院"
-                           size="small"
-                           style="width: 230px;margin-right: 5px">
-                    <el-option
-                            v-for="item in schools"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id">
-                    </el-option>
-                </el-select>
-                <el-select v-model="searchValue.majorId"
-                           @change="selectMajorChanged"
-                           placeholder="请选择专业"
-                           size="small"
-                           style="width: 230px;margin-right: 5px">
-                    <el-option
-                            v-for="item in majors"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id">
-                    </el-option>
-                </el-select>
-                <el-input placeholder="搜索班级..." prefix-icon="el-icon-search"
-                          clearable
-                          @clear="initClassByPage"
-                          style="width: 300px;margin-right: 10px" v-model="keyword" @keydown.enter.native="initClassByPage" ></el-input>
-                <el-button icon="el-icon-search" type="primary" @click="initClassByPage" > 搜索</el-button>
-
+            <div style="display: flex;justify-content: space-around"><!--第一行左侧搜索-->
+                <div>
+                    <el-select v-model="searchValue.schoolId"
+                               @change="selectSchoolChanged"
+                               placeholder="请选择学院"
+                               size="small"
+                               style="width: 230px;margin-right: 5px">
+                        <el-option
+                                v-for="item in schools"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                    <el-select v-model="searchValue.majorId"
+                               @change="selectMajorChanged"
+                               placeholder="请选择专业"
+                               size="small"
+                               style="width: 230px;margin-right: 5px">
+                        <el-option
+                                v-for="item in majors"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                    <el-select v-model="searchValue.grade"
+                               @change="selectGradeChanged"
+                               placeholder="请选择年级"
+                               size="small"
+                               style="width: 200px;margin-right: 5px">
+                        <el-option
+                                v-for="item in grades"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.name">
+                        </el-option>
+                    </el-select>
+                    <el-button size="small" @click="emptyCondition" style="margin-left: 2px;">重置</el-button>
+                </div>
+                <div >
+                    <el-input placeholder="搜索班级..." prefix-icon="el-icon-search"
+                              clearable
+                              @clear="initClassByPage"
+                              style="width: 300px;margin-right: 5px;margin-left: 30px" v-model="keyword" @keydown.enter.native="initClassByPage" ></el-input>
+                    <el-button icon="el-icon-search" type="primary" @click="initClassByPage" > 搜索</el-button>
+                </div>
             </div>
             <div ><!--第一行右侧，批量导入，添加用户按钮-->
                 <el-button type="primary" icon="el-icon-plus" @click="showAddClassView">
@@ -44,7 +60,11 @@
                     :data="classes"
                     stripe
                     border
-                    style="width: 60%">
+                    v-loading="loading"
+                    element-loading-text="正在加载..."
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-background="rgba(0, 0, 0, 0.7)"
+                    style="width: 70%">
                 <el-table-column
                         type="selection"
                         width="55">
@@ -70,10 +90,11 @@
                 <el-table-column
                         prop="major.name"
                         label="所在专业"
-                        width="200"
+                        width="250"
                 >
                 </el-table-column>
                 <el-table-column
+                        align="center"
                         label="操作">
                     <template slot-scope="scope">
                         <el-button size="small" @click="showEditView(scope.row)">编辑</el-button>
@@ -81,13 +102,13 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <div  v-if="isPagVisiable">
+            <div  v-if="isPagVisiable" style="width: 70%">
                 <el-pagination
-                        style="text-align: center;margin-top: 10px"
+                        style="text-align: right;margin-top: 10px"
                         background
                         @size-change="sizeChange"
                         @current-change="currentChange"
-                        layout="sizes, prev, pager, next"
+                        layout="sizes, prev, pager, next,->, total, slot"
                         :total="total">
                 </el-pagination>
             </div>
@@ -137,10 +158,19 @@
                         <tr>
                             <td> <el-tag>所在年级</el-tag></td>
                             <td>
-                                <el-input size="small"
-                                          v-model.trim="updateClass.grade"
-                                          placeholder="如：2019"
-                                          style="margin-left: 5px;width: 300px"></el-input>
+                                <el-select v-model="updateClass.grade"
+
+                                           placeholder="请选择年级"
+                                           size="small"
+                                           style="margin-left: 5px;width: 300px">
+                                    <el-option
+                                            v-for="item in grades"
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.name">
+                                    </el-option>
+                                </el-select>
+
                             </td>
                         </tr>
                         <tr>
@@ -168,12 +198,14 @@
         name: "ClaMana",
         data(){
             return{
+                loading:false,
                 isPagVisiable:true,
                 keyword:'',
                 title:'',
                 searchValue:{/*条件搜索值*/
                     schoolId:'',
-                    majorId:''
+                    majorId:'',
+                    grade:'',
                 },
                 updateClass:{
                     name:'',
@@ -184,6 +216,7 @@
                 schools:[],
                 majors:[],
                 classes:[],
+                grades:[],
                 total:0,
                 page:1,
                 size:10,
@@ -194,6 +227,7 @@
             this.initSchools();//进入页面时候，初始化表格数据
             this.initMajors();
             this.initClassByPage();
+            this.initGrades();//初始化年级
         },methods:{
             doAddClass(){
                 //判断是添加还是更新，有id则为更新，没有id则为更新
@@ -222,9 +256,18 @@
                     })
                 }
             },
+            emptyCondition(){
+                this.searchValue.majorId='';
+                this.searchValue.schoolId='';
+                this.searchValue.grade='';
+            },
             selectSchoolChanged(){/*下拉框选择学院*/
                 this.initMajors();
+                this.initClassByPage();
 
+            },
+            selectGradeChanged(){//选择完年级后触发
+                this.initClassByPage();
             }
             ,selectMajorChanged(){/*下拉框选择专业*/
                 //选择完专业后，初始化表格中的班级数据
@@ -246,20 +289,55 @@
 
 
             }, initClassByPage(){/*初始化分页的班级*/
-                this.getRequest("/baseinfo/class/?page="+this.page+"&size="+this.size+"&keyword="+this.keyword).then(resp=>{
+                this.loading=false;
+                let url = "/baseinfo/class/all3?page="+this.page+"&size="+this.size;
+               //学院专业
+                if (this.searchValue.schoolId) {
+                    url += '&schoolId=' + this.searchValue.schoolId;
+                }
+                if (this.searchValue.majorId) {
+                    url += '&majorId=' + this.searchValue.majorId;
+
+
+                }
+                if (this.searchValue.grade) {
+                    url += '&grade=' + this.searchValue.grade;
+
+
+                }else{//普通搜索
+                    url+="&name="+this.keyword;
+                }
+                console.log("url:",url)
+                this.getRequest(url).then(resp=>{
                     if(resp){
                         this.classes=resp.data;
                         this.total=resp.total;
+                        this.loading=false;
                     }
                 })
             },
+            initGrades(){
+                if(!window.sessionStorage.getItem("grades")){
+                    this.getRequest("/baseinfo/grade/").then(resp=>{
+                        if(resp){
+                            this.grades=resp;
+                            window.sessionStorage.setItem("grades", JSON.stringify(resp));
+                        }
+                    })
+                }else{
+                    this.grades=JSON.parse(window.sessionStorage.getItem("grades"));
+                }
+
+
+            },
             initClassByMajorId(){/*初始化所有的班级*/
-                this.getRequest("/baseinfo/class/all?majorId="+this.searchValue.majorId).then(resp=>{
+                this.initClassByPage();
+                /*this.getRequest("/baseinfo/class/all?majorId="+this.searchValue.majorId).then(resp=>{
                     if(resp){
                         this.classes=resp;
 
                     }
-                })
+                })*/
 
             },initSchools(){
                 this.getRequest("/baseinfo/school/all").then(resp=>{
@@ -276,7 +354,7 @@
                     }
                 })
             },
-            initMajors(){
+            initMajors(){//根据学院id获取专业
                 //alert(this.searchValue.schoolId);
                 this.getRequest("/baseinfo/major/?schoolId="+this.searchValue.schoolId).then(resp=>{
                     if(resp){
