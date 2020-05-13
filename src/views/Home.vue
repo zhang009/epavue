@@ -150,6 +150,7 @@
                        //注销
                         this.getRequest("/logout");//以前我们自定义的方法
                         window.sessionStorage.removeItem("user");
+                        window.sessionStorage.removeItem("userType");
                         this.$router.replace("/");//回到登录页面
                         this.$store.commit('initRoutes', []);//清空存储的菜单数据
                     }).catch(() => {
@@ -159,7 +160,13 @@
                         });
                     });
                 }else if(cmd=='userInfo'){
-                    this.$router.push('/teacherinfo');
+                    let userType=window.sessionStorage.getItem("userType");
+                    if(userType=="student"){
+
+                    }else{
+                        this.$router.push('/teacherinfo');
+                    }
+
                 }
             }
         }

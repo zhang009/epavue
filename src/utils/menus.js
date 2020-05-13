@@ -51,6 +51,8 @@ export const formatRoutes=(routes)=>{
                     require(['../views/sys/' + component + '.vue'], resolve);
                 }else if (component.startsWith("Bas")) {
                     require(['../views/bas/' + component + '.vue'], resolve);
+                }else if (component.startsWith("Stu")) {
+                    require(['../views/stu/' + component + '.vue'], resolve);
                 }
 
             }
