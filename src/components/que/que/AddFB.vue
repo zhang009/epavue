@@ -33,7 +33,7 @@
                         </tinymce-editor>-->
                         <el-input
                                 type="textarea"
-                                :rows="10"
+                                :rows="5"
                                 placeholder="请输入答案"
                                 v-model="updateMainQueInfo.answer">
                         </el-input>
@@ -49,7 +49,7 @@
                         </tinymce-editor>-->
                         <el-input
                                 type="textarea"
-                                :rows="10"
+                                :rows="8"
                                 placeholder="请输入解析"
                                 v-model="updateMainQueInfo.analysis">
                         </el-input>

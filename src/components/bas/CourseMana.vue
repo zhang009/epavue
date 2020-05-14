@@ -2,61 +2,76 @@
     <div><!--课程管理-->
         <div style="display: flex;justify-content: space-between"><!--第一行工具栏-->
             <div><!--第一行左侧搜索-->
-                <el-select v-model="searchValue.schoolId"
-                           @change="selectSchoolChanged"
-                           placeholder="请选择学院"
-                           size="small"
-                           style="width: 230px;margin-right: 5px">
-                    <el-option
-                            v-for="item in schools"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id">
-                    </el-option>
-                </el-select>
-                <el-select v-model="searchValue.majorId"
-                           @change="selectMajorChanged"
-                           placeholder="请选择专业"
-                           size="small"
-                           style="width: 230px;margin-right: 5px">
-                    <el-option
-                            v-for="item in majors"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id">
-                    </el-option>
-                </el-select>
-                <el-select v-model="searchValue.classId"
-                           @change="selectClassChanged"
-                           placeholder="请选择班级"
-                           size="small"
-                           style="width: 230px;margin-right: 5px">
-                    <el-option
-                            v-for="item in classes"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id">
-                    </el-option>
-                </el-select>
-                <el-input placeholder="搜索课程..." prefix-icon="el-icon-search"
+
+                <el-input placeholder="输入课程名搜索课程..." prefix-icon="el-icon-search"
                           clearable
                           @clear="initCourseByPage"
-                          style="width: 300px;margin-right: 10px" v-model="keyword" @keydown.enter.native="initCourseByPage" ></el-input>
-                <el-button icon="el-icon-search" type="primary" @click="initCourseByPage" > 搜索</el-button>
-
+                          style="width: 300px;margin-right: 10px" v-model="keyword" @keydown.enter.native="initCourseByPage" :disabled="showAdvanceSearchView"></el-input>
+                <el-button icon="el-icon-search" type="primary" @click="initCourseByPage" :disabled="showAdvanceSearchView"> 搜索</el-button>
+                <el-button  type="primary" @click="showAdvanceSearchView=!showAdvanceSearchView">
+                    <i :class="showAdvanceSearchView?'fa fa-angle-double-up':'fa fa-angle-double-down'" aria-hidden="true"/>
+                    条件搜索</el-button>
             </div>
             <div ><!--第一行右侧，批量导入，添加用户按钮-->
                 <el-button type="primary" icon="el-icon-plus" @click="showAddClassView">
                     添加课程
                 </el-button>
             </div><!--第一行右侧，批量导入，添加用户按钮----end-->
+
+        </div>
+        <div>
+            <transition name="fade">
+                <div v-show="showAdvanceSearchView" style="border: 1px solid #409eff ;border-radius:5px;box-sizing: border-box;padding:5px;margin: 10px 0px; ">
+                    <div>
+                        <el-select v-model="searchValue.schoolId"
+                                   @change="selectSchoolChanged"
+                                   placeholder="请选择学院"
+                                   size="small"
+                                   style="width: 230px;margin-right: 5px">
+                            <el-option
+                                    v-for="item in schools"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="searchValue.majorId"
+                                   @change="selectMajorChanged"
+                                   placeholder="请选择专业"
+                                   size="small"
+                                   style="width: 230px;margin-right: 5px">
+                            <el-option
+                                    v-for="item in majors"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="searchValue.classId"
+                                   @change="selectClassChanged"
+                                   placeholder="请选择班级"
+                                   size="small"
+                                   style="width: 230px;margin-right: 5px">
+                            <el-option
+                                    v-for="item in classes"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                        <el-button size="small" @click="emptySearchValue">重置</el-button>
+                        <el-button size="small" icon="el-icon-search" type="primary" @click="initCourseByPage('advanced')">搜索</el-button>
+                    </div>
+                </div>
+            </transition>
+
         </div>
         <div style="margin-top: 10px"><!--第二行表格内容展示-->
             <el-table
                     :data="courses"
                     stripe
                     border
-                    style="width: 60%">
+                    style="width: 70%">
                 <el-table-column
                         type="selection"
                         width="55">
@@ -76,25 +91,31 @@
                         width="200"
                 ></el-table-column>
                 <el-table-column
+                        prop="className"
+                        label="开设班级"
+                        width="200">
+
+                </el-table-column>
+                <el-table-column
                         prop="term"
                         label="学年学期"
                         width="200"
                 ></el-table-column>
                 <el-table-column
-                        label="操作">
+                        label="操作" align="center">
                     <template slot-scope="scope">
                         <el-button size="small" @click="showEditView(scope.row)">编辑</el-button>
                         <el-button size="small" type="danger" @click="deleteHandler(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <div  v-if="isPagVisiable">
+            <div  v-if="isPagVisiable" style="width: 70%;" >
                 <el-pagination
-                        style="text-align: center;margin-top: 10px"
+                        style="text-align: right;margin-top: 10px"
                         background
                         @size-change="sizeChange"
                         @current-change="currentChange"
-                        layout="sizes, prev, pager, next"
+                        layout="sizes, prev, pager, next,->,total"
                         :total="total">
                 </el-pagination>
             </div>
@@ -114,6 +135,7 @@
                                            @change="selectSchool2Changed"
                                            placeholder="请选择学院"
                                            size="small"
+                                           :disabled="true"
                                            style="margin-left: 5px;width: 300px">
                                     <el-option
                                             v-for="item in schools"
@@ -130,6 +152,7 @@
                                 <el-select v-model="updateCourse.majorId"
                                            @change="selectMajor2Changed"
                                            placeholder="请选择专业"
+                                           :disabled="true"
                                            size="small"
                                            style="margin-left: 5px;width: 300px">
                                     <el-option
@@ -147,6 +170,7 @@
                                 <el-select v-model="updateCourse.classId"
                                            placeholder="请选择专业"
                                            size="small"
+                                           :disabled="true"
                                            style="margin-left: 5px;width: 300px">
                                     <el-option
                                             v-for="item in classes2"
@@ -160,10 +184,19 @@
                         <tr>
                             <td> <el-tag>学年学期</el-tag></td>
                             <td>
-                                <el-input size="small"
-                                          v-model.trim="updateCourse.term"
-                                          placeholder="如：2019-2020学年第一学期"
-                                          style="margin-left: 5px;width: 300px"></el-input>
+
+                                <el-select
+                                        placeholder="选择学期"
+                                        size="small"
+                                        v-model="updateCourse.term"
+                                        style="margin-left: 5px;width: 300px">
+                                    <el-option
+                                            v-for="item in semester"
+                                            :key="item.name"
+                                            :label="item.name"
+                                            :value="item.name">
+                                    </el-option>
+                                </el-select>
                             </td>
                         </tr>
                         <tr>
@@ -196,20 +229,24 @@
                 isPagVisiable:true,
                 keyword:'',
                 title:'',
+                showAdvanceSearchView:false,
                 searchValue:{/*条件搜索值*/
                     schoolId:'',
                     majorId:'',
                     classId:''
                 },
-                updateCourse:{
+                semester:[],/*学期*/
+                updateCourse:{//添加或更新课程
+                    schoolId:'',
                     name:'',
                     term:'',
                     classId:'',
+                    majorId:'',
                 },
                 schools:[],
                 majors:[],
                 classes:[],
-                schools2:[],
+
                 majors2:[],
                 classes2:[],
                 courses:[],
@@ -224,6 +261,7 @@
             this.initSchools();//进入页面时候，初始化表格数据
             //this.initMajors();
             this.initCourseByPage();
+            this.initSemester();//初始化学年学期
         },methods:{
             doAddCourse(){
                 //判断是添加还是更新，有id则为更新，没有id则为更新
@@ -231,8 +269,7 @@
                     this.putRequest("/baseinfo/course/",this.updateCourse).then(resp=>{
                         if(resp){
                             this.initCourseByPage();
-                            this.updateCourse.name='';
-                            this.updateCourse.grade='';
+                            this.emptyUpdateCourseInfo();//清空输入框
                             this.dialogVisible=false;
                             if(this.updateCourse.id){
                                 this.updateCourse.id='';
@@ -240,15 +277,36 @@
                         }
                     })
                 }else {//添加
+                    //console.log("添加：",this.updateCourse);
                     this.postRequest("/baseinfo/course/", this.updateCourse).then(resp => {
                         if (resp) {
                             this.initCourseByPage();
-                            this.updateCourse.name='';
-                            this.updateCourse.term='';
+                            this.emptyUpdateCourseInfo();//清空输入框
                             this.dialogVisible=false;
                         }
                     })
                 }
+
+            },
+            initSemester(){
+                if(!window.sessionStorage.getItem("semester")){
+                    this.getRequest("/baseinfo/semester/").then(resp=>{
+                        if(resp){
+                            this.semester=resp;
+                            window.sessionStorage.setItem("semester", JSON.stringify(resp));
+                        }
+                    })
+                }else{
+                    this.semester=JSON.parse(window.sessionStorage.getItem("semester"));
+                }
+
+
+            },
+            emptySearchValue(){//清空条件搜索条件
+                this.searchValue.schoolId='';
+                this.searchValue.majorId='';
+                this.searchValue.classId='';
+
             },
             selectSchoolChanged(){/*下拉框选择学院*/
                 this.initMajors();
@@ -275,9 +333,11 @@
             showAddClassView(){
                 this.title='添加课程信息';
                 this.dialogVisible=true;
-               this.searchValue.schoolId='';
-               this.searchValue.majorId='';
-                this.updateCourse.classId='';
+              /* this.searchValue.schoolId='';
+               this.searchValue.majorId='';//清空查询的*/
+
+
+                this.emptyUpdateCourseInfo();//清空输入框
             },
             initClassByMajorId(){/*根据专业获取班级列表*/
               //  alert(this.searchValue.majorId);
@@ -287,17 +347,30 @@
                     }
                 })
             },
-            initCourseByPage(){/*根据条件初始化分页的课程*/
+            initCourseByPage(type){//根据条件初始化分页的课程数据
                 this.loading = true;//展示数据加载图标
-                let url = '/baseinfo/course/?page=' + this.page + '&size=' + this.size;
-                if (this.searchValue.classId!='') {//条件搜索
+                let url = '/baseinfo/course/withClass?page=' + this.page + '&size=' + this.size;
+                if(type&&type=='advanced'){//条件搜索
+                    if(this.searchValue.schoolId!=''&&this.searchValue.majorId==''){
+                        this.$message.error('请选择专业');
+                        return ;
+                    }
+                    if (this.searchValue.schoolId) {
+
+                        url += '&schoolId=' + this.searchValue.schoolId;
+                    }
+                    if (this.searchValue.majorId) {
+
+                        url += '&majorId=' + this.searchValue.majorId;
+                    }
                     if (this.searchValue.classId) {
-                       // alert(this.searchValue.classId);
                         url += '&classId=' + this.searchValue.classId;
                     }
-                }else if(this.keyword!=''){//普通搜索
+                }
+                else {//普通搜索
                     url+="&name="+this.keyword;
                 }
+               // console.log("url:",url);
                 this.getRequest(url).then(resp=>{
                     if(resp){
                         this.loading = false;
@@ -308,13 +381,20 @@
                 })
             }
            ,initSchools(){
-                this.getRequest("/baseinfo/school/all").then(resp=>{
-                    if(resp){
-                        this.schools=resp;
-                    }
-                })
+                if(!window.sessionStorage.getItem("schools")){
+                    this.getRequest("/baseinfo/school/all").then(resp=>{
+                        if(resp){
+                            this.schools=resp;
+                            window.sessionStorage.setItem("schools", JSON.stringify(resp));
+                        }
+
+                    })
+                }else{
+                    this.schools=JSON.parse(window.sessionStorage.getItem("schools"));
+                }
             },
             initMajors2(){/*添加或更新选择专业*/
+                
                 this.getRequest("/baseinfo/major/?schoolId="+this.updateCourse.schoolId).then(resp=>{
                     if(resp){
                         this.majors2=resp;
@@ -329,7 +409,15 @@
                     }
                 })
             },showEditView(data){
-                Object.assign(this.updateCourse,data)
+                console.log("schools:",this.schools);
+                console.log("majors2:",this.majors2);
+                console.log("classes2:",this.classes2);
+
+                Object.assign(this.updateCourse,data);
+                console.log("updateCourse:",this.updateCourse);
+                this.initMajors2();
+               this.selectMajor2Changed();
+                this.$forceUpdate();
                 this.title='编辑课程信息';
                 this.dialogVisible=true;//显示编辑对话框
 
@@ -351,6 +439,9 @@
                         message: '已取消删除'
                     });
                 });
+            },
+            emptyUpdateCourseInfo(){//清空添加或编辑操作之后的输入框值
+                this.updateCourse={};
             },
             sizeChange(currentSize){
                 this.size=currentSize;

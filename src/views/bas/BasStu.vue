@@ -55,12 +55,12 @@
             <transition name="fade"><!--第二行，条件搜索div-->
                 <div v-show="showAdvanceSearchView" style="border :1px solid #409eff;border-radius: 5px;box-sizing: border-box;padding: 5px ;margin: 10px 0px;"><!--条件搜索-->
                     <el-row>
-                        <el-col :span="15" style="margin-left: 10px;">
+                        <el-col :span="12" style="margin-left: 10px;">
                             学院:
                             <el-select v-model="searchValue.schoolId"
                                        placeholder="请选择学院"
                                        @change="selectSchoolChanged"
-                                       size="mini"
+                                       size="small"
                                        style="width: 220px;">
                                 <el-option
                                         v-for="item in allSchools"
@@ -73,7 +73,7 @@
                             <el-select v-model="searchValue.majorId"
                                        placeholder="请选择专业"
                                        @change="selectMajorChanged"
-                                       size="mini"
+                                       size="small"
                                        style="width: 220px;">
                                 <el-option
                                         v-for="item in allMajors"
@@ -88,7 +88,7 @@
                             <el-select v-model="searchValue.classId"
                                        placeholder="请选择班级"
 
-                                       size="mini"
+                                       size="small"
                                        style="width: 220px;"><!--   @change="selectClassChanged"-->
                                 <el-option
                                         v-for="item in allClasses"
@@ -98,11 +98,11 @@
                                 </el-option>
                             </el-select>
                         </el-col>
-                        <el-col :span="6">
-                            <el-button size="mini" @click="emptySearchValue">取消</el-button>
-                            <el-button size="mini" icon="el-icon-search" type="primary" @click="initStudents('advanced')">搜索</el-button>
+                        <el-col :span="6" style="margin-left: 15px">
+                            <el-button size="small" @click="emptySearchValue">取消</el-button>
+                            <el-button size="small" icon="el-icon-search" type="primary" @click="initStudents('advanced')">搜索</el-button>
                         </el-col>
-                        <el-col :span="3" >
+                        <el-col :span="6" >
                         </el-col>
 
                     </el-row>
@@ -159,6 +159,7 @@
                         label="班级">
                 </el-table-column>
                 <el-table-column
+                        align="center"
                         label="操作">
                     <template slot-scope="scope">
                         <el-button size="small" @click="showEditStuView(scope.row)">编辑</el-button>
@@ -168,7 +169,7 @@
             </el-table>
 
             <el-button
-                    size="mini"
+                    size="small"
                     type="danger"
                     style="margin-top:8px "
                     @click="deleteMany" :disabled="multipleSelection.length==0">批量删除</el-button><!--批量删除-->
@@ -182,7 +183,7 @@
                 </el-pagination>
             </div>
         </div>
-        <!--添加用户对话框-->
+        <!--添加和编辑用户对话框-->
         <el-dialog
                 :title="title"
                 :visible.sync="dialogVisible"
@@ -199,10 +200,10 @@
                     <el-row  >
                         <el-col :span="20" :offset="4">
                             <el-form-item label="所在学院">
-                                <el-select v-model="searchAddStudentValue.schoolId"
+                                <el-select v-model="updateStu.schoolId"
                                            placeholder="请选择学院"
                                            @change="selectSchool2Changed"
-                                           size="mini"
+                                           size="small"
                                            style="width: 220px;">
                                     <el-option
                                             v-for="item in allSchools"
@@ -215,10 +216,10 @@
                         </el-col>
                         <el-col :span="20" :offset="4">
                             <el-form-item label="所在专业">
-                                <el-select v-model="searchAddStudentValue.majorId"
+                                <el-select v-model="updateStu.majorId"
                                            placeholder="请选择专业"
                                            @change="selectMajor2Changed"
-                                           size="mini"
+                                           size="small"
                                            style="width: 220px;">
                                     <el-option
                                             v-for="item in allMajors"
@@ -231,11 +232,11 @@
                         </el-col>
 
                             <el-col :span="20" :offset="4">
-                                <el-form-item label="班级:" prop="jobLevelId">
+                                <el-form-item label="班级:" prop="classId">
                                     <el-select v-model="updateStu.classId"
                                                placeholder="请选择学生所在班级"
 
-                                               size="mini" style="width: 180px;"><!--  @change="selectAddClassChanged"-->
+                                               size="small" style="width: 180px;"><!--  @change="selectAddClassChanged"-->
                                         <el-option
                                                 v-for="item in allClasses2"
                                                 :key="item.id"
@@ -251,7 +252,7 @@
 
                         <el-col :span="20" :offset="4">
                             <el-form-item label="姓名:" prop="name"  >
-                                <el-input size="mini" style="width: 180px" prefix-icon="el-icon-edit" v-model="updateStu.name"
+                                <el-input size="small" style="width: 180px" prefix-icon="el-icon-edit" v-model="updateStu.name"
                                           placeholder="请输入学生姓名"></el-input>
                             </el-form-item>
                         </el-col>
@@ -259,7 +260,7 @@
                     <el-row>
                         <el-col :span="20" :offset="4">
                             <el-form-item label="学号" prop="studentNum">
-                                <el-input size="mini" style="width: 180px" prefix-icon="el-icon-edit"
+                                <el-input size="small" style="width: 180px" prefix-icon="el-icon-edit"
                                           v-model="updateStu.studentNum" placeholder="请输入学生学号" ></el-input>
                             </el-form-item>
                         </el-col>
@@ -290,6 +291,34 @@
     export default {
         name: "BasStu",
         data(){
+            var checkStudentNum=(rule,value,callback) => {
+                if(!value) {
+                    return callback(new Error('请输入学号'));
+                }else{
+                    const reg = /^\d{12}$/
+                    if(reg.test(value)) {
+                        //工号格式正确
+                        // alert(value);
+                        if(this.updateStu.id){//编辑用户信息的时候的时候不需要验证
+                            callback();
+                        }else{
+                            this.postRequest("/baseinfo/stu/studentNum?studentNum="+value).then(resp=>{
+                                if(resp){
+                                    //  alert(resp.result);
+                                    if(resp.result=='yes'){//数据库存在工号
+                                        return callback(new Error('该学号已被使用，请重新输入'));
+                                    }else{
+                                        callback();
+                                    }
+                                }
+                            })
+                        }
+
+                    }else{
+                        return callback(new Error('请输入正确的学号'));
+                    }
+                }
+            };
             return{
                 loading:false,
                 loading2:false,
@@ -306,7 +335,7 @@
                 updateStu:{/*添加和更新学生信息*/
                     name:'',
                     studentNum:'',
-                    gender:'',
+                    gender:'男',
                     classId:''
                 },
                 importDataBtnIcon:'el-icon-upload2',
@@ -327,7 +356,10 @@
                 size:10,
                 keyword:'',/*搜索关键词*/
                 rules:{
-
+                    name: [{required: true, message: '请输入姓名', trigger: 'blur'}],
+                    gender: [{required: true, message: '请选择性别', trigger: 'blur'}],
+                    studentNum: [{validator:checkStudentNum,required: true,  trigger: 'blur'}],
+                    classId: [{required: true, message: '请选择班级', trigger: 'blur'}],
                 },
                 multipleSelection:[],
 
@@ -348,17 +380,24 @@
                 this.multipleSelection = val;
             },
             initStudents(type){
-                this.loading=true;
+
                 let url='/baseinfo/stu/?page='+this.page+'&size='+this.size;
                 if(type&&type=='advanced'){
                     //如果是条件搜索
-                    if(this.searchValue.classId){
+
+                    if(this.searchValue.classId&&this.searchValue.classId!=''){
                         url+='&classId='+this.searchValue.classId;
+                    }else{
+                        this.$message.error('请先选择班级！');
+
+                        return;
                     }
                 }else{
                     //普通搜索
                     url+="&name="+this.keyword;
                 }
+                this.loading=true;
+                console.log("url:",url);
                 this.getRequest(url).then(resp=>{
                     if(resp){
                         this.loading = false;
@@ -429,7 +468,7 @@
             },
             initClassByMajorId2(){/*根据专业id获取班级列表*/
                 //  alert(this.searchValue.majorId);
-                this.getRequest("/baseinfo/class/all?majorId="+this.searchAddStudentValue.majorId).then(resp=>{
+                this.getRequest("/baseinfo/class/all?majorId="+this.updateStu.majorId).then(resp=>{
                     if(resp){
                         this.allClasses2=resp;
                     }
@@ -445,7 +484,7 @@
             },
             initMajors2(){/*根据学院id获取专业列表（添加学生）*/
                 //
-                this.getRequest("/baseinfo/major/?schoolId="+this.searchAddStudentValue.schoolId).then(resp=>{
+                this.getRequest("/baseinfo/major/?schoolId="+this.updateStu.schoolId).then(resp=>{
                     if(resp){
                         this.allMajors=resp;
                     }
@@ -457,9 +496,9 @@
                 window.open('/baseinfo/stu/export','_parent');
             },
             emptySearchValue(){
-                this.searchValue.schoolId=null;
-                this.searchValue.majorId=null;
-                this.searchValue.classId=null;
+                this.searchValue.schoolId='';
+                this.searchValue.majorId='';
+                this.searchValue.classId='';
             },
             selectAddClassChanged(){
                 //添加或编辑，班级选择事件
@@ -482,15 +521,18 @@
             showEditStuView(data){
                 this.title='编辑学生信息';
                 Object.assign(this.updateStu,data);
+                this.initMajors2();
+                this.initClassByMajorId2()
+                console.log("updateStu:",this.updateStu);
 
                 this.dialogVisible=true;
             },
             emptyUpdateStu(){
                 this.updateStu={
-                    name: "",
-                    studentNum: "",
-                    gender: "",
-                    classId: null,
+                    name:'',
+                    studentNum:'',
+                    gender:'男',
+                    classId:''
                 }
             },
             deleteStu(data){

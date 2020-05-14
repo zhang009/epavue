@@ -146,7 +146,7 @@
                     </table>
                 </div>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible1 = false">取 消</el-button>
+                <el-button @click="dialogVisible3 = false">取 消</el-button>
 
                <el-button type="primary" @click="doEditKnows">确 定</el-button>
               </span>
@@ -192,7 +192,7 @@
                     </table>
                 </div>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible2 = false">取 消</el-button>
+                <el-button @click="dialogVisible4 = false">取 消</el-button>
                <el-button type="primary" @click="doEditKnows2">确 定</el-button>
               </span>
             </el-dialog>
