@@ -355,6 +355,7 @@
                 isAddTF:false,
                 isAddFB:false,
                 isAddQA:false,
+                queFrom:'',
                /* scData:{},
                 mcData:{},
                 tfData:{},
@@ -369,17 +370,21 @@
             if(this.$route.params.queType){//如果有参数，表示由试题页面跳转过来，进入编辑试题页面
 
                 var queType=this.$route.params.queType;
+                this.queFrom=this.$route.params.queFrom;//路由来源
 
                 if(queType=='sc'){
                     this.queType="单选题";
                     this.scMainAllQueInfo=JSON.parse(this.$route.params.scMainAllQueInfo);
+                    //console.log("单选题：",this.scMainAllQueInfo)
                     this.$set(this.scMainQueInfo,"id",this.scMainAllQueInfo.id);
                     this.$set(this.scMainQueInfo,"stem",this.scMainAllQueInfo.stem);
                     this.$set(this.scMainQueInfo,"option1",this.scMainAllQueInfo.option1);
                     this.$set(this.scMainQueInfo,"option2",this.scMainAllQueInfo.option2);
                     this.$set(this.scMainQueInfo,"option3",this.scMainAllQueInfo.option3);
                     this.$set(this.scMainQueInfo,"option4",this.scMainAllQueInfo.option4);
+                    this.$set(this.scMainQueInfo,"answer",this.scMainAllQueInfo.answer);
                     this.$set(this.scMainQueInfo,"analysis",this.scMainAllQueInfo.analysis);
+                    this.$set(this.scMainQueInfo,"status",this.scMainAllQueInfo.status);
 
 
                     this.$set(this.scMainQueInfo,"courseId",this.scMainAllQueInfo.courseId);
@@ -406,6 +411,7 @@
                     this.$set(this.mcMainQueInfo,"options",this.mcMainAllQueInfo.options);
                     this.$set(this.mcMainQueInfo,"answer",this.mcMainAllQueInfo.answer);
                     this.$set(this.mcMainQueInfo,"analysis",this.mcMainAllQueInfo.analysis);
+                    this.$set(this.mcMainQueInfo,"status",this.mcMainAllQueInfo.status);
 
 
                     this.$set(this.mcMainQueInfo,"courseId",this.mcMainAllQueInfo.courseId);
@@ -427,6 +433,7 @@
                 else if(queType=='tf'){
                     this.queType="判断题";
                     this.tfMainAllQueInfo=JSON.parse(this.$route.params.tfMainAllQueInfo);
+                    console.log(this.tfMainAllQueInfo);
                     this.$set(this.tfMainQueInfo,"id",this.tfMainAllQueInfo.id);
                     this.$set(this.tfMainQueInfo,"stem",this.tfMainAllQueInfo.stem);
                     this.$set(this.tfMainQueInfo,"answer",this.tfMainAllQueInfo.answer);
@@ -456,6 +463,7 @@
                     this.$set(this.fbMainQueInfo,"stem",this.fbMainAllQueInfo.stem);
                     this.$set(this.fbMainQueInfo,"answer",this.fbMainAllQueInfo.answer);
                     this.$set(this.fbMainQueInfo,"analysis",this.fbMainAllQueInfo.analysis);
+                    this.$set(this.fbMainQueInfo,"status",this.fbMainAllQueInfo.status);
 
                     this.$set(this.fbMainQueInfo,"courseId",this.fbMainAllQueInfo.courseId);
                     this.$set(this.updateRightQueInfo,"courseId",this.fbMainAllQueInfo.courseId);
@@ -480,6 +488,7 @@
                     this.$set(this.qaMainQueInfo,"stem",this.qaMainAllQueInfo.stem);
                     this.$set(this.qaMainQueInfo,"answer",this.qaMainAllQueInfo.answer);
                     this.$set(this.qaMainQueInfo,"analysis",this.qaMainAllQueInfo.analysis);
+                    this.$set(this.qaMainQueInfo,"status",this.qaMainAllQueInfo.status);
 
                     this.$set(this.qaMainQueInfo,"courseId",this.qaMainAllQueInfo.courseId);
                     this.$set(this.updateRightQueInfo,"courseId",this.qaMainAllQueInfo.courseId);
@@ -541,7 +550,7 @@
                     this.isAddQA=true;
                 }
             },
-            initCourse(){//
+            initCourse(){//加载所有的课程
                 if(!window.sessionStorage.getItem("courses")){
                     this.getRequest('/baseinfo/course/all?classId='+'').then(resp => {
                         if (resp) {
@@ -553,7 +562,7 @@
                     this.courses=JSON.parse(window.sessionStorage.getItem("courses"));
                 }
             },
-            initCheckTeachers(){//
+            initCheckTeachers(){//加载所有的审核教师
                 if(!window.sessionStorage.getItem("checkTeachers")){
                     this.getRequest('/system/user/addQue').then(resp => {
                         if (resp) {
@@ -580,7 +589,7 @@
                     }
                 })
             },
-            selectChapterChanged(){
+            selectChapterChanged(){//章节下拉框选中触发
 
             },
             selectKnowsChanged(){
@@ -600,23 +609,23 @@
                 //数据回显：app.selectedOptions=JSON.parse(result.data.userAddress);
                 //console.log(this.$refs['knowsCascader'].getCheckedNodes());
 
-                //这里将数组类型转化为字符串类型
+                //这里将数组类型转化为字符串类型，把知识点id进行拼接
                 let ids=this.knowIds.join('@');
                 this.updateRightQueInfo.knowIds=ids;
 
             },
             strToKnows(){//把知识转化为数组类型方便显示
-                var idsArr=this.updateRightQueInfo.knowIds.split("|");
+                var idsArr=this.updateRightQueInfo.knowIds.split("@");
                 this.knowIds=idsArr;
             },
             selectQueTypeChanged(){//当试题类型下拉框改变
-                this.initQue();
-                this.emptyRightInfo();
+                this.initQue();//加载试题
+                this.emptyRightInfo();//清空右侧输入框
             },
             selectCheckTeacherChanged(){
 
             },
-            submitSCData(data){
+            submitSCData(data){//接受子组件传递的数据
                 this.scMainQueInfo=data;
             },
             submitMCData(data){
@@ -636,33 +645,35 @@
                 if(this.queType=='单选题'){
 
                     if(this.$refs.AddSC.checkData()){ //这里还需要对组件中的值是否为空进行判断
-                        this.$refs.AddSC.submit(); // 获取sc组件中的数据
+                        this.$refs.AddSC.submit(); // 获取sc单选试题组件中的数据
                         this.$refs.rightInfoForm.validate((valid) => {//this.refs可以获取到当前页面所有的ref
                             if (valid) {
 
                                 //数据通过验证，发送到后端进行保存操作
-                                this.scMainAllQueInfo.stem=this.scMainQueInfo.stem;
-                                this.scMainAllQueInfo.option1=this.scMainQueInfo.option1;
-                                this.scMainAllQueInfo.option2=this.scMainQueInfo.option2;
-                                this.scMainAllQueInfo.option3=this.scMainQueInfo.option3;
-                                this.scMainAllQueInfo.option4=this.scMainQueInfo.option4;
-                                this.scMainAllQueInfo.answer=this.scMainQueInfo.answer;
-                                this.scMainAllQueInfo.analysis=this.scMainQueInfo.analysis;
+                                this.scMainAllQueInfo.stem=this.scMainQueInfo.stem;//题干
+                                this.scMainAllQueInfo.option1=this.scMainQueInfo.option1;//选型1
+                                this.scMainAllQueInfo.option2=this.scMainQueInfo.option2;//选型2
+                                this.scMainAllQueInfo.option3=this.scMainQueInfo.option3;//选型3
+                                this.scMainAllQueInfo.option4=this.scMainQueInfo.option4;//选型4
+                                this.scMainAllQueInfo.answer=this.scMainQueInfo.answer;//答案
+                                this.scMainAllQueInfo.analysis=this.scMainQueInfo.analysis;//解析
 
-                                this.scMainAllQueInfo.courseId=this.updateRightQueInfo.courseId;
-                                this.scMainAllQueInfo.chapterId=this.updateRightQueInfo.chapterId;
-                                this.scMainAllQueInfo.knowIds=this.updateRightQueInfo.knowIds;
-                                this.scMainAllQueInfo.dot=this.updateRightQueInfo.dot;
-                                this.scMainAllQueInfo.checkTeacherId=this.updateRightQueInfo.checkTeacherId;
-
-                                if(this.scMainQueInfo.id){//不为空时为更新操作
+                                this.scMainAllQueInfo.courseId=this.updateRightQueInfo.courseId;//课程
+                                this.scMainAllQueInfo.chapterId=this.updateRightQueInfo.chapterId;//章节
+                                this.scMainAllQueInfo.knowIds=this.updateRightQueInfo.knowIds;//知识点
+                                this.scMainAllQueInfo.dot=this.updateRightQueInfo.dot;//试题难度
+                                this.scMainAllQueInfo.checkTeacherId=this.updateRightQueInfo.checkTeacherId;//审核教师ID
+                                console.log(this.scMainQueInfo)
+                                if(this.scMainQueInfo.id){//id不为空时为更新操作
                                     this.putRequest("/question/scinput/update",this.scMainAllQueInfo).then(resp=>{
                                         if(resp){
                                             this.emptyRightInfo();//刷新页面
                                             this.$refs.AddSC.emptyData();//调用组件中方法清空数据
                                             var that = this;
+
+                                            console.log(this.scMainQueInfo.status)
                                             if(this.scMainQueInfo.status==2){
-                                                setTimeout(function () {//跳转到试题查询页面
+                                                setTimeout(function () {//跳转到试题审核页面
                                                     that.$router.push({ path:'/que/check'  });
                                                 },500);
                                             }else{
@@ -677,8 +688,8 @@
                                 }else {//否则，为添加操作
                                     this.postRequest("/question/scinput/add",this.scMainAllQueInfo).then(resp=>{
                                         if(resp){
-                                            this.emptyRightInfo();//刷新页面
-                                            this.$refs.AddSC.emptyData();//调用组件中方法清空数据
+                                            this.emptyRightInfo();//清空页面右侧数据
+                                            this.$refs.AddSC.emptyData();//调用子组件中方法清空数据
                                         }
                                     })
                                 }
@@ -754,7 +765,7 @@
                                             this.emptyRightInfo();//刷新页面
                                             this.$refs.AddTF.emptyData();//调用组件中方法清空数据
                                             var that = this;
-
+                                            console.log("status",this.tfMainQueInfo.status);
                                             if(this.tfMainQueInfo.status==2){//由审核页面跳转来的，跳转回审核页面
                                               /*  console.log(">>>>>>")*/
                                                 setTimeout(function () {//跳转到试题查询页面

@@ -3,7 +3,7 @@
         <div><!--试题审核页面-->
             <br>
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-                <el-tab-pane label="提交试卷审核" name="receivedpapercheck">
+                <el-tab-pane label="提交试卷审核" name="receivedpapercheck" v-if="isCourseCourseManager">
                     <SubmittedPaperCheck v-if="isChildUpdate1"></SubmittedPaperCheck>
                 </el-tab-pane>
                 <el-tab-pane label="收到试卷审核" name="submittedpapercheck">
@@ -29,8 +29,24 @@
                 activeName:'receivedpapercheck',
                 isChildUpdate1:true,
                 isChildUpdate2:false,
+                isCourseCourseManager:false,//是否是课程负责人
             }
+        },mounted() {
+            this.initCourseCourseManager();
         },methods:{
+            initCourseCourseManager(){//判断是否是课程负责人
+                let teacher=JSON.parse(window.sessionStorage.getItem("user"));
+
+                let roles=teacher.roles;
+
+                for (let i = 0; i < roles.length; i++) {
+                    let role=roles[i];
+                    if(role.name=='ROLE_coursemanager'){
+                        this.isCourseCourseManager=true;//
+                        return;
+                    }
+                }
+            },
             handleClick(tab){
                 if(tab.name=="receivedpapercheck"){
                     this.isChildUpdate1=true;
