@@ -462,7 +462,7 @@
 
     }
     .stem span{
-        white-space:pre-line
+        white-space:pre
     }
 
 </style>

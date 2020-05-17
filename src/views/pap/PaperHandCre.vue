@@ -673,11 +673,12 @@
                                                     </template>
                                                 </el-table-column>
                                                 <el-table-column
+                                                        align="center"
                                                         label="操作">
                                                     <template slot-scope="scope">
                                                         <el-button size="small" :disabled="scope.$index===0"  @click="moveSCUp(scope.$index,scope.row)"><i class="el-icon-arrow-up"></i></el-button>
                                                         <el-button size="small" :disabled="scope.$index===(selectPaperInfo.sclist.length-1)" @click="moveSCDown(scope.$index,scope.row)"><i class="el-icon-arrow-down"></i></el-button>
-                                                        <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>
+                                                        <!--<el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>-->
                                                     </template>
                                                 </el-table-column>
                                             </el-table>
@@ -736,11 +737,12 @@
                                                     </template>
                                                 </el-table-column>
                                                 <el-table-column
+                                                        align="center"
                                                 >
                                                     <template slot-scope="scope">
                                                         <el-button size="small" :disabled="scope.$index===0"  @click="moveSCUp(scope.$index,scope.row)"><i class="el-icon-arrow-up"></i></el-button>
                                                         <el-button size="small" :disabled="scope.$index===(selectPaperInfo.mclist.length-1)" @click="moveSCDown(scope.$index,scope.row)"><i class="el-icon-arrow-down"></i></el-button>
-                                                        <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>
+                                                       <!-- <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>-->
                                                     </template>
                                                 </el-table-column>
                                             </el-table>
@@ -799,11 +801,12 @@
                                                     </template>
                                                 </el-table-column>
                                                 <el-table-column
+                                                        align="center"
                                                 >
                                                     <template slot-scope="scope">
                                                         <el-button size="small" :disabled="scope.$index===0"  @click="moveSCUp(scope.$index,scope.row)"><i class="el-icon-arrow-up"></i></el-button>
                                                         <el-button size="small" :disabled="scope.$index===(selectPaperInfo.tflist.length-1)" @click="moveSCDown(scope.$index,scope.row)"><i class="el-icon-arrow-down"></i></el-button>
-                                                        <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>
+                                                       <!-- <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>-->
                                                     </template>
                                                 </el-table-column>
                                             </el-table>
@@ -862,11 +865,12 @@
                                                     </template>
                                                 </el-table-column>
                                                 <el-table-column
+                                                        align="center"
                                                 >
                                                     <template slot-scope="scope">
                                                         <el-button size="small" :disabled="scope.$index===0"  @click="moveSCUp(scope.$index,scope.row)"><i class="el-icon-arrow-up"></i></el-button>
                                                         <el-button size="small" :disabled="scope.$index===(selectPaperInfo.fblist.length-1)" @click="moveSCDown(scope.$index,scope.row)"><i class="el-icon-arrow-down"></i></el-button>
-                                                        <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>
+                                                        <!--<el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>-->
                                                     </template>
                                                 </el-table-column>
                                             </el-table>
@@ -924,11 +928,13 @@
                                                     </template>
                                                 </el-table-column>
                                                 <el-table-column
+                                                        align="center"
                                                 >
+
                                                     <template slot-scope="scope">
                                                         <el-button size="small" :disabled="scope.$index===0"  @click="moveSCUp(scope.$index,scope.row)"><i class="el-icon-arrow-up"></i></el-button>
                                                         <el-button size="small" :disabled="scope.$index===(selectPaperInfo.qalist.length-1)" @click="moveSCDown(scope.$index,scope.row)"><i class="el-icon-arrow-down"></i></el-button>
-                                                        <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>
+                                                       <!-- <el-button size="small" type="danger" @click="deleteScQue(scope.row)"><i class="el-icon-delete"></i></el-button>-->
                                                     </template>
                                                 </el-table-column>
                                             </el-table>
@@ -941,7 +947,7 @@
                                 </el-row>
                                 <div style="margin-top: 20px">
                                     <el-row>
-                                        <el-col :span="15"><div>&nbsp;</div>
+                                        <el-col :span="12"><div>&nbsp;</div>
                                         </el-col>
                                         <el-col :span="3">
                                             <strong>总试题数：</strong>{{selectPaperQueNum}}
@@ -949,8 +955,8 @@
                                         <el-col :span="3">
                                             <strong>总分值：</strong>{{totalScore}}<strong>分</strong>
                                         </el-col>
-                                        <el-col :span="3">
-                                            <strong>及格分：</strong>{{passScore}}<strong>分</strong>
+                                        <el-col :span="6">
+                                            <strong>及格分：</strong>{{passScore}}<strong>分（总分*60%）</strong>
                                         </el-col>
                                     </el-row>
 
@@ -981,7 +987,7 @@
                             </div>
                             <el-divider content-position="left">试卷预览</el-divider>
                             <!--<div style=" box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)">-->
-                            <div style="border-radius: 4px;border: 1px solid #dedede;width: 80%;margin:0 auto" >
+                            <div style="border-radius: 4px;border: 1px solid #dedede;width: 80%;margin:0 auto;padding-bottom: 20px" >
                                 <div ><!--试卷标题展示-->
                                     <div style="display: flex;justify-content: center">
                                         <h3>{{updatePaperInfo.semester}}</h3>
@@ -994,15 +1000,15 @@
                                 <!--单选题-->
                                 <div v-show="selectPaperInfo.sclist&&(selectPaperInfo.sclist.length>0)">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
-                                        <strong>单选题</strong>
+                                        <strong>单选题（共{{selectPaper.scIds.length}}个小题，每小题{{selectQueScore.scScore}}分）</strong>
                                         <div v-for="(scque,index) in selectPaperInfo.sclist" style="margin-top: 20px">
-                                            <div>
+                                            <div style="margin-top: 10px;margin-left: 30px">
                                                 <div><!--题干-->
                                                     <div class="stem">
                                                         {{index+1}}. <span>{{scque.stem}}</span>
                                                     </div>
                                                 </div>
-                                                <div ><!--选项-->
+                                                <div style="margin-left: 20px"><!--选项-->
                                                     <div>A. {{scque.option1}}</div>
                                                     <div>B. {{scque.option2}} </div>
                                                     <div>C. {{scque.option3}}</div>
@@ -1015,15 +1021,15 @@
                                 <!--多选题-->
                                 <div v-show="selectPaperInfo.mclist&&(selectPaperInfo.mclist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
-                                        <strong>多选题</strong>
+                                        <strong>多选题（共{{selectPaper.mcIds.length}}个小题，每小题{{selectQueScore.mcScore}}分）</strong>
                                         <div v-for="(mcque,index) in selectPaperInfo.mclist">
-                                            <div>
+                                            <div style="margin-top: 10px;margin-left: 30px">
                                                 <div><!--题干-->
                                                     <div class="stem">
                                                         {{index+1}}. <span>{{mcque.stem}}</span>
                                                     </div>
                                                 </div>
-                                                <div ><!--选项-->
+                                                <div style="margin-left: 20px"><!--选项-->
                                                     <div v-for="(item,indexj) in mcque.options"><!--遍历多选题选项-->
                                                         {{optionChar[indexj]}} {{item.optionContent}}
                                                     </div>
@@ -1035,9 +1041,9 @@
                                 <!--判断题-->
                                 <div v-show="selectPaperInfo.tflist&&(selectPaperInfo.tflist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
-                                        <strong>判断题</strong>
+                                        <strong>判断题（共{{selectPaper.tfIds.length}}个小题，每小题{{selectQueScore.tfScore}}分）</strong>
                                         <div v-for="(tfque,index) in selectPaperInfo.tflist">
-                                            <div>
+                                            <div style="margin-top: 10px;margin-left: 30px">
                                                 <div><!--题干-->
                                                     <div class="stem">
                                                         {{index+1}}. <span>{{tfque.stem}}</span>
@@ -1051,9 +1057,9 @@
                                 <!--填空题-->
                                 <div v-show="selectPaperInfo.fblist&&(selectPaperInfo.fblist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
-                                        <strong>填空题</strong>
+                                        <strong>填空题（共{{selectPaper.fbIds.length}}个小题，合计{{fbScore}}分）</strong>
                                         <div v-for="(fbque,index) in selectPaperInfo.fblist">
-                                            <div>
+                                            <div style="margin-top: 10px;margin-left: 30px">
                                                 <div><!--题干-->
                                                     <div class="stem">
                                                         {{index+1}}. <span>{{fbque.stem}}</span>
@@ -1067,9 +1073,9 @@
                                 <!--简答题-->
                                 <div v-show="selectPaperInfo.qalist&&(selectPaperInfo.qalist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
-                                        <strong>简答题</strong>
+                                        <strong>简答题（共{{selectPaper.qaIds.length}}个小题，合计{{qaScore}}分）</strong>
                                         <div v-for="(qaque,index) in selectPaperInfo.qalist">
-                                            <div>
+                                            <div style="margin-top: 10px;margin-left: 30px">
                                                 <div><!--题干-->
                                                     <div class="stem">
                                                         {{index+1}}. <span>{{qaque.stem}}</span>
@@ -1297,8 +1303,26 @@
                             +Number(total);
             },
             passScore:function(){
-                var num=this.totalScore;
+                var num=Number(this.totalScore)*0.6;
                 return num.toFixed(2);
+            },
+            fbScore:function () {
+                let total=0;
+                if(this.selectQueScore.fbScore.length>0){
+                    for (let i = 0; i < this.selectQueScore.fbScore.length; i++) {
+                        total+=Number(this.selectQueScore.fbScore[i]);
+                    }
+                }
+                return total;
+            },
+            qaScore:function () {
+                let total=0;
+                if(this.selectQueScore.qaScore.length>0){
+                    for (let i = 0; i < this.selectQueScore.qaScore.length; i++) {
+                        total+=Number(this.selectQueScore.qaScore[i]);
+                    }
+                }
+                return total;
             }
         },
         mounted() {
@@ -1351,7 +1375,7 @@
 
                                 const content = res
                                 const blob = new Blob([content])
-                                const fileName = '导出信息.docx'
+                                const fileName = '手工选题组卷.docx'
                                 if ('download' in document.createElement('a')) { // 非IE下载
                                     const elink = document.createElement('a')
                                     elink.download = fileName
@@ -1407,7 +1431,7 @@
                     if(resp){
                         var that=this;
                         setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
-                            location.reload();//刷新页面
+                           /* location.reload();//刷新页面*/
                         },1000);
                     }
                 })
@@ -1687,7 +1711,7 @@
                 console.log(this.scoreChapterData.score);*/
                 var options={
                         title: {
-                            text: '章节分数分布',
+                            text: '试卷章节-分数分布',
                         },
                         tooltip: {//提示框，鼠标悬浮交互时的信息提示
                             trigger: 'axis',
@@ -1933,6 +1957,12 @@
                     },2000);*/
 
                  /* }*/
+                }
+                if(this.activeItemIndex==4){
+                    var that=this;
+                    setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
+                        location.reload();//刷新页面
+                    },1000);
                 }
 
             },
@@ -2242,7 +2272,7 @@
         text-align:center;
     }
     .stem span{
-        white-space:pre-line
+        white-space:pre
     }
     .echarts {
         width: 100%;

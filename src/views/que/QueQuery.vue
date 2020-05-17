@@ -19,7 +19,7 @@
            <!--第二行，条件搜索div-->
             <div  style="border :1px solid #409eff;border-radius: 5px;box-sizing: border-box;padding: 5px ;margin-top: 10px;"><!--条件搜索-->
                     <el-row>
-                        <el-col :span="17">
+                        <el-col :span="17" :offset="2" style="">
                             题型:
                             <el-select v-model="searchValue.queType"
                                        placeholder="请选择题型"
@@ -33,7 +33,7 @@
                                 </el-option>
                             </el-select>
                             难度:
-                            <el-select v-model="searchValue.qlevel" placeholder="请选择试题难度"  style="width: 180px;">
+                            <el-select v-model="searchValue.qlevel" placeholder="请选择试题难度"  style="width: 180px;margin-left: 3px;">
                                 <el-option
                                         v-for="item in qlevel"
                                         :key="item.value"
@@ -44,8 +44,9 @@
                             所属课程：
                             <el-select v-model="searchValue.qcourse"
                                        placeholder="请选择课程"
-                                       size="mini"
-                                       style="width: 150px;"
+                                       size="small"
+                                       filterable
+                                       style="width: 200px;"
                                        @change="selectCourseChanged"
                             >
                                 <el-option
@@ -56,7 +57,11 @@
                                 </el-option>
                             </el-select>
                             所属章节：
-                            <el-select v-model="searchValue.qchapter" placeholder="请选择章节" size="mini" style="width: 150px;">
+                            <el-select v-model="searchValue.qchapter"
+                                       placeholder="请选择章节"
+                                       filterable
+                                       size="small"
+                                       style="width: 200px;">
                                 <el-option
                                         v-for="item in chapters"
                                         :key="item.id"
@@ -65,9 +70,9 @@
                                 </el-option>
                             </el-select>
                         </el-col>
-                        <el-col :span="7">
-                            <el-button size="mini" @click="emptySearchValue">重置</el-button>
-                            <el-button size="mini" icon="el-icon-search" type="primary" @click="queryQuestionsByCondition">搜索</el-button>
+                        <el-col :span="5">
+                            <el-button size="small" @click="emptySearchValue">重置</el-button>
+                            <el-button size="small" icon="el-icon-search" type="primary" @click="queryQuestionsByCondition">搜索</el-button>
                         </el-col>
 
                     </el-row>
@@ -120,10 +125,11 @@
                                             </div>
                                             <div style="margin-top: 5px">
                                                 <span>【解析】</span>
-                                                <div>{{scope.row.analysis}}</div>
+                                                <span v-if="scope.row.analysis==null||scope.row.analysis==''">无</span>
+                                                <span v-else>{{scope.row.analysis}}</span>
                                             </div>
                                             <div style="margin-top: 5px">
-                                                <span>【上传者】</span><span>{{scope.row.teacher.name}}</span>
+                                                <span>【录入者】</span><span>{{scope.row.teacher.name}}</span>
                                             </div>
 
                                         </div>
@@ -183,7 +189,7 @@
 
                                         <div  class="text item" @click="showMCHiddenView(scope.$index)" ><!--3.选项-->
 
-                                            <div v-for="(item,indexj) in scope.row.options">{{optionChar[indexj]}} {{item.optionContent}}</div><!--遍历多选题选项-->
+                                            <div v-for="(item,indexj) in scope.row.options" :key="indexj">{{optionChar[indexj]}} {{item.optionContent}}</div><!--遍历多选题选项-->
 
                                         </div>
                                         <div v-show="mcViewStatus[scope.$index]" @click="showMCHiddenView(scope.$index)" ><!--4.隐藏详细信息-->
@@ -198,10 +204,11 @@
                                             </div>
                                             <div style="margin-top: 5px">
                                                 <span>【解析】</span>
-                                                <div>{{scope.row.analysis}}</div>
+                                                <span v-if="scope.row.analysis==null||scope.row.analysis==''">无</span>
+                                                <span v-else>{{scope.row.analysis}}</span>
                                             </div>
                                             <div style="margin-top: 5px">
-                                                <span>【上传者】</span><span>{{scope.row.teacher.name}}</span>
+                                                <span>【录入者】</span><span>{{scope.row.teacher.name}}</span>
                                             </div>
 
                                         </div>
@@ -274,10 +281,11 @@
                                             </div>
                                             <div style="margin-top: 5px">
                                                 <span>【解析】</span>
-                                                <div>{{scope.row.analysis}}</div>
+                                                <span v-if="scope.row.analysis==null||scope.row.analysis==''">无</span>
+                                                <span v-else>{{scope.row.analysis}}</span>
                                             </div>
                                             <div style="margin-top: 5px">
-                                                <span>【上传者】</span><span>{{scope.row.teacher.name}}</span>
+                                                <span>【录入者】</span><span>{{scope.row.teacher.name}}</span>
                                             </div>
 
                                         </div>
@@ -350,10 +358,11 @@
                                             </div>
                                             <div style="margin-top: 5px">
                                                 <span>【解析】</span>
-                                                <div>{{scope.row.analysis}}</div>
+                                                <span v-if="scope.row.analysis==null||scope.row.analysis==''">无</span>
+                                                <span v-else>{{scope.row.analysis}}</span>
                                             </div>
                                             <div style="margin-top: 5px">
-                                                <span>【上传者】</span><span>{{scope.row.teacher.name}}</span>
+                                                <span>【录入者】</span><span>{{scope.row.teacher.name}}</span>
                                             </div>
 
                                         </div>
@@ -422,10 +431,11 @@
                                             </div>
                                             <div style="margin-top: 5px">
                                                 <span>【解析】</span>
-                                                <div>{{scope.row.analysis}}</div>
+                                                <span v-if="scope.row.analysis==null||scope.row.analysis==''">无</span>
+                                                <span v-else>{{scope.row.analysis}}</span>
                                             </div>
                                             <div style="margin-top: 5px">
-                                                <span>【上传者】</span><span>{{scope.row.teacher.name}}</span>
+                                                <span>【录入者】</span><span>{{scope.row.teacher.name}}</span>
                                             </div>
 
                                         </div>
@@ -596,12 +606,13 @@
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
                     }
+                    console.log("url:",url);
                     this.getRequest(url).then(resp=>{
                         if(resp){
                             this.loading = false;
                             this.sclist=resp.data;
                             this.total=resp.total;
-                            if(this.tatal>10){
+                            if(this.total>10){
                                 this.isShowPagination=true;
                             }
                         }
@@ -616,13 +627,14 @@
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
                     }
+                    console.log("url:",url);
                     this.getRequest(url).then(resp=>{
                         if(resp){
 
                             this.mclist=resp.data;
 
                             this.total=resp.total;
-                            if(this.tatal>10){
+                            if(this.total>10){
                                 this.isShowPagination=true;
                             }
                         }
@@ -637,13 +649,14 @@
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
                     }
+                    console.log("url:",url);
                     this.getRequest(url).then(resp=>{
                         if(resp){
 
                             this.tflist=resp.data;
 
                             this.total=resp.total;
-                            if(this.tatal>10){
+                            if(this.total>10){
                                 this.isShowPagination=true;
                             }
                         }
@@ -658,13 +671,14 @@
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
                     }
+                    console.log("url:",url);
                     this.getRequest(url).then(resp=>{
                         if(resp){
 
                             this.fblist=resp.data;
 
                             this.total=resp.total;
-                            if(this.tatal>10){
+                            if(this.total>10){
                                 this.isShowPagination=true;
                             }
                         }
@@ -679,13 +693,142 @@
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
                     }
+                    console.log("url:",url);
                     this.getRequest(url).then(resp=>{
                         if(resp){
 
                             this.qalist=resp.data;
 
                             this.total=resp.total;
-                            if(this.tatal>10){
+                            if(this.total>10){
+                                this.isShowPagination=true;
+                            }
+                        }
+                    })
+                }
+
+            },
+            initQuestions2(){//通过名称搜索试题
+                //首先获取题型
+                if(this.searchValue.queType=='单选题'){
+                    if(this.searchValue.qcourse==null||this.searchValue.qcourse==''){
+                        this.$message.error('请先选择课程！');
+                        return;
+                    }
+                    let url = '/question/scinput/?page=' + this.page + '&size=' + this.size;
+                    if (this.searchValue.qcourse) {
+                        url += '&courseId=' + this.searchValue.qcourse;
+                    }
+                    if (this.searchValue.qcourse) {
+                        url += '&courseId=' + this.searchValue.qcourse;
+                    }
+                    if (this.keyword!='') {
+                        url += '&stem=' + this.keyword;
+                    }
+
+                    console.log("url:",url);
+                    this.getRequest(url).then(resp=>{
+                        if(resp){
+                            this.loading = false;
+                            this.sclist=resp.data;
+                            this.total=resp.total;
+                            if(this.total>10){
+                                this.isShowPagination=true;
+                            }
+                        }
+                    })
+                }else if(this.searchValue.queType=='多选题'){
+                    if(this.searchValue.qcourse==null||this.searchValue.qcourse==''){
+                        this.$message.error('请先选择课程！');
+                        return;
+                    }
+                    let url = '/question/mcinput/?page=' + this.page + '&size=' + this.size;
+                    if (this.searchValue.qcourse) {
+                        url += '&courseId=' + this.searchValue.qcourse;
+                    }
+                    if (this.keyword!='') {
+                        url += '&stem=' + this.keyword;
+                    }
+                    console.log("url:",url);
+                    this.getRequest(url).then(resp=>{
+                        if(resp){
+
+                            this.mclist=resp.data;
+
+                            this.total=resp.total;
+                            if(this.total>10){
+                                this.isShowPagination=true;
+                            }
+                        }
+                    })
+                }else if(this.searchValue.queType=='判断题'){
+                    if(this.searchValue.qcourse==null||this.searchValue.qcourse==''){
+                        this.$message.error('请先选择课程！');
+                        return;
+                    }
+                    let url = '/question/tfinput/?page=' + this.page + '&size=' + this.size;
+                   if (this.searchValue.qcourse) {
+                        url += '&courseId=' + this.searchValue.qcourse;
+                    }
+                    if (this.keyword!='') {
+                        url += '&stem=' + this.keyword;
+                    }
+                    console.log("url:",url);
+                    this.getRequest(url).then(resp=>{
+                        if(resp){
+
+                            this.tflist=resp.data;
+
+                            this.total=resp.total;
+                            if(this.total>10){
+                                this.isShowPagination=true;
+                            }
+                        }
+                    })
+                }else if(this.searchValue.queType=='填空题'){
+                    if(this.searchValue.qcourse==null||this.searchValue.qcourse==''){
+                        this.$message.error('请先选择课程！');
+                        return;
+                    }
+                    let url = '/question/fbinput/?page=' + this.page + '&size=' + this.size;
+                    if (this.searchValue.qcourse) {
+                        url += '&courseId=' + this.searchValue.qcourse;
+                    }
+                    if (this.keyword!='') {
+                        url += '&stem=' + this.keyword;
+                    }
+                    console.log("url:",url);
+                    this.getRequest(url).then(resp=>{
+                        if(resp){
+
+                            this.fblist=resp.data;
+
+                            this.total=resp.total;
+                            if(this.total>10){
+                                this.isShowPagination=true;
+                            }
+                        }
+                    })
+                }else if(this.searchValue.queType=='简答题'){
+                    if(this.searchValue.qcourse==null||this.searchValue.qcourse==''){
+                        this.$message.error('请先选择课程！');
+                        return;
+                    }
+                    let url = '/question/qainput/?page=' + this.page + '&size=' + this.size;
+                    if (this.searchValue.qcourse) {
+                        url += '&courseId=' + this.searchValue.qcourse;
+                    }
+                    if (this.keyword!='') {
+                        url += '&stem=' + this.keyword;
+                    }
+                    console.log("url:",url);
+                    this.getRequest(url).then(resp=>{
+                        if(resp){
+
+                            this.qalist=resp.data;
+
+                            this.total=resp.total;
+                            if(this.total>10){
                                 this.isShowPagination=true;
                             }
                         }
@@ -693,7 +836,8 @@
                 }
 
             },clickKeyQuery(){//关键词搜索
-
+                this.initQuestions2();
+                this.initShowCardHidden();
             },queryQuestionsByCondition(){//条件查询
                 this.initQuestions();
                 this.initShowCardHidden();
@@ -917,7 +1061,7 @@
 <style >
 
     .stem span{
-        white-space:pre-line
+        white-space:pre
     }
 
 </style>

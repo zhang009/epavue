@@ -85,6 +85,7 @@
                     <el-table-column
                             prop="postTime"
                             width="130px"
+                            sortable
                             label="提交时间">
                     </el-table-column>
                     <el-table-column
@@ -259,7 +260,6 @@
                             <div v-if="questionCheckInfo.checkStatus==0" align="center"><!--审核按钮-->
                                  <el-radio-group
                                          size="small"
-
                                          v-model="passQuestion">
                                     <el-radio :label='1' border>通过</el-radio>
                                     <el-radio :label='2' border>拒绝</el-radio>
@@ -358,7 +358,7 @@
                         this.title1='试题审核';
                         this.passQuestion=1;//
                         this.refuseReason='';
-                        this.updateQuestionCheck=data;//试题的id
+                        this.updateQuestionCheck=data;//试题的信息
                     }
                     let target=JSON.parse(JSON.stringify(data));/*对象的深拷贝*/
                     this.questionCheckInfo=target;
@@ -405,7 +405,7 @@
 
 <style >
     .stem span{
-        white-space:pre-line
+        white-space:pre
     }
 
 </style>

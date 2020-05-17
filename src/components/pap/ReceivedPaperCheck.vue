@@ -53,7 +53,7 @@
                         :show-overflow-tooltip='true'
                         label="组卷方式">
                     <template slot-scope="scope">
-                        <span v-if="scope.row.paperType==0">手工组卷</span>
+                        <span v-if="scope.row.testPaperType==0">手工组卷</span>
                         <span v-else>自动组卷</span>
                     </template>
                 </el-table-column>
@@ -68,8 +68,8 @@
                 >
                     <template slot-scope="scope">
                         <el-tag type="warning" v-if="scope.row.checkStatus==0">未审核</el-tag>
-                        <el-tag type="info" v-else-if="scope.row.checkStatus==1">已通过</el-tag>
-                        <el-tag type="warning" v-else-if="scope.row.checkStatus==2">拒绝</el-tag>
+                        <el-tag type="success" v-else-if="scope.row.checkStatus==1">已通过</el-tag>
+                        <el-tag type="danger" v-else-if="scope.row.checkStatus==2">拒绝</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" width="210px">
@@ -77,22 +77,17 @@
                         <el-button
                                 size="mini"
                                 type="primary"
-                                @click="showDetailView( scope.row)" plain>查看</el-button><!--所有状态都显示-->
+                                v-if="scope.row.checkStatus==1||scope.row.checkStatus==2"
+                                @click="showDetailView( scope.row)" plain>查看</el-button><!--通过审核或拒绝-->
                         <el-button
-                                v-if="scope.row.checkStatus==1"
+                                size="mini"
+                                type="primary"
+                                v-else-if="scope.row.checkStatus==0"
+                                @click="showDetailView( scope.row)" plain>审核</el-button><!--未审核-->
+                        <el-button
                                 size="mini"
                                 type="danger"
                                 @click="showDeleteView(scope.row)" plain>删除</el-button><!--审核通过后的才能删除-->
-                        <el-button
-                                v-if="scope.row.checkStatus==0"
-                                size="mini"
-                                type="primary"
-                                @click="showPassView(scope.row)" plain>通过</el-button><!--未通过审核显示-->
-                        <el-button
-                                size="mini"
-                                type="warning"
-                                v-if="scope.row.checkStatus==0"
-                                @click="showRefuseView( scope.row)" plain>拒绝</el-button><!--未通过审核显示-->
 
                     </template>
                 </el-table-column>
@@ -111,67 +106,29 @@
                         :total="total">
                 </el-pagination>
             </div>
+
             <el-dialog
-                    title="拒绝该试卷加入试卷库"
-                    :visible.sync="paperRefuseDialogVisible"
-                    width="30%"><!--审核拒绝对话框-->
-                <el-input type="textarea"
-                          :rows="10"
-                          v-model="refuseReason"
-                          placeholder="请备注拒绝原因"
-                ></el-input>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="paperRefuseDialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="submitResuseReason">确 定</el-button>
-                  </span>
-            </el-dialog>
-            <el-dialog
-                    title="试卷详情"
+                    :title="title1"
                     :visible.sync="paperDetailDialogVisible"
                     width="60%">
 
-                <!--<el-row :gutter="5" style="margin-top: 20px;margin-bottom: 8px">&lt;!&ndash;带间隔的布局&ndash;&gt;
-                    <el-col :span="5"  style="text-align: right;">
-                        <strong>提交审核时间：</strong>
-                    </el-col>
-                    <el-col :span="6">
-                        <span >{{updatePaperCheck.postTime}}</span>
-                    </el-col>
-                    <el-col :span="6" style="text-align: right;">
-                        <strong>提交人：</strong>
-                        <span v-if="updatePaperCheck.postTeacher!=null">{{updatePaperCheck.postTeacher.name}}</span>
-                    </el-col>
-                </el-row>-->
-                <!--<el-row :gutter="5" style="margin-bottom: 8px">&lt;!&ndash;带间隔的布局&ndash;&gt;
-                    <el-col :span="5" :offset="5"  style="text-align: right;">
-                        <strong>审核状态：</strong>
-                    </el-col>
-                    <el-col :span="6">
-                        <span v-if="updatePaperCheck.checkStatus==0">未审核</span>
-                        <span v-else-if="updatePaperCheck.checkStatus==1">通过</span>
-                        <span v-else-if="updatePaperCheck.checkStatus==2">拒绝</span>
-                    </el-col>
-                    <el-col :span="6" style="text-align: right;">
-                        <strong>拒绝原因：</strong>
-                        <span>{{updatePaperCheck.refuseReason}}</span>
-                    </el-col>
-                </el-row>-->
+               
 
-                <div style="border-radius: 4px;border: 1px solid #dedede;width: 80%;margin:0 auto" v-if="updatePaperCheck.testPaper!=null">
+                <div style="border-radius: 4px;border: 1px solid #dedede;width: 80%;margin:0 auto" v-if="updateTestPaperInfo!=null">
                     <div ><!--试卷标题展示-->
                         <div style="display: flex;justify-content: center">
-                            <h3>{{updatePaperCheck.testPaper.semester}}</h3>
+                            <h3>{{updateTestPaperInfo.testPaper.semester}}</h3>
                         </div>
-                        <div style="display: flex;justify-content: center" v-if="updatePaperCheck.testPaper.school&&updatePaperCheck.testPaper.major&&this.updatePaperCheck.testPaper.course">
-                            <h4>{{updatePaperCheck.testPaper.school.name}}{{updatePaperCheck.testPaper.major.name}}{{updatePaperCheck.testPaper.course.name}}{{updatePaperCheck.testPaper.name}}</h4>
+                        <div style="display: flex;justify-content: center" v-if="updateTestPaperInfo.testPaper.school&&updateTestPaperInfo.testPaper.major&&this.updateTestPaperInfo.testPaper.course">
+                            <h4>{{updateTestPaperInfo.testPaper.school.name}}{{updateTestPaperInfo.testPaper.major.name}}{{updateTestPaperInfo.testPaper.course.name}}{{updateTestPaperInfo.testPaper.name}}</h4>
                         </div>
 
                     </div>
                     <!--单选题-->
-                    <div v-show="updatePaperCheck.testPaper.sclist&&(updatePaperCheck.testPaper.sclist.length>0)">
+                    <div v-show="updateTestPaperInfo.testPaper.sclist&&(updateTestPaperInfo.testPaper.sclist.length>0)">
                         <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
                             <strong>单选题</strong>
-                            <div v-for="(scque,index) in updatePaperCheck.testPaper.sclist" style="margin-top: 20px">
+                            <div v-for="(scque,index) in updateTestPaperInfo.testPaper.sclist" style="margin-top: 20px">
                                 <div>
                                     <div><!--题干-->
                                         <div class="stem">
@@ -189,10 +146,10 @@
                         </div>
                     </div>
                     <!--多选题-->
-                    <div v-show="updatePaperCheck.testPaper.mclist&&(updatePaperCheck.testPaper.mclist.length>0)" style="margin-top: 20px">
+                    <div v-show="updateTestPaperInfo.testPaper.mclist&&(updateTestPaperInfo.testPaper.mclist.length>0)" style="margin-top: 20px">
                         <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
                             <strong>多选题</strong>
-                            <div v-for="(mcque,index) in updatePaperCheck.testPaper.mclist" style="margin-top: 20px">
+                            <div v-for="(mcque,index) in updateTestPaperInfo.testPaper.mclist" style="margin-top: 20px">
                                 <div>
                                     <div><!--题干-->
                                         <div class="stem">
@@ -209,10 +166,10 @@
                         </div>
                     </div>
                     <!--判断题-->
-                    <div v-show="updatePaperCheck.testPaper.tflist&&(updatePaperCheck.testPaper.tflist.length>0)" style="margin-top: 20px">
+                    <div v-show="updateTestPaperInfo.testPaper.tflist&&(updateTestPaperInfo.testPaper.tflist.length>0)" style="margin-top: 20px">
                         <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
                             <strong>判断题</strong>
-                            <div v-for="(tfque,index) in updatePaperCheck.testPaper.tflist" style="margin-top: 20px">
+                            <div v-for="(tfque,index) in updateTestPaperInfo.testPaper.tflist" style="margin-top: 20px">
                                 <div>
                                     <div><!--题干-->
                                         <div class="stem">
@@ -225,10 +182,10 @@
                         </div>
                     </div>
                     <!--填空题-->
-                    <div v-show="updatePaperCheck.testPaper.fblist&&(updatePaperCheck.testPaper.fblist.length>0)" style="margin-top: 20px">
+                    <div v-show="updateTestPaperInfo.testPaper.fblist&&(updateTestPaperInfo.testPaper.fblist.length>0)" style="margin-top: 20px">
                         <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
                             <strong>填空题</strong>
-                            <div v-for="(fbque,index) in updatePaperCheck.testPaper.fblist" style="margin-top: 20px">
+                            <div v-for="(fbque,index) in updateTestPaperInfo.testPaper.fblist" style="margin-top: 20px">
                                 <div>
                                     <div><!--题干-->
                                         <div class="stem">
@@ -241,10 +198,10 @@
                         </div>
                     </div>
                     <!--简答题-->
-                    <div v-show="updatePaperCheck.testPaper.qalist&&(updatePaperCheck.testPaper.qalist.length>0)" style="margin-top: 20px">
+                    <div v-show="updateTestPaperInfo.testPaper.qalist&&(updateTestPaperInfo.testPaper.qalist.length>0)" style="margin-top: 20px">
                         <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
                             <strong>简答题</strong>
-                            <div v-for="(qaque,index) in updatePaperCheck.testPaper.qalist" style="margin-top: 20px">
+                            <div v-for="(qaque,index) in updateTestPaperInfo.testPaper.qalist" style="margin-top: 20px">
                                 <div>
                                     <div><!--题干-->
                                         <div class="stem">
@@ -256,27 +213,67 @@
                             </div>
                         </div>
                     </div>
+                    <div style="margin-top: 20px;margin-bottom: 10px" >
+                        <el-row v-if="updateTestPaperInfo.testPaper">
+                            <el-col :span="5" :offset="13">
+                                <strong>组卷教师：</strong>{{updateTestPaperInfo.testPaper.teacher.name}}
+                            </el-col>
+                            <el-col :span="6">
+                                <strong>提交日期：</strong>{{updateTestPaperInfo.testPaper.createTime}}
+                            </el-col>
+                            <el-col :span="0">
+                                <!--更新日期：{{updateTestPaperInfo.testPaper.updateTime}}-->
+                            </el-col>
+                        </el-row>
+                    </div>
                 </div>
-                <div style="margin-top: 20px">
-                    <el-row v-if="updatePaperCheck.testPaper">
-                        <el-col :span="5" :offset="5">
-                            组卷教师：{{updatePaperCheck.testPaper.teacher.name}}
+                <div v-if="updateTestPaperInfo!=null&&updateTestPaperInfo.checkStatus!=0">
+                    <el-row :gutter="5" style="margin-bottom: 8px" ><!--带间隔的布局-->
+                        <el-col :span="5" style="text-align: right;">
+                            <strong>审核状态：</strong>
                         </el-col>
-                        <el-col :span="6">
-                            创建日期：{{updatePaperCheck.testPaper.createTime}}
-                        </el-col>
-                        <el-col :span="6">
-                            更新日期：{{updatePaperCheck.testPaper.updateTime}}
+                        <el-col :span="19">
+                            <el-tag v-if="updateTestPaperInfo.checkStatus==0" type="warning">未审核</el-tag>
+                            <el-tag v-else-if="updateTestPaperInfo.checkStatus==1" type="success">审核通过</el-tag>
+                            <el-tag v-else-if="updateTestPaperInfo.checkStatus==2" type="danger">审核未通过</el-tag>
                         </el-col>
                     </el-row>
+                    <el-row :gutter="5" v-if="updateTestPaperInfo.checkStatus==2" style="margin-bottom: 8px">
+                        <el-col :span="5" style="text-align: right;">
+                            <strong>拒绝原因：</strong>
+                        </el-col>
+                        <el-col :span="19">
+                            <span>{{updateTestPaperInfo.refuseReason}}</span>
+                        </el-col>
+                    </el-row>
+
+                </div>
+                <div style="margin: 0 auto;width: 80%">
+                    <div v-if="updateTestPaperInfo!=null&&updateTestPaperInfo.checkStatus==0" align="center" style="margin-top: 10px;"><!--审核按钮-->
+
+                        <el-radio-group
+                                size="small"
+                                v-model="passPaper">
+                            <el-radio :label='1' border>通过</el-radio>
+                            <el-radio :label='2' border>拒绝</el-radio>
+                        </el-radio-group>
+                        <div style="margin-bottom: 10px;margin-top: 5px">
+                            <el-input type="textarea"
+                                      :rows="7"
+                                      v-if="passPaper==2"
+                                      v-model="refuseReason"
+                                      placeholder="请备注拒绝原因"
+
+                            ></el-input>
+                        </div>
+                    </div>
+                    <div align="right" style="margin-top: 10px;margin-right: 20px">
+
+                        <el-button v-if="updateTestPaperInfo!=null&&updateTestPaperInfo.checkStatus==0" type="primary" @click="submitCheckResult">提交</el-button>
+                        <el-button v-else type="primary" @click="paperDetailDialogVisible = false">确 定</el-button>
+                    </div>
                 </div>
 
-
-
-                <span slot="footer" class="dialog-footer">
-                   <!-- <el-button @click="dialogVisible2 = false">取 消</el-button>-->
-                    <el-button type="primary" @click="paperDetailDialogVisible = false">确 定</el-button>
-                  </span>
             </el-dialog>
         </div>
     </div>
@@ -289,13 +286,15 @@
         data(){
             return{
                 loading1:false,//加载审核列表数据
+                title1:'试卷详情',
                 receivedPaperChecklist:[],//收到审核试题的列表
                 paperCheckInfo:{},//试卷信息展示的详细信息
                 paperDetailDialogVisible:false,//展示详细信息对话框
                 paperRefuseDialogVisible:false,//展示拒绝审核信息对话框
-
                 updatePaperCheck:{},//这里主要是为了放置对话框中试卷审核信息
+                updateTestPaperInfo:null,//这里主要是为了放置对话框中试卷信息
                 refuseReason:'',//审核拒绝原因
+                passPaper:1,//默认通过审核状态
                 multipleSelection:[],//批量操作
                 optionChar:['A.',"B.", "C.","D.","E.","F.","G.","H.","I.","J."],//这是为了对应多选题的选项序号
                 total:0,
@@ -320,7 +319,7 @@
                     if(resp){
                         this.loading1=false;
                         this.receivedPaperChecklist=resp.data;
-                        console.log(this.receivedPaperChecklist.length);
+                        console.log(this.receivedPaperChecklist);
                         this.total=resp.total;
                     }
                 })
@@ -330,7 +329,7 @@
             },
             submitResuseReason(data){
                 //提交拒绝原因
-                this.postRequest("/pap/check/refuse?id="+this.updatePaperCheck.id+"&reason="+this.refuseReason).then(resp=>{
+                this.postRequest("/pap/check/refuse?id="+this.updateTestPaperInfo.id+"&reason="+this.refuseReason).then(resp=>{
                     if(resp){
                         this.initData();//刷新页面
                         this.emptyRefuseViewData();
@@ -339,10 +338,22 @@
                 })
             },
             showDetailView(data){
-                let target=JSON.parse(JSON.stringify(data));/*对象的深拷贝*/
-                this.updatePaperCheck=target;
+                let target = JSON.parse(JSON.stringify(data));/*对象的深拷贝*/
+                this.updateTestPaperInfo=target;
 
                 this.paperDetailDialogVisible=true;
+
+
+                if(data.checkStatus==0){
+                    this.title1='试卷审核';
+                    this.passPaper=1;//审核状态标识为1，默认通过审核
+                    this.refuseReason='';//拒绝原因置为空
+                    this.updatePaperCheck=target;
+                    console.log("updatePaperCheck",this.updatePaperInfo)
+
+                }
+
+
             },
             showDeleteView(data){
                 this.$confirm('此操作将永久删除该条审核记录, 是否继续?', '提示', {
@@ -361,6 +372,23 @@
                         message: '已取消删除'
                     });
                 });
+            },
+            submitCheckResult(){//提交审核结果
+                if(this.passPaper==2){//审核未通过
+                    this.updatePaperCheck.checkStatus=this.passQuestion;//审核状态
+                    this.updatePaperCheck.refuseReason=this.refuseReason;//审核未通过原因
+                    this.updatePaperCheck.testPaper="";//防止传递过多的数据，这里把试卷信息指控
+                }else{
+                    this.updatePaperCheck.checkStatus=this.passPaper;//审核状态
+                }
+
+                this.postRequest("/pap/check/",this.updatePaperCheck).then(resp=>{
+                    if(resp){
+                        this.initData();//刷新页面
+                        this.emptyRefuseViewData();
+                        this.paperDetailDialogVisible=false;
+                    }
+                })
             },
             showPassView(data){
                 this.$confirm('是否将该试题加入试题库, 是否继续?', '提示', {
@@ -390,7 +418,7 @@
 
             },
             emptyRefuseViewData(){
-                this.updatePaperCheck.id='';
+                this.updateTestPaperInfo.id='';
                 this.refuseReason='';
             },
             sizeChange(currentSize){

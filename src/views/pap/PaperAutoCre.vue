@@ -338,7 +338,7 @@
                                  v-loading="loading2"
                                  element-loading-text="正在生成试卷..."
                                  element-loading-spinner="el-icon-loading"
-                                 style="border-radius: 4px;border: 1px solid #dedede;width: 80%;margin:0 auto;"
+                                 style="border-radius: 4px;border: 1px solid #dedede;width: 70%;margin:0 auto;"
                             ><!--试卷展示-->
 
                                 <div ><!--试卷标题展示-->
@@ -353,7 +353,7 @@
                                 <!--单选题-->
                                 <div v-show="testPaper2.sclist&&(testPaper2.sclist.length>0)">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
-                                        <strong>单选题</strong>
+                                        <strong>单选题（共{{testPaperReg.scTotalNum}}个小题，每小题{{paperQueScores.scScore}}分）</strong>
                                         <div v-for="(scque,index) in testPaper2.sclist" style="margin-top: 20px">
                                             <div>
                                                 <div><!--题干-->
@@ -361,11 +361,11 @@
                                                         {{index+1}}. <span>{{scque.stem}}</span>
                                                     </div>
                                                 </div>
-                                                <div ><!--选项-->
-                                                    <div>A. {{scque.option1}}</div>
-                                                    <div>B. {{scque.option2}} </div>
-                                                    <div>C. {{scque.option3}}</div>
-                                                    <div>D. {{scque.option4}}</div>
+                                                <div style="margin-left: 20px"><!--选项-->
+                                                    <div class="option">A. {{scque.option1}}</div>
+                                                    <div class="option">B. {{scque.option2}} </div>
+                                                    <div class="option">C. {{scque.option3}}</div>
+                                                    <div class="option">D. {{scque.option4}}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -374,7 +374,7 @@
                                 <!--多选题-->
                                 <div v-show="testPaper2.mclist&&(testPaper2.mclist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
-                                        <strong>多选题</strong>
+                                        <strong>多选题（共{{testPaperReg.mcTotalNum}}个小题，每小题{{paperQueScores.mcScore}}分）</strong>
                                         <div v-for="(mcque,index) in testPaper2.mclist">
                                             <div>
                                                 <div><!--题干-->
@@ -382,8 +382,8 @@
                                                         {{index+1}}. <span>{{mcque.stem}}</span>
                                                     </div>
                                                 </div>
-                                                <div ><!--选项-->
-                                                    <div v-for="(item,indexj) in mcque.options"><!--遍历多选题选项-->
+                                                <div style="margin-left: 20px"><!--选项-->
+                                                    <div v-for="(item,indexj) in mcque.options" class="option"><!--遍历多选题选项-->
                                                         {{optionChar[indexj]}} {{item.optionContent}}
                                                     </div>
                                                 </div>
@@ -394,7 +394,7 @@
                                 <!--判断题-->
                                 <div v-show="testPaper2.tflist&&(testPaper2.tflist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
-                                        <strong>判断题</strong>
+                                        <strong>判断题 （共{{testPaperReg.tfTotalNum}}个小题，每小题{{paperQueScores.tfScore}}分）</strong>
                                         <div v-for="(tfque,index) in testPaper2.tflist">
                                             <div>
                                                 <div><!--题干-->
@@ -410,7 +410,7 @@
                                 <!--填空题-->
                                 <div v-show="testPaper2.fblist&&(testPaper2.fblist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
-                                        <strong>填空题</strong>
+                                        <strong>填空题（共{{testPaperReg.fbTotalNum}}个小题，每小题{{paperQueScores.fbScore}}分）</strong>
                                         <div v-for="(fbque,index) in testPaper2.fblist">
                                             <div>
                                                 <div><!--题干-->
@@ -426,7 +426,7 @@
                                 <!--简答题-->
                                 <div v-show="testPaper2.qalist&&(testPaper2.qalist.length>0)" style="margin-top: 20px">
                                     <div style="margin-left: 25px;margin-top: 15px;margin-right: 15px;align-content: center">
-                                        <strong>简答题</strong>
+                                        <strong>简答题（共{{testPaperReg.qaTotalNum}}个小题，每小题{{paperQueScores.qaScore}}分）</strong>
                                         <div v-for="(qaque,index) in testPaper2.qalist">
                                             <div>
                                                 <div><!--题干-->
@@ -544,16 +544,46 @@
                     qaScore2:''
                 },
                 paperQueNums:{//第三步，选择试卷题型的数量和可用的试题数
-                    scSelectNums:0,
-                    scAvailableNums:0,
+                    scSelectNums:0,//选择的数量
+                    scAvailableNums:0,//可用的数量
+                    scDotNum:{
+                        level1:0,
+                        level2:0,
+                        level3:0,
+                        level4:0
+                    },
                     mcSelectNums:0,
                     mcAvailableNums:0,
+                    mcDotNum:{
+                        level1:0,
+                        level2:0,
+                        level3:0,
+                        level4:0
+                    },
                     tfSelectNums:0,
                     tfAvailableNums:0,
+                    tfDotNum:{
+                        level1:0,
+                        level2:0,
+                        level3:0,
+                        level4:0
+                    },
                     fbSelectNums:0,
                     fbAvailableNums:0,
+                    fbDotNum:{
+                        level1:0,
+                        level2:0,
+                        level3:0,
+                        level4:0
+                    },
                     qaSelectNums:0,
                     qaAvailableNums:0,
+                    qaDotNum:{
+                        level1:0,
+                        level2:0,
+                        level3:0,
+                        level4:0
+                    },
                 },
                 paperQueScores:{//选择的试卷中每个题型试题的分数
                     scScore:0,
@@ -563,10 +593,10 @@
                     qaScore:0,
                 },
                 paperDotDis:[{//试题难度分布
-                    queType:'',
-                    dot:'',
-                    queNum:'',
-                    totalNum:''
+                    queType:'',//试题题型
+                    dot:'',//难度
+                    queNum:'',//该题型下试题的总数
+                    totalNum:''//分配数量
                 }],
                 rules:{
                     courseId: [{required: true, message: '请选择课程', trigger: 'blur'}],
@@ -574,17 +604,17 @@
                     checkTeacherId:[{required: true, message: '请选择审核人', trigger: 'blur'}],
                 },
                 testPaper:{},//试卷对象，用于接收后端传来的数据
-                testPaper2:{},
+                testPaper2:{},//试卷预览数据
                 showTestPaper:false,
                 testPaperReg:{//创建试卷时，传到后端的约束规则
-                    knowIds:[],
-                    courseId:'',
-                    scTotalNum:'',
+                    knowIds:[],//知识点数组
+                    courseId:'',//课程id
+                    scTotalNum:'',//试题总数
                     mcTotalNum:'',
                     tfTotalNum:'',
                     fbTotalNum:'',
                     qaTotalNum:'',
-                    scQueReg:{//单选题规则
+                    scQueReg:{//单选题规则，试题数量以及相应试题难度的数量
                         scQueNum:'',
                         dot1Num:'',
                         dot2Num:'',
@@ -618,7 +648,8 @@
                         dot2Num:'',
                         dot3Num:'',
                         dot4Num:'',
-                    }
+                    },
+                    queTypeCharNum:["一、","二、","三、","四、","五、","六、","七、","八、","九、","十、","十一、","十二、","十三、",]
                 }
             }
         },
@@ -629,16 +660,31 @@
             this.initCheckTeachers();
         },
         computed:{
-            allocationScore:function () {
+            allocationScore:function () {//计算已经分配的分数
                 return Number(this.paperQueScores.scScore)*Number(this.paperQueNums.scSelectNums)+
                         Number(this.paperQueScores.mcScore)*Number(this.paperQueNums.mcSelectNums)+
                         Number(this.paperQueScores.tfScore)*Number(this.paperQueNums.tfSelectNums)+
                         Number(this.paperQueScores.fbScore)*Number(this.paperQueNums.fbSelectNums)+
                         Number(this.paperQueScores.qaScore)*Number(this.paperQueNums.qaSelectNums);
+            },
+            testPaper2QueTypeNum:function () {//试卷预览中试题题型的数量,以此作为下标
+                let num=0;
+                if(this.testPaper2.sclist!=null&&this.testPaper2.sclist.length>0){
+                    num+=Number(num);
+                }else if(this.testPaper2.mclist!=null&&this.testPaper2.mclist.length>0){
+                    num+=Number(num);
+                }else if(this.testPaper2.tflist!=null&&this.testPaper2.tflist.length>0){
+                    num+=Number(num);
+                }else if(this.testPaper2.fblist!=null&&this.testPaper2.fblist.length>0){
+                    num+=Number(num);
+                }else if(this.testPaper2.qalist!=null&&this.testPaper2.qalist.length>0){
+                    num+=Number(num);
+                }
+                return num
             }
         },
         methods:{
-            handleNodeClick(){//树形章节知识点结构，选中事件
+            handleNodeClick(){//树形章节知识点结构，选中事件，初始化试题规约中的知识点id
 
                 let res = this.$refs.tree.getCheckedKeys(true);//获取所有叶节点id
                 //console.log(res);
@@ -650,7 +696,6 @@
             submitTestPaper(){//提交保存试卷
                 //提交前检查数据是否都已经填写正确，包括：课程、学院、专业、学期、试卷名称、
                 //试题分数、章节、知识点、审核教师id,总分,及格分
-
 
                 this.updatePaperInfo.passScore=(Number(this.updatePaperInfo.totalScore)*0.6).toFixed(2);
                 this.updatePaperInfo.sclist=this.testPaper2.sclist;
@@ -733,7 +778,8 @@
                 if(paperDotDis!=null){
                     for (let i = 0; i < this.paperDotDis.length; i++) {
                            let queDotDis= this.paperDotDis[i];
-                           if(queDotDis.queType="单选题"){
+                         /*  console.log("queDotDis:",queDotDis);*/
+                           if(queDotDis.queType=="单选题"){
                                if(queDotDis.dot==1){
                                    this.testPaperReg.scQueReg.dot1Num+=Number(queDotDis.queNum);
                                }
@@ -747,7 +793,7 @@
                                    this.testPaperReg.scQueReg.dot4Num+=Number(queDotDis.queNum);
                                }
                            }
-                           if(queDotDis.queType="多选题"){
+                           else if(queDotDis.queType=="多选题"){
                                if(queDotDis.dot==1){
                                    this.testPaperReg.mcQueReg.dot1Num+=Number(queDotDis.queNum);
                                }
@@ -761,7 +807,7 @@
                                    this.testPaperReg.mcQueReg.dot4Num+=Number(queDotDis.queNum);
                                }
                            }
-                           if(queDotDis.queType="判断题"){
+                           else if(queDotDis.queType=="判断题"){
                                if(queDotDis.dot==1){
                                    this.testPaperReg.tfQueReg.dot1Num+=Number(queDotDis.queNum);
                                }
@@ -775,7 +821,7 @@
                                    this.testPaperReg.tfQueReg.dot4Num+=Number(queDotDis.queNum);
                                }
                            }
-                           if(queDotDis.queType="填空题"){
+                           else if(queDotDis.queType=="填空题"){
                                if(queDotDis.dot==1){
                                    this.testPaperReg.fbQueReg.dot1Num+=Number(queDotDis.queNum);
                                }
@@ -789,7 +835,7 @@
                                    this.testPaperReg.fbQueReg.dot4Num+=Number(queDotDis.queNum);
                                }
                            }
-                           if(queDotDis.queType="简答题"){
+                           else if(queDotDis.queType=="简答题"){
                                if(queDotDis.dot==1){
                                    this.testPaperReg.qaQueReg.dot1Num+=Number(queDotDis.queNum);
                                }
@@ -828,20 +874,91 @@
                 this.getRequest("/pap/create/getTypesNum?courseId="+this.updatePaperInfo.courseId).then(resp=> {
                     if (resp) {
                         this.testPaper=resp;
+                        this.paperQueNums.scDotNum={};
+                        this.paperQueNums.mcDotNum={};
+                        this.paperQueNums.tfDotNum={};
+                        this.paperQueNums.fbDotNum={};
+                        this.paperQueNums.qaDotNum={};
                         if(this.testPaper.sclist!=null){//初始化
                             this.paperQueNums.scAvailableNums=this.testPaper.sclist.length;
+                            //初始化试题难度对应的数量
+                            let listsc=this.testPaper.sclist;
+                            for (let i = 0; i < listsc.length; i++) {
+                                let scQue=listsc[i];
+                                if(scQue.dot==1){
+                                    this.paperQueNums.scDotNum.level1=Number( this.paperQueNums.scDotNum.level1)+1;
+                                }else if(scQue.dot==2){
+                                    this.paperQueNums.scDotNum.level2=Number( this.paperQueNums.scDotNum.level2)+1;
+                                }else if(scQue.dot==3){
+                                    this.paperQueNums.scDotNum.level3=Number( this.paperQueNums.scDotNum.level3)+1;
+                                }else if(scQue.dot==4){
+                                    this.paperQueNums.scDotNum.level4=Number( this.paperQueNums.scDotNum.level4)+1;
+                                }
+                            }
                         }
                         if(this.testPaper.mclist!=null){
                             this.paperQueNums.mcAvailableNums=this.testPaper.mclist.length;
+                            let listmc=this.testPaper.mclist;
+                            for (let i = 0; i < listmc.length; i++) {
+                                let mcQue=listmc[i];
+                                if(mcQue.dot==1){
+                                    this.paperQueNums.mcDotNum.level1=Number( this.paperQueNums.mcDotNum.level1)+1;
+                                }else if(mcQue.dot==2){
+                                    this.paperQueNums.mcDotNum.level2=Number( this.paperQueNums.mcDotNum.level2)+1;
+                                }else if(mcQue.dot==3){
+                                    this.paperQueNums.mcDotNum.level3=Number( this.paperQueNums.mcDotNum.level3)+1;
+                                }else if(mcQue.dot==4){
+                                    this.paperQueNums.mcDotNum.level4=Number( this.paperQueNums.mcDotNum.level4)+1;
+                                }
+                            }
                         }
                         if(this.testPaper.tflist!=null){
                             this.paperQueNums.tfAvailableNums=this.testPaper.tflist.length;
+                            let listtf=this.testPaper.tflist;
+                            for (let i = 0; i < listtf.length; i++) {
+                                let tfQue=listtf[i];
+                                if(tfQue.dot==1){
+                                    this.paperQueNums.tfDotNum.level1=Number( this.paperQueNums.tfDotNum.level1)+1;
+                                }else if(tfQue.dot==2){
+                                    this.paperQueNums.tfDotNum.level2=Number( this.paperQueNums.tfDotNum.level2)+1;
+                                }else if(tfQue.dot==3){
+                                    this.paperQueNums.tfDotNum.level3=Number( this.paperQueNums.tfDotNum.level3)+1;
+                                }else if(tfQue.dot==4){
+                                    this.paperQueNums.tfDotNum.level4=Number( this.paperQueNums.tfDotNum.level4)+1;
+                                }
+                            }
                         }
                         if(this.testPaper.fblist!=null){
                             this.paperQueNums.fbAvailableNums=this.testPaper.fblist.length;
+                            let listfb=this.testPaper.fblist;
+                            for (let i = 0; i < listfb.length; i++) {
+                                let fbQue=listfb[i];
+                                if(fbQue.dot==1){
+                                    this.paperQueNums.fbDotNum.level1=Number( this.paperQueNums.fbDotNum.level1)+1;
+                                }else if(fbQue.dot==2){
+                                    this.paperQueNums.fbDotNum.level2=Number( this.paperQueNums.fbDotNum.level2)+1;
+                                }else if(fbQue.dot==3){
+                                    this.paperQueNums.fbDotNum.level3=Number( this.paperQueNums.fbDotNum.level3)+1;
+                                }else if(fbQue.dot==4){
+                                    this.paperQueNums.fbDotNum.level4=Number( this.paperQueNums.fbDotNum.level4)+1;
+                                }
+                            }
                         }
                         if(this.testPaper.qalist!=null){
                             this.paperQueNums.qaAvailableNums=this.testPaper.qalist.length;
+                            let listqa=this.testPaper.qalist;
+                            for (let i = 0; i < listqa.length; i++) {
+                                let qaQue=listqa[i];
+                                if(qaQue.dot==1){
+                                    this.paperQueNums.qaDotNum.level1=Number( this.paperQueNums.qaDotNum.level1)+1;
+                                }else if(qaQue.dot==2){
+                                    this.paperQueNums.qaDotNum.level2=Number( this.paperQueNums.qaDotNum.level2)+1;
+                                }else if(qaQue.dot==3){
+                                    this.paperQueNums.qaDotNum.level3=Number( this.paperQueNums.qaDotNum.level3)+1;
+                                }else if(qaQue.dot==4){
+                                    this.paperQueNums.qaDotNum.level4=Number( this.paperQueNums.qaDotNum.level4)+1;
+                                }
+                            }
                         }
                     }
                 })
@@ -881,7 +998,7 @@
                     }
                 }
             },
-            queTypeChange2(data){
+            queTypeChange2(data){//根据题型查询出该题型下面选择了多少个试题，并计算出该题型的难度的数目
 
                 if(data.queType=="单选题"){
                     data.totalNum=this.paperQueNums.scSelectNums;
@@ -917,8 +1034,8 @@
 
                 this.activeItemIndex++;
                 if (this.activeItemIndex == 1) {//根据课程获取章节和知识点信息
-                    this.initKnows();
-                    this.initQueNums();
+                    this.initKnows();//初始化知识点
+                    this.initQueNums();//初始化试题数量
                     this.$refs.paperBaseInfo.validate((valid) => {
                         if (valid) {
 
@@ -1050,10 +1167,11 @@
 </script>
 
 <style >
-    .el-aside {
-
-
-
-
+    .stem span{
+        white-space:pre;
+        margin-top: 5px;
+    }
+    .option{
+        margin-top: 5px;
     }
 </style>

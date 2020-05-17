@@ -12,6 +12,7 @@
                               style="width: 300px;margin-right: 10px" v-model="keyword" @keydown.enter.native="initTestPaper" ></el-input>
                     <el-button icon="el-icon-search" type="primary" @click="initTestPaper" > 搜索</el-button>
                 </div>
+
                 <div style="width:92%;border:1px solid #f0f0f0;border-radius: 5px;box-sizing: border-box;padding: 5px ;margin: 10px 0px;" ><!--内容面板展示-->
                     <!-- <div style="margin-top: 20px">-->
                     <el-row>
@@ -160,7 +161,7 @@
                             title="试卷详情"
                             :visible.sync="detailTestPaperDialogVisible"
                             width="60%">
-                       <div style="border-radius: 4px;border: 1px solid #dedede;width: 80%;margin:0 auto" v-if="this.updateTestPaperInfo!=null">
+                       <div style="border-radius: 4px;border: 1px solid #dedede;width: 80%;margin:0 auto;padding-bottom: 10px" v-if="this.updateTestPaperInfo!=null">
                            <div ><!--试卷标题展示-->
                                <div style="display: flex;justify-content: center">
                                    <h3>{{updateTestPaperInfo.semester}}</h3>
@@ -169,12 +170,10 @@
                                    <h4>{{updateTestPaperInfo.school.name}}{{updateTestPaperInfo.major.name}}{{updateTestPaperInfo.course.name}}{{updateTestPaperInfo.name}}</h4>
                                </div>
                                <div align="right" style="margin-right: 100px">
-                                   <div>
+                                   <!--<div>
                                        <h5>试卷整体难度：<span style="color:red">适中</span></h5>
-                                   </div>
+                                   </div>-->
                                </div>
-
-
                            </div>
                            <!--单选题-->
                            <div v-show="updateTestPaperInfo.sclist&&(updateTestPaperInfo.sclist.length>0)">
@@ -187,11 +186,11 @@
                                                    {{index+1}}. <span>{{scque.stem}}</span>
                                                </div>
                                            </div>
-                                           <div ><!--选项-->
-                                               <div>A. {{scque.option1}}</div>
-                                               <div>B. {{scque.option2}} </div>
-                                               <div>C. {{scque.option3}}</div>
-                                               <div>D. {{scque.option4}}</div>
+                                           <div style="margin-left: 20px"><!--选项-->
+                                               <div class="option">A. {{scque.option1}}</div>
+                                               <div class="option">B. {{scque.option2}} </div>
+                                               <div class="option">C. {{scque.option3}}</div>
+                                               <div class="option">D. {{scque.option4}}</div>
                                            </div>
                                        </div>
                                    </div>
@@ -208,8 +207,8 @@
                                                    {{index+1}}. <span>{{mcque.stem}}</span>
                                                </div>
                                            </div>
-                                           <div ><!--选项-->
-                                               <div v-for="(item,indexj) in mcque.options"><!--遍历多选题选项-->
+                                           <div style="margin-left: 20px"><!--选项-->
+                                               <div v-for="(item,indexj) in mcque.options" class="option"><!--遍历多选题选项-->
                                                    {{optionChar[indexj]}} {{item.optionContent}}
                                                </div>
                                            </div>
@@ -266,17 +265,17 @@
                                </div>
                            </div>
                        </div>
-                        <div style="margin-top: 20px">
+                        <div style="margin-top: 20px;">
                             <el-row v-if="updateTestPaperInfo.teacher">
-                                <el-col :span="5" :offset="5">
+                                <el-col :span="5" :offset="10">
                                     组卷教师：{{updateTestPaperInfo.teacher.name}}
                                 </el-col>
-                                <el-col :span="6">
+                                <el-col :span="9">
                                     创建日期：{{updateTestPaperInfo.createTime}}
                                 </el-col>
-                                <el-col :span="6">
+                               <!-- <el-col :span="6">
                                     更新日期：{{updateTestPaperInfo.updateTime}}
-                                </el-col>
+                                </el-col>-->
                             </el-row>
                         </div>
 
@@ -514,5 +513,7 @@
 </script>
 
 <style scoped>
-
+    .option{
+        margin-top: 5px;
+    }
 </style>

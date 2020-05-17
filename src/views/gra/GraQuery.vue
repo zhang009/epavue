@@ -441,9 +441,9 @@
                     :visible.sync="drawer"
                     size='26%'
                     style="overflow: scroll"
-                    :before-close="handleClose"
-                    :modal="false"
-                    :with-header="false">
+
+                    :with-header="false"
+                   >
                 <h3 align="center">成绩详情</h3>
                 <div style="padding-left:30px;padding-right:20px">
                     <span style="font-weight:bold;font-size:14px;color:grey">{{testPaper.name}}</span><!--试卷名称-->
@@ -596,10 +596,7 @@
             }
         }
         ,methods:{
-            handleClose(){//关闭成绩详情
-                this.gradeRank='';
-                this.allStudentGrades=[];
-            },
+
             deleteGrade(){
 
             },
@@ -622,41 +619,47 @@
                 this.studentGradeInfo=data;
                 //计算成绩排名
                 //需要注意的是，成绩排名的时候，需要获取该班级下面所有学生的成绩信息，所以这里还需要发送一次请求
-                let grade=this.studentGradeInfo.totalGrade;
+                let grade=this.studentGradeInfo.totalGrade;//当前学生的成绩
+                //先把排名数据清空
+                this.gradeRank='';
+                this.allStudentGrades=[];
+                this. grades=[];
 
-                if(!window.sessionStorage.getItem("allStudentGrades")){//获取该班级下所有学生的成绩
-                    let url = '/gra/input/allOnlyStudentGrades?';
-                    if (this.searchValue2.classId) {
-                        url += '&classId=' + this.searchValue2.classId;
-                    }
-                    if (this.testPaper.id) {
-                        url += '&testPaperId=' + this.testPaper.id;
-                    }
-                    if (this.searchValue2.name!='') {
-                        url += '&studentName=' + this.searchValue2.name;
-                    }
-                    this.getRequest(url).then(resp=>{
 
-                        if(resp){
-                            this.allStudentGrades=resp;
-                            window.sessionStorage.setItem("allStudentGrades", JSON.stringify(resp));
+                //这里为什么把每次查看都发送一次请求，因为有可能用户进行了成绩的添加或编辑操作，所以这里要获取最新的数据
+             /*   if(!window.sessionStorage.getItem("allStudentGrades")){//获取该班级下所有学生的成绩*/
+                let url = '/gra/input/allOnlyStudentGrades?';
+                if (this.searchValue2.classId) {
+                    url += '&classId=' + this.searchValue2.classId;
+                }
+                if (this.testPaper.id) {
+                    url += '&testPaperId=' + this.testPaper.id;
+                }
+                if (this.searchValue2.name!='') {
+                    url += '&studentName=' + this.searchValue2.name;
+                }
+                this.getRequest(url).then(resp=>{
+                    if(resp){
+                        this.allStudentGrades=resp;
+
+                        for (let i = 0; i < this.allStudentGrades.length; i++) {
+                            this.grades.push(this.allStudentGrades[i].totalGrade);
                         }
-                    })
 
 
-                }else{
+                        let grades=this.sort(this.grades);//排序
+                        console.log("grades",grades);
+                        let index=this.getArrayIndex(grades,grade);
+                        this.gradeRank=Number(index)+1;
+                        window.sessionStorage.setItem("allStudentGrades", JSON.stringify(resp));
+                    }
+                })
+
+
+                /*}else{
                     this.allStudentGrades=JSON.parse(window.sessionStorage.getItem("allStudentGrades"));
-                }
-                console.log(this.grades);
-                for (let i = 0; i < this.allStudentGrades.length; i++) {
-                   this.grades.push(this.allStudentGrades[i].totalGrade);
-                }
-                console.log(this.grades);
+                }*/
 
-                let grades=this.sort(this.grades);//排序
-                console.log(grades);
-                let index=this.getArrayIndex(grades,grade);
-                this.gradeRank=Number(index)+1;
 
 
 
@@ -671,11 +674,11 @@
               return -1;
 
             },
-            sort(arr){//数组排序
+            sort(arr){//数组排序,降序
                 var len=arr.length;
                 for (let i = 0; i < len; i++) {
                     for (let j = 0; j < len - 1; j++) {
-                        if(arr[j]>arr[j+1]){
+                        if(arr[j]<arr[j+1]){
                             var temp=arr[j+1];//元素交换
                             arr[j+1]=arr[j];
                             arr[j]=temp;

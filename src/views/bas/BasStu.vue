@@ -55,7 +55,7 @@
             <transition name="fade"><!--第二行，条件搜索div-->
                 <div v-show="showAdvanceSearchView" style="border :1px solid #409eff;border-radius: 5px;box-sizing: border-box;padding: 5px ;margin: 10px 0px;"><!--条件搜索-->
                     <el-row>
-                        <el-col :span="12" style="margin-left: 10px;">
+                        <el-col :span="13" style="margin-left: 10px;">
                             学院:
                             <el-select v-model="searchValue.schoolId"
                                        placeholder="请选择学院"
@@ -102,7 +102,7 @@
                             <el-button size="small" @click="emptySearchValue">取消</el-button>
                             <el-button size="small" icon="el-icon-search" type="primary" @click="initStudents('advanced')">搜索</el-button>
                         </el-col>
-                        <el-col :span="6" >
+                        <el-col :span="5" >
                         </el-col>
 
                     </el-row>
@@ -393,6 +393,9 @@
                         return;
                     }
                 }else{
+                    if(this.searchValue.classId&&this.searchValue.classId!=''){
+                        url+='&classId='+this.searchValue.classId;
+                    }
                     //普通搜索
                     url+="&name="+this.keyword;
                 }

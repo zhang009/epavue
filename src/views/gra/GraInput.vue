@@ -287,7 +287,7 @@
                             align="center"
                             label="操作">
                         <template slot-scope="scope">
-                            <el-button size="mini" >详情</el-button>
+                            <el-button size="mini" @click="showDetailGrade(scope.row)">详情</el-button>
                         </template>
                     </el-table-column>
 
@@ -527,6 +527,67 @@
                 <el-button size="small" type="primary" @click="addTestPaperClassInfo">确 定</el-button>
               </span>
             </el-dialog>
+            <!--成绩详情抽屉-->
+            <el-drawer
+                    title="成绩详情"
+                    :visible.sync="drawer"
+                    size='26%'
+                    style="overflow: scroll"
+
+
+                    :with-header="false">
+                <h3 align="center">成绩详情</h3>
+                <div style="padding-left:30px;padding-right:20px">
+                    <span style="font-weight:bold;font-size:14px;color:grey">{{testPaper.name}}</span><!--试卷名称-->
+                    <el-divider></el-divider>
+                    <div>
+                        <el-form label-position="right" label-width="80px">
+                            <el-form-item label="学生姓名:">
+                                {{studentGradeInfo.studentName}}
+                            </el-form-item>
+                            <el-form-item label="成绩:" >
+                                {{studentGradeInfo.totalGrade}}
+                            </el-form-item>
+                            <el-form-item label="是否及格:">
+                                <div v-if="isPass">
+                                    <el-tag type="success"  effect="plain">及格</el-tag>
+                                </div>
+                                <div v-else>
+                                    <el-tag type="danger"  effect="plain">不及格</el-tag>
+                                </div>
+                            </el-form-item>
+                            <el-form-item label="成绩排名:">
+                                第{{gradeRank}}名
+                                &#12288;&#12288;&#12288;&#12288;&#12288;&#12288;(共{{allStudentGrades.length}}名学生)
+                            </el-form-item>
+                        </el-form>
+
+                    </div>
+                    <el-divider content-position="left">试题得分详情</el-divider>
+                    <div  style="margin-left: 0px;margin-top: 20px">
+                        <div v-for="(largeQue,indexi) in studentGradeInfo.largeQues" :key="indexi" style="margin-top: 20px;">
+                            <div v-if="largeQue.queType!=null&&largeQue.queType!=''" style="margin-bottom: 10px"><!--大题标题-->
+                                第{{largeQueTypeNum[indexi]}}大题、<strong>{{largeQue.queType}}</strong>
+                                （共{{largeQue.smallQueGrade.length}}小题，累计得分{{largeQue.largeQueGrade}}分）
+                            </div>
+                            <div v-for="(smallQue,indexj) in largeQue.smallQueGrade" :key="indexj">
+                                <el-row style="margin-top: 10px">
+                                    <el-col :span="4" style="" align="center">
+                                        <el-tag  effect="plain">试题{{indexj+1}}.</el-tag><!--小题序号-->
+                                    </el-col>
+                                    <el-col :span="7" style="">
+                                        原分值:{{smallQue.initScore}} 分
+                                    </el-col>
+                                    <el-col :span="8" style="">
+                                        得分:{{smallQue.queGrade}} 分
+                                    </el-col>
+                                </el-row>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </el-drawer>
         </div>
 
     </div>
@@ -539,6 +600,7 @@
         name: "GraInput",
         data(){
             return{
+                drawer:false,
                 loading1:false,//加载试卷列表
                 loading2:false,//选择班级，加载成绩列表
                 loading3:false,//导入数据加载
@@ -614,7 +676,11 @@
                     testPaperId:'',
                     courseId:'',
                     classId:'',
-                }
+                },
+                studentGradeInfo:'',//显示学生成绩详情
+                gradeRank:'',//成绩排名
+                grades:[],
+                allStudentGrades:[],//这里存储所有学生的成绩
 
             }
         },created() {
@@ -633,6 +699,16 @@
                     }
                 }
                 return total;
+            },
+            //是否及格
+            isPass:function () {
+                if(this.studentGradeInfo!=''){
+                    if(this.studentGradeInfo.totalGrade>(this.testPaper.totalScore*0.6)){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
             }
         },
 
@@ -647,6 +723,29 @@
 
 
         },methods:{
+            sort(arr){//数组排序
+                var len=arr.length;
+                for (let i = 0; i < len; i++) {
+                    for (let j = 0; j < len - 1; j++) {
+                        if(arr[j]<arr[j+1]){
+                            var temp=arr[j+1];//元素交换
+                            arr[j+1]=arr[j];
+                            arr[j]=temp;
+                        }
+                    }
+                }
+                return arr;
+            },
+            getArrayIndex(arr,val){//获取数组的下标
+                var i=arr.length;
+                while(i--){
+                    if(arr[i]===val){
+                        return i;
+                    }
+                }
+                return -1;
+
+            },
             rowClick(row){//选中试卷表格数据的某一行，触发该事件
 
                 this.testPaper=JSON.parse(JSON.stringify(row));//对象的深拷贝
@@ -782,7 +881,56 @@
                     this.postTeachers=JSON.parse(window.sessionStorage.getItem("AllPostTeachers"));
                 }
             },
+            showDetailGrade(data){//成绩详情
+                // alert();
+                this.drawer=true;
+                this.studentGradeInfo=data;
+                //计算成绩排名
+                //需要注意的是，成绩排名的时候，需要获取该班级下面所有学生的成绩信息，所以这里还需要发送一次请求
+                let grade=this.studentGradeInfo.totalGrade;//当前学生的成绩
+                //先把排名数据清空
+                this.gradeRank='';
+                this.allStudentGrades=[];
+                this. grades=[];
 
+                //这里为什么把每次查看都发送一次请求，因为有可能用户进行了成绩的添加或编辑操作，所以这里要获取最新的数据
+                /*   if(!window.sessionStorage.getItem("allStudentGrades")){//获取该班级下所有学生的成绩*/
+                let url = '/gra/input/allOnlyStudentGrades?';
+                if (this.searchValue2.classId) {
+                    url += '&classId=' + this.searchValue2.classId;
+                }
+                if (this.testPaper.id) {
+                    url += '&testPaperId=' + this.testPaper.id;
+                }
+                if (this.searchValue2.name!='') {
+                    url += '&studentName=' + this.searchValue2.name;
+                }
+                this.getRequest(url).then(resp=>{
+                    if(resp){
+                        this.allStudentGrades=resp;
+
+                        for (let i = 0; i < this.allStudentGrades.length; i++) {
+                            this.grades.push(this.allStudentGrades[i].totalGrade);
+                        }
+
+
+                        let grades=this.sort(this.grades);//排序
+
+                        let index=this.getArrayIndex(grades,grade);
+                        this.gradeRank=Number(index)+1;
+                        window.sessionStorage.setItem("allStudentGrades", JSON.stringify(resp));
+                    }
+                })
+
+
+                /*}else{
+                    this.allStudentGrades=JSON.parse(window.sessionStorage.getItem("allStudentGrades"));
+                }*/
+
+
+
+
+            },
             selectSchoolChanged(){
                 //学院下拉框改变
                 this.initMajors();
@@ -997,6 +1145,9 @@
     }
 </script>
 
-<style scoped>
+<style >
+    .el-drawer{
 
+        overflow: scroll
+    }
 </style>
