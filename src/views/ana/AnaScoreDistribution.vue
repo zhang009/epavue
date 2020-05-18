@@ -43,8 +43,8 @@
                     </el-table-column>
                 </el-table>
                 <el-dialog title="成绩区间人数分布" :visible.sync="column_value" :destroy-on-close="true">
-                    <div id="column" :style="{width: '600px', height: '300px'}" ></div>
-                    <div id="line_chart" :style="{width: '600px', height: '300px'}" ></div>
+                    <div id="column" :style="{width: '800px', height: '300px'}" ></div>
+                    <div id="line_chart" :style="{width: '800px', height: '300px'}" ></div>
                     <div style="font-size: 20px">成绩区间人数分布越接近正态分布曲线右半部分的形状，则试卷质量就越好。</div>
                 </el-dialog>
 <!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
@@ -84,14 +84,16 @@
                     },
                     grid: {
                         left: '3%',
-                        right: '4%',
+                        right: '16%',
                         bottom: '3%',
                         containLabel: true
                     },
                     xAxis: [
                         {
+                            name:'分数区间',
+                            nameTextStyle:{fontSize:18},
                             type: 'category',
-                            data: ["60以下", "60-69", "70-79", "80-89", "90-100"],
+                            data: ["60以上", "60-69", "70-79", "80-89", "90-100"],
                             axisTick: {
                                 alignWithLabel: true
                             }
@@ -99,6 +101,8 @@
                     ],
                     yAxis: [
                         {
+                            name:'人数',
+                            nameTextStyle:{fontSize:18},
                             type: 'value'
                         }
                     ],
@@ -117,11 +121,21 @@
                 line_chart:null,
                 //折线图数据
                 line_chart_option : {
+                    grid: {
+                        left: '3%',
+                        right: '15%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
                     xAxis: {
+                        name:'分数区间',
+                        nameTextStyle:{fontSize:18},
                         type: 'category',
-                        data: ['60以下', '60-69', '70-79', '80-89', '90-100']
+                        data: ['60以上', '60-69', '70-79', '80-89', '90-100']
                     },
                     yAxis: {
+                        name:'人数',
+                        nameTextStyle:{fontSize:18},
                         type: 'value'
                     },
                     series: [{
