@@ -3,12 +3,15 @@
         <div><!--试题审核页面-->
             <br>
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-                <el-tab-pane label="提交试卷审核" name="receivedpapercheck" v-if="isCourseCourseManager">
-                    <SubmittedPaperCheck v-if="isChildUpdate1"></SubmittedPaperCheck>
-                </el-tab-pane>
-                <el-tab-pane label="收到试卷审核" name="submittedpapercheck">
+
+                <el-tab-pane label="收到的试卷审核" name="submittedpapercheck">
                     <ReceivedPaperCheck v-if="isChildUpdate2"></ReceivedPaperCheck>
                 </el-tab-pane>
+
+                <el-tab-pane label="提交的试卷审核" name="receivedpapercheck" v-if="isCourseCourseManager">
+                    <SubmittedPaperCheck v-if="isChildUpdate1"></SubmittedPaperCheck>
+                </el-tab-pane>
+
             </el-tabs>
         </div>
     </div>
@@ -26,7 +29,7 @@
         },
         data(){
             return{
-                activeName:'receivedpapercheck',
+                activeName:'submittedpapercheck',
                 isChildUpdate1:true,
                 isChildUpdate2:false,
                 isCourseCourseManager:false,//是否是课程负责人

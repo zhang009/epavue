@@ -115,7 +115,7 @@
                                             <el-form-item label="设置试题难度:" prop="dot"  >
                                                 <el-select v-model="updateRightQueInfo.dot"
                                                            placeholder="请选择试题难度"
-                                                           @change="selectChapterChanged"
+
                                                            size="large"
                                                            style="width: 250px;">
                                                     <el-option
@@ -581,16 +581,16 @@
                         this.chapters=resp;
                     }
                 })
-                //获取知识点列表
+
+            },
+            selectChapterChanged(){//章节下拉框选中触发
+                                   //获取知识点列表
                 this.getRequest("/baseinfo/knows/all?courseId="+this.updateRightQueInfo.courseId).then(resp=> {
                     if (resp) {
                         //this.knows=JSON.parse(JSON.stringify(resp));
                         this.knows=resp[0].children;
                     }
                 })
-            },
-            selectChapterChanged(){//章节下拉框选中触发
-
             },
             selectKnowsChanged(){
                 //console.log('knowIds:'+this.knowIds);
@@ -883,7 +883,7 @@
                 }
             },
             emptyRightInfo(){
-                this.updateRightQueInfo.courseId='';
+
                 this.updateRightQueInfo.chapterId='';
                 this.updateRightQueInfo.dot='';
                 this.updateRightQueInfo.knowIds='';

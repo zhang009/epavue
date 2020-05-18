@@ -88,6 +88,7 @@
                <el-table-column
                        prop="postTime"
                        width="130px"
+                       sortable
                        label="提交时间">
                </el-table-column>
                <el-table-column
@@ -409,6 +410,6 @@
 
 <style >
     .stem span{
-        white-space:pre-line
+        white-space:pre
     }
 </style>

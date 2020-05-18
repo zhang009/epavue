@@ -45,7 +45,7 @@
                                         :value="item.id">
                                 </el-option>
                             </el-select>
-                            <el-button size="mini" @click="emptySearchValue">重置</el-button>
+                            <el-button size="small" @click="emptySearchValue" style="margin-left: 5px">重置</el-button>
                             <el-button  type="primary" icon="el-icon-search" @click="initPaperTemplate('advanced')">
                                 条件搜索</el-button>
                         </el-col>
