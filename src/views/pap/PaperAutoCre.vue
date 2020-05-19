@@ -261,7 +261,7 @@
                                             </el-form>
 
                                             <div style="margin-top: 20px;">
-                                                <span>试卷共：{{updatePaperInfo.totalScore}}分</span> <span style="margin-left: 20px">已选择{{allocationScore}}分</span>
+                                                <span>试卷共：<strong>{{updatePaperInfo.totalScore}}分</strong></span> <span style="margin-left: 20px">已分配：<span style="color: red">{{allocationScore}}</span>分</span>
                                             </div>
                                         </div>
                                     </div>

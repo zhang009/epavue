@@ -4,12 +4,12 @@
             <br>
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
 
-                <el-tab-pane label="收到的试卷审核" name="submittedpapercheck">
-                    <ReceivedPaperCheck v-if="isChildUpdate2"></ReceivedPaperCheck>
+                <el-tab-pane label="收到的试卷审核" name="receivedpapercheck" v-if="isCourseCourseManager">
+                    <ReceivedPaperCheck v-if="isChildUpdate1"></ReceivedPaperCheck>
                 </el-tab-pane>
 
-                <el-tab-pane label="提交的试卷审核" name="receivedpapercheck" v-if="isCourseCourseManager">
-                    <SubmittedPaperCheck v-if="isChildUpdate1"></SubmittedPaperCheck>
+                <el-tab-pane label="提交的试卷审核" name="submittedpapercheck" >
+                    <SubmittedPaperCheck v-if="isChildUpdate2"></SubmittedPaperCheck>
                 </el-tab-pane>
 
             </el-tabs>

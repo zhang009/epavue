@@ -135,7 +135,7 @@
                                            @change="selectSchool2Changed"
                                            placeholder="请选择学院"
                                            size="small"
-                                           :disabled="true"
+                                           :disabled="schoolDisabled"
                                            style="margin-left: 5px;width: 300px">
                                     <el-option
                                             v-for="item in schools"
@@ -152,7 +152,7 @@
                                 <el-select v-model="updateCourse.majorId"
                                            @change="selectMajor2Changed"
                                            placeholder="请选择专业"
-                                           :disabled="true"
+                                           :disabled="majorDisabled"
                                            size="small"
                                            style="margin-left: 5px;width: 300px">
                                     <el-option
@@ -168,9 +168,9 @@
                             <td> <el-tag>选择班级</el-tag></td>
                             <td>
                                 <el-select v-model="updateCourse.classId"
-                                           placeholder="请选择专业"
+                                           placeholder="请选择班级"
                                            size="small"
-                                           :disabled="true"
+                                           :disabled="classDisabled"
                                            style="margin-left: 5px;width: 300px">
                                     <el-option
                                             v-for="item in classes2"
@@ -254,6 +254,9 @@
                 page:1,
                 size:10,
                 dialogVisible:false,
+                schoolDisabled:false,//禁用标志，用来修改课程时使用
+                majorDisabled:false,
+                classDisabled:false,
 
             }
         }
@@ -332,6 +335,9 @@
 
             showAddClassView(){
                 this.title='添加课程信息';
+                this.schoolDisabled=false;
+                this.majorDisabled=false;
+                this.classDisabled=false;
                 this.dialogVisible=true;
               /* this.searchValue.schoolId='';
                this.searchValue.majorId='';//清空查询的*/
@@ -419,6 +425,11 @@
                this.selectMajor2Changed();
                 this.$forceUpdate();
                 this.title='编辑课程信息';
+
+                this.schoolDisabled=true;
+                this.majorDisabled=true;
+                this.classDisabled=true;
+
                 this.dialogVisible=true;//显示编辑对话框
 
             }

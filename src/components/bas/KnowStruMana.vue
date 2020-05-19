@@ -320,7 +320,8 @@
                     //如果是新建的课程（没有章节和知识点），则需要新建章节
                     this.title1="添加章节"
                     this.know.parentId=this.searchValue.courseId;//这里添加章节设置的parentId不在是后端传过来的，
-                    this.courseName=node.parent.label;//展示所属课程
+                    console.log("node:",node);
+                    this.courseName=node.label;//展示所属课程
                     this.dialogVisible1=true;//展示
                 }else if(data.parentId==-1&&data.children==null){
                     //添加知识点

@@ -93,8 +93,8 @@
                                             <div>
                                                 <span>题型：单选题</span>
                                                 <el-divider direction="vertical"></el-divider>
-
-                                                <span>难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <span v-if="scope.row.dot">难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <span v-else>难度：</span><!--难度为空-->
                                                <!-- <el-divider direction="vertical"></el-divider>
                                                 <span>草木深</span>-->
                                             </div>
@@ -174,7 +174,8 @@
                                                 <span>题型：多选题</span>
                                                 <el-divider direction="vertical"></el-divider>
 
-                                                <span>难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <span v-if="scope.row.dot">难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <span v-else>难度：</span><!--根据dot的数值，对应到qlevel的label值-->
                                                <!-- <el-divider direction="vertical"></el-divider>
                                                 <span>草木深</span>-->
                                             </div>
@@ -251,7 +252,8 @@
                                                 <span>题型：判断题</span>
                                                 <el-divider direction="vertical"></el-divider>
 
-                                                <span>难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <span v-if="scope.row.dot">难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <span v-else>难度：</span><!--根据dot的数值，对应到qlevel的label值-->
                                                <!-- <el-divider direction="vertical"></el-divider>
                                                 <span>草木深</span>-->
                                             </div>
@@ -328,7 +330,8 @@
                                                 <span>题型：填空题</span>
                                                 <el-divider direction="vertical"></el-divider>
 
-                                                <span>难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <span v-if="scope.row.dot">难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <span v-else>难度：</span>
                                                <!-- <el-divider direction="vertical"></el-divider>
                                                 <span>草木深</span>-->
                                             </div>
@@ -405,7 +408,8 @@
                                                 <span>题型：简答题</span>
                                                 <el-divider direction="vertical"></el-divider>
 
-                                                <span>难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <span v-if="scope.row.dot">难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <span v-else>难度：</span><!--根据dot的数值，对应到qlevel的label值-->
                                                <!-- <el-divider direction="vertical"></el-divider>
                                                 <span>草木深</span>-->
                                             </div>
@@ -719,9 +723,6 @@
                     if (this.searchValue.qcourse) {
                         url += '&courseId=' + this.searchValue.qcourse;
                     }
-                    if (this.searchValue.qcourse) {
-                        url += '&courseId=' + this.searchValue.qcourse;
-                    }
                     if (this.keyword!='') {
                         url += '&stem=' + this.keyword;
                     }
@@ -920,12 +921,14 @@
                     });
                 });
             },
-            deleteMCQue(){
+            deleteMCQue(data){
+
                 this.$confirm('此操作将永久删除该多选题, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
+
                     this.deleteRequest("/question/mcinput/"+data.id).then(resp=>{
                         if(resp){
                             this.initQuestions();
@@ -939,7 +942,7 @@
                     });
                 });
             },
-            deleteTFQue(){
+            deleteTFQue(data){
                 this.$confirm('此操作将永久删除该判断题, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -958,7 +961,7 @@
                     });
                 });
             },
-            deleteFBQue(){
+            deleteFBQue(data){
                 this.$confirm('此操作将永久删除该填空题, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -977,7 +980,7 @@
                     });
                 });
             },
-            deleteQAQue(){
+            deleteQAQue(data){
                 this.$confirm('此操作将永久删除该简答题, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',

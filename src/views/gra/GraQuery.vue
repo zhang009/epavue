@@ -158,6 +158,7 @@
                              </template>
                          </el-table-column>-->
                     </el-table>
+
                     <div style="text-align: right;width: 92%;margin-top: 10px">
                         <el-pagination
                                 background
@@ -252,7 +253,12 @@
                         element-loading-spinner="el-icon-loading"
                         element-loading-background="rgba(0, 0, 0, 0.7)"
                         :default-sort = "{prop: 'grade', order: 'descending'}"
+                        @selection-change="handleSelectionChange"
                         style="width: 80%">
+                    <el-table-column
+                            type="selection"
+                            width="55">
+                    </el-table-column>
                     <el-table-column
                             type="index"
                             label="编号"
@@ -302,12 +308,17 @@
                         <template slot-scope="scope">
                             <el-button size="mini" @click="showDetailGrade(scope.row)">详情</el-button>
                             <el-button size="mini" @click="showUpdateGrade(scope.row)">编辑</el-button>
-                            <el-button size="mini" @click="deleteGrade">删除</el-button>
+                            <el-button size="mini" @click="deleteHandler(scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
 
 
                 </el-table>
+                <el-button
+                        size="mini"
+                        type="danger"
+                        style="margin-top:8px "
+                        @click="deleteMany" :disabled="multipleSelection.length==0">批量删除</el-button><!--批量删除-->
                 <div style="text-align: right;width: 80%;margin-top: 10px">
                     <el-pagination
                             background
@@ -555,7 +566,8 @@
                 radioId:'',//选中试卷行的id
                 page2:1,//学生成绩页码
                 size2:10,
-                total2:10,
+                total2:0,
+                multipleSelection: [],//批量操作勾选数组
 
 
             }
@@ -655,6 +667,12 @@
                     }
                 })
 
+                this.getRequest('/pap/testPaper/getAllTestPaperById?id='+row.id).then(resp=>{
+                    if(resp){
+                       let testPaper=resp.obj;
+                       console.log(testPaper);
+                    }
+                })
 
                 /*}else{
                     this.allStudentGrades=JSON.parse(window.sessionStorage.getItem("allStudentGrades"));
@@ -692,6 +710,7 @@
                /* this.updateStudentGrade.studentName=data.studentName;
                 this.updateStudentGrade.studentNum=data.studentNum;*/
                console.log(data);
+               this.updateStudentGrade.id=data.id;
                this.updateStudentGrade.studentNum=data.studentNum;
                this.updateStudentGrade.studentName=data.studentName;
                this.updateStudentGrade.totalGrade=data.totalGrade;
@@ -778,7 +797,7 @@
             doUpdateStudentGrade(){//保存成绩信息
                 // console.log(this.updateStudentGrade)
                 //验证信息
-                this.postRequest('/gra/input/updateStudentGrade',this.updateStudentGrade).then(resp=>{
+                this.putRequest('/gra/input/updateStudentGrade',this.updateStudentGrade).then(resp=>{
                     if(resp){
                         this.initStudentGrades();
                         this.showUpdateGradeVisible=false;
@@ -877,6 +896,34 @@
                         message: '已取消删除'
                     });
                 });
+            },
+            deleteMany(){
+                this.$confirm('此操作将永久删除【'+this.multipleSelection.length+'】条记录, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    //点击确定批量删除
+                    let ids='?';
+                    this.multipleSelection.forEach(item=>{
+                        ids+='ids='+item.id+'&'
+                    })
+                    this.deleteRequest("/gra/input/"+ids).then(resp=>{
+                        if(resp){
+                            //删除成功
+                            this.initStudentGrades();
+                        }
+                    });
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
             },
         }
     }

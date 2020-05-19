@@ -17,7 +17,7 @@
             </el-dropdown>
         </el-header>
             <el-container>
-                <el-aside width="200px">
+                <el-aside width="200px;">
                     <!--<el-menu @select="menuClick">-->
                     <el-menu router unique-opened><!--左侧菜单栏-->
                             <!--default-active="2"默认打开的菜单项，这里关闭-->

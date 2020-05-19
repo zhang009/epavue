@@ -294,7 +294,8 @@
                         border
                         v-loading="loading1"
                         element-loading-spinner="el-icon-loading"
-                        element-loading-background="rgba(0, 0, 0, 0.7)"
+                        element-loading-text="正在加载数据"
+                        element-loading-background="rgba(0, 0, 0, 0.5)"
                         style="width: 90%"
                         :default-sort = "{prop: 'createTime', order: 'descending'}"
                         >
@@ -434,15 +435,15 @@
                         <el-divider></el-divider>
                         <div >
                                 <el-row >
-                                    <el-col :span="6" :offset="6">
+                                    <el-col :span="6" :offset="11">
                                         创建教师：{{templateDetailInfo.postTeacherName}}
                                     </el-col>
                                     <el-col :span="6">
                                         创建日期：{{templateDetailInfo.createTime}}
                                     </el-col>
-                                    <el-col :span="6">
+                                    <!--<el-col :span="6">
                                         更新日期：{{templateDetailInfo.updateTime}}
-                                    </el-col>
+                                    </el-col>-->
                                 </el-row>
                         </div>
 
@@ -585,7 +586,7 @@
         },
         methods:{
             initPaperTemplate(type){
-                this.loading = true;
+                this.loading1 = true;
                 let url = '/pap/template/?page=' + this.page + '&size=' + this.size;
                 if (type && type == 'advanced') {//条件搜索
                     if (this.searchValue.courseId) {
@@ -600,7 +601,7 @@
                 console.log(url);
                 this.getRequest(url).then(resp=>{
                     if(resp){
-                        this.loading = false;
+                        this.loading1 = false;
                       /*  console.log(resp.data);*/
                         this.paperTemplates=resp.data;
                         this.total=resp.total;
@@ -875,6 +876,7 @@
             showAddTemplateView(){
                 this.dialogVisible=true;
                 this.title="添加试卷模板"
+                this.emptyUpdateInfo()
             },
             emptySearchValue(){
                 this.searchValue.courseId='';
@@ -925,8 +927,10 @@
                                 if(resp){
                                     this.dialogVisible=false;
                                     console.log("添加试卷")
+
                                     this.initPaperTemplate();
                                     this.emptyUpdateInfo();
+
 
                                 }
                             })

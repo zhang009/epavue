@@ -24,7 +24,7 @@
         },
         data(){
             return{
-                activeName:'receivedcheck',
+                activeName:'submittedcheck',
                 isChildUpdate1:true,
                 isChildUpdate2:false,
                 isCourseCourseManager:false,//是否是课程负责人
@@ -44,6 +44,7 @@
                     let role=roles[i];
                     if(role.name=='ROLE_coursemanager'){
                         this.isCourseCourseManager=true;//
+                        this.activeName='receivedcheck';//默认显示标签栏
                         return;
                     }
                 }

@@ -884,12 +884,12 @@
             },
             emptyRightInfo(){
 
-                this.updateRightQueInfo.chapterId='';
+                /*this.updateRightQueInfo.chapterId='';*/
                 this.updateRightQueInfo.dot='';
-                this.updateRightQueInfo.knowIds='';
-                this.updateRightQueInfo.checkTeacherId='';
+               /* this.updateRightQueInfo.knowIds='';*/
+             /*   this.updateRightQueInfo.checkTeacherId='';*/
                 this.knowIds=[];
-                this.knows=[];
+               /* this.knows=[];*/
             }
         }
     }

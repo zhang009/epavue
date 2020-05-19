@@ -228,11 +228,19 @@
             <!--成绩展示table-->
             <div style="margin-top: 20px">
 
+                <div style="display: flex;justify-content: space-between;width: 80%">
+                    <div>
+                        <div v-if="isClick">
+                            该班级下共有学生：<span>{{students.length}}</span>人，还有<span style="color: red">{{notInputGradeStuNum}}</span>人未录入成绩。
+                        </div>
+                    </div>
 
-                <div align="right" style="width: 80%">
-                    <el-button size="small" type="primary" @click="showAddGradeView">添加成绩信息</el-button>
-                    <el-button size="small" type="primary" @click="showMultiAddGradeView">批量添加</el-button>
+                    <div align="right" >
+                        <el-button size="small" type="primary" @click="showAddGradeView">添加成绩信息</el-button>
+                        <el-button size="small" type="primary" @click="showMultiAddGradeView">批量添加</el-button>
+                    </div>
                 </div>
+
 
                 <el-table
                         :data="studentGrades"
@@ -645,7 +653,7 @@
                 size:10,
                 page2:1,//学生成绩页码
                 size2:10,
-                total2:10,
+                total2:0,
                 radioId:'',
                 addTestPaperClass:{//在试卷下添加班级的信息
                     classId:'',
@@ -660,6 +668,7 @@
                     totalGrade:'',
                     largeQues:[]
                 },
+                isClick:false,//点击确定按钮触发
 
                 /*largeQues:[{
                         queType:'',
@@ -709,6 +718,12 @@
                         return false;
                     }
                 }
+            },
+            //未录入学生人数
+            notInputGradeStuNum:function () {
+                if(this.students!=''){
+                    return Number(this.students.length)-Number(this.total2);
+                }
             }
         },
 
@@ -717,7 +732,7 @@
             this.initCourse();
             this.initPostTeachers();
             var that=this;
-            setTimeout(function () {//跳转到试题查询页面
+            setTimeout(function () {
                 that.selectTestPaperDialogVisible=true;
             },500);
 
@@ -771,6 +786,18 @@
 
                 console.log(this.students!=null);
                /* console.log(this.updateStudentGrade.studentName);*/
+
+                //判断成绩是否存在
+                if(this.studentGrades!=null){
+                    for (let i = 0; i < this.studentGrades.length; i++) {
+                        if(this.studentGrades[i].studentName==this.updateStudentGrade.studentName){
+                            //提示信息
+                            this.$message.error('该生成绩已录入，请检查！');
+
+                            return;
+                        }
+                    }
+                }
                 //显示学生的学号
                 if(this.students!=null){
 
@@ -778,16 +805,6 @@
                         if(this.updateStudentGrade.studentName==this.students[i].name){
                             console.log(this.students[i].studentName)
                             this.updateStudentGrade.studentNum=this.students[i].studentNum;
-                            break;
-                        }
-                    }
-                }
-                //判断成绩是否存在
-                if(this.studentGrades!=null){
-                    for (let i = 0; i < this.studentGrades.length; i++) {
-                        if(this.studentGrades[i].studentName==this.updateStudentGrade.studentName){
-                            //提示信息
-                            this.$message.error('该生成绩已存在，请检查');
                             break;
                         }
                     }
@@ -940,7 +957,9 @@
                 this.initClassByMajorId();
             },
             initStudentGrades(){
+                //获取该班级下所有具有成绩的学生信息
                 this.loading2 = true;
+                this.isClick=true;
                 let url = '/gra/input/allStudentGradesByClassId?page=' + this.page2 + '&size=' + this.size2;
                 if (this.searchValue2.classId) {
                     url += '&classId=' + this.searchValue2.classId;
@@ -955,6 +974,12 @@
                         this.studentGrades=resp.data;
                         this.total2=resp.total;
                         console.log(resp.data);
+                    }
+                })
+                //获取该班级下所有学生信息
+                this.getRequest('/baseinfo/stu/getAllStudentByClassId?classId='+this.searchValue2.classId).then(resp => {
+                    if (resp) {
+                        this.students = resp;
                     }
                 })
             },
@@ -1021,12 +1046,7 @@
                 })
             },
             showAddGradeView(){//显示添加成绩对话框
-                //获取学生信息
-                this.getRequest('/baseinfo/stu/getAllStudentByClassId?classId='+this.searchValue2.classId).then(resp => {
-                    if (resp) {
-                        this.students = resp;
-                    }
-                })
+
                 this.emptyStudentInfo();//清空学生数据
                 //初始化试题得分
                 if(this.searchValue2.classId!=''){
@@ -1102,7 +1122,7 @@
             emptyMutiStudentInfo(){
 
             },
-            exportData(){
+            exportData(){//导入学生成绩
                 if(this.testPaper.id!=''&&this.testPaper.courseId!=''&&this.searchValue2.classId){
                     window.open('/gra/input/getTem?testPaperId='+
                         this.testPaper.id+'&courseId='+

@@ -15,12 +15,12 @@
             <el-form-item prop="password">
                 <el-input size="normal" type="password" v-model="loginForm.password" auto-complete="off" placehoder="请输入密码：" @keydown.enter.native="submitLogin"></el-input>
             </el-form-item>
-            <el-form-item prop="userType">
+            <!--<el-form-item prop="userType">
                 <el-radio-group v-model="loginForm.userType">
                     <el-radio label="teacher">教师</el-radio>
                     <el-radio label="student">学生</el-radio>
                 </el-radio-group>
-            </el-form-item>
+            </el-form-item>-->
            <!-- <el-checkbox  v-model="checked" class="loginRemember"></el-checkbox>-->
             <el-button  size="normal"type="primary" style="width:100%;" @click="submitLogin">登录</el-button>
         </el-form>

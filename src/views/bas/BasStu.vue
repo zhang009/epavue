@@ -120,7 +120,7 @@
                     element-loading-spinner="el-icon-loading"
                     element-loading-background="rgba(0, 0, 0, 0.7)"
                     @selection-change="handleSelectionChange"
-                    style="width: 60%">
+                    style="width: 65%">
                 <el-table-column
                         type="selection"
                         width="55">
