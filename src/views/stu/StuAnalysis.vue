@@ -1,12 +1,134 @@
 <template>
     <div>
-        测试
+        <el-divider></el-divider>
+        <div style="margin-bottom: 5px">
+            共查询到你的考试的课程有：<span style="color: red">{{myTestPapers.length}}</span>门
+        </div>
+        <div>
+            <div style="height: 600px">
+                <el-table
+                        :data="myTestPapers"
+                        stripe
+                        border
+                        v-loading="loading"
+                        element-loading-spinner="el-icon-loading"
+                        element-loading-background="rgba(0, 0, 0, 0.7)"
+                        style="width: 80%"
+                       >
+                    <<el-table-column
+                            type="index"
+                            label="编号"
+                            fixed
+                            width="80">&lt;!&ndash;   prop="id"&ndash;&gt;
+                        <template slot-scope="scope">
+                            <span>{{(page - 1) * size + scope.$index + 1}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            label="课程"
+                            prop="course"
+                            width="200">
+                        <template slot-scope="scope">
+                            {{scope.row.course.name}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            label="学年学期"
+                            prop="semester"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            label="试卷名称"
+                            prop="name"
+                            width="250">
+                    </el-table-column>
+
+                    <el-table-column
+                            align="center"
+                            label="总分"
+                            prop="totalScore"
+                            width="100">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            label="成绩"
+                            width="100">
+                        <template slot-scope="scope">
+                            {{scope.row.studentTotalGrade}}
+                        </template>
+                    </el-table-column>
+                     <el-table-column
+                             align="center"
+                             label="操作">
+                         <template slot-scope="scope">
+                             <el-button size="mini" @click="showMyAnalysisView(scope.row)">个人成绩分析</el-button>
+                             <el-button size="mini" @click="showClassAnalysisView(scope.row)">班级成绩分析</el-button>
+                         </template>
+                     </el-table-column>
+                </el-table>
+                <div style="text-align: right;width: 80%;margin-top: 10px">
+                    <el-pagination
+                            background
+                            @size-change="sizeChange"
+                            @current-change="currentChange"
+                            layout="prev, pager, next, total, slot"
+                            :total="total">
+                    </el-pagination>
+                </div>
+
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
     export default {
-        name: "StuAnalysis"
+        name: "StuAnalysis",
+        data(){
+            return{
+                loading:false,
+                myTestPapers:[],
+                total:0,
+                page:1,
+                size:10,
+            }
+        },mounted() {
+            this.initMyTestPaper();
+        },methods:{
+            initMyTestPaper(){
+                let user=window.sessionStorage.getItem("user");
+                let userObj=JSON.parse(user);//这里把用户的json消息转为对象
+                this.loading = true;
+                console.log(userObj);
+                let url = '/stu/analysis/getAllMyTestPaper?page=' + this.page + '&size=' + this.size+'&studentNum='+userObj.studentNum;
+                this.getRequest(url).then(resp=>{
+                    if(resp){
+                        this.loading = false;
+                        console.log(resp.data);
+                        this.myTestPapers=resp.data;
+                        this.total=resp.total;
+                    }
+                })
+
+            },
+            showMyAnalysisView(data){
+                    //这里的data为一条试卷的数据，通过data.id获取试卷的id
+            },
+            showClassAnalysisView(data){
+
+            },
+            sizeChange(currentSize){//试卷选择中页码改变触发事件
+                this.size=currentSize;
+                this.initMyTestPaper();
+            },
+            currentChange(currentPage){//里面的参数为当前页
+                this.page=currentPage;
+                this.initMyTestPaper();
+            },
+        }
     }
 </script>
 
