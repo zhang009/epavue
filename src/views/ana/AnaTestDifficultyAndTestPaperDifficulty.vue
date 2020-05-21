@@ -71,6 +71,7 @@
                                         <div><!--题干-->
                                             <div class="stem">
                                                 {{index+1}}. <span>{{scque.stem}}</span>
+                                                <span style="color: red; float: right">试题难度：简单</span>
                                             </div>
                                         </div>
                                         <div ><!--选项-->
@@ -92,6 +93,7 @@
                                         <div><!--题干-->
                                             <div class="stem">
                                                 {{index+1}}. <span>{{mcque.stem}}</span>
+                                                <span style="color: red; float: right">试题难度：简单</span>
                                             </div>
                                         </div>
                                         <div ><!--选项-->
@@ -112,6 +114,7 @@
                                         <div><!--题干-->
                                             <div class="stem">
                                                 {{index+1}}. <span>{{tfque.stem}}</span>
+                                                <span style="color: red; float: right">试题难度：简单</span>
                                             </div>
                                         </div>
 
@@ -128,6 +131,7 @@
                                         <div><!--题干-->
                                             <div class="stem">
                                                 {{index+1}}. <span>{{fbque.stem}}</span>
+                                                <span style="color: red; float: right">试题难度：简单</span>
                                             </div>
                                         </div>
 
@@ -144,6 +148,7 @@
                                         <div><!--题干-->
                                             <div class="stem">
                                                 {{index+1}}. <span>{{qaque.stem}}</span>
+                                                <span style="color: red; float: right">试题难度：简单</span>
                                             </div>
                                         </div>
 
@@ -196,6 +201,7 @@
         name: "AnaTestDifficultyAndTestPaperDifficulty",
         data(){
             return{
+                optionChar:['A.',"B.", "C.","D.","E.","F.","G.","H.","I.","J."],//这是为了对应多选题的选项序号
                 //向后台请求的试卷信息
                 updateTestPaperInfo:{},
                 total:0,        //总共有多少数据
@@ -261,69 +267,25 @@
             setTableData(){
                 this.tableData = this.list_oftestpaper
             },
-            initTestPaper(type){
-                this.loading1 = true;
-                let url = '/pap/testPaper/?page=' + this.page + '&size=' + this.size;
-                if (type && type == 'advanced') {//条件搜索
-                    if (this.searchValue.courseId) {
-                        url += '&courseId=' + this.searchValue.courseId;
-                    }
-                    if (this.searchValue.createTeacherId) {
-                        url += '&postTeacherId=' + this.searchValue.createTeacherId;
-                    }
-                    if (this.searchValue.createPaperType) {
-                        url += '&paperType=' + this.searchValue.createPaperType;
-                    }
-                }else{//普通搜索
-                    url+="&name="+this.keyword;
-                }
-                this.getRequest(url).then(resp=>{
-                    if(resp){
-                        this.loading1 = false;
-                        console.log(resp.data);
-                        this.testPapers=resp.data;
-                        this.total=resp.total;
-                    }
-                })
-            },
+
             //列表点击事件
             list_click(row){
-                console.log("row",row)
                 //true表示显示弹出框
+                console.log('id',row.id)
                 this.column_value=true
                 let that = this
                 //向后台发送卷子id，获取该卷子分数区间和每个区间的人数
-                this.getRequest('http://localhost:8080/pap/testPaper/?page='+this.page+'&size='+this.size).then(resp=>{
-                    if(resp){
-                        console.log("resp=",resp)
-                        console.log("resp.data=",resp.data);
-                        console.log("resp.total=",resp.total)
-                        that.testPapers=resp.data;
-                        that.total=resp.total;
-                        that.updateTestPaperInfo=resp.data;
+                this.getRequest('/pap/testPaper/getAllTestPaperById?id='+row.id).then(res=>{
+                    if(res){
+                        console.log(res)
+                        that.updateTestPaperInfo = res.obj
                     }
                 })
 
 
 
             },
-            //画柱状图和折线图的函数
-            drawLine(){
-                // document.getElementById("column").removeAttribute("_echarts_instance_");
-                this.myChart = this.$echarts.init(document.getElementById("column"))
-                this.line_chart = this.$echarts.init(document.getElementById("line_chart"))
 
-
-                console.log(this.option.xAxis[0].data)
-                console.log(this.option.series[0].data)
-                this.line_chart.clear()
-                this.myChart.clear()
-                this.line_chart.setOption(this.line_chart_option,true)
-                this.myChart.setOption(this.option,true)
-
-
-
-            }
         },
         watch:{
             option:{

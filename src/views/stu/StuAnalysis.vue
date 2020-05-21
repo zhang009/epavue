@@ -196,7 +196,9 @@
                 })
 
             },
+            //章节得分率分析
             showMyAnalysisView(data){
+
                     //这里的data为一条试卷的数据，通过data.id获取试卷的id
                 this.drawer=true;
                 this.testPaper=data;//赋值给试卷对象
@@ -236,6 +238,7 @@
                 this.gradeRank='';
                 this.allStudentGrades=[];
                 this. grades=[];
+
 
 
             },
