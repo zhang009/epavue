@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div><!--成绩区间人数分布-->
         <el-row class="el-row_margin">
             <el-col :span="12">
                 <el-input placeholder="请输入试卷名称（可以只输入部分关键字）" v-model="search_data" class="search_input" @keyup.enter.native="center_search">
@@ -89,7 +89,7 @@
                                 yAxisIndex: 'none'
                             },
                             dataView: {readOnly: false},
-                            magicType: {type: ['line', 'bar']},
+                           // magicType: {type: ['line', 'bar']},
                             restore: {},
                             saveAsImage: {}
                         }
@@ -222,7 +222,7 @@
                 this.column_value=true
                 let that = this
                 //向后台发送卷子id，获取该卷子分数区间和每个区间的人数
-                this.postRequest('http://localhost:8080/analysis/getTestPaperScoreById?id='+row.id).then(res=>{
+                this.postRequest('/analysis/getTestPaperScoreById?id='+row.id).then(res=>{
                     if(res){
 
                         let arr = res.section;
@@ -278,7 +278,7 @@
         mounted() {
             let that = this
             //挂载结束后立即向后台请求试卷列表的数据，然后将试卷列表显示在表格中
-            this.$http.get('http://localhost:8080/analysis/getListOfTestPaper').then(function (res) {
+            this.$http.get('/analysis/getListOfTestPaper').then(function (res) {
                 that.count_TestPaper = res.length       //将返回数据总数保存起来
                 //将返回来的数组放到表格里
                 that.list_oftestpaper = res

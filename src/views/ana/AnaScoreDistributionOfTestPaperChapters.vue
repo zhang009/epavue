@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div><!--章节分值分布-->
         <el-row class="el-row_margin">
             <el-col :span="12">
                 <el-input placeholder="请输入试卷名称（可以只输入部分关键字）" v-model="search_data" class="search_input" @keyup.enter.native="center_search">
@@ -44,7 +44,9 @@
                 </el-table>
                 <el-dialog title="章节分值分布" :visible.sync="column_value">
                     <div id="column" :style="{width: '700px', height: '500px'}" ></div>
+                    <div style="font-size: 20px">章节分值分布是检验试卷质量的重要指标，考卷中的章节要不仅仅要贴合课堂中讲过的章节，也要突出重点。</div>
                 </el-dialog>
+
                 <!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
                 <!--                    <el-collapse-item v-for="(item,index) in papers" :title="item" :name="index">-->
                 <!--                        <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>-->
@@ -186,7 +188,7 @@
                 //true表示显示弹出框
                 this.column_value=true
                 //向后台发送请求获取数据
-                this.getRequest('http://localhost:8080/analysis/getScoreDistributionOfTestPaperChapters?id='+row.id).then(res=>{
+                this.getRequest('/analysis/getScoreDistributionOfTestPaperChapters?id='+row.id).then(res=>{
                     if(res){
                         that.option.yAxis.data = res.names
                         that.option.series[0].data = res.scoreDistribution;
@@ -208,7 +210,7 @@
         mounted() {
             let that = this
             //挂载结束后立即向后台请求试卷列表的数据，然后将试卷列表显示在表格中
-            this.$http.get('http://localhost:8080/analysis/getListOfTestPaper').then(function (res) {
+            this.$http.get('/analysis/getListOfTestPaper').then(function (res) {
                 console.log(res)
                 that.count_TestPaper = res.length       //将返回数据总数保存起来
                 //将返回来的数组放到表格里

@@ -64,8 +64,8 @@
                             align="center"
                             label="操作">
                         <template slot-scope="scope">
-                            <el-button size="mini" @click="showMyAnalysisView(scope.row)">个人成绩分析</el-button>
-                            <el-button size="mini" @click="showClassAnalysisView(scope.row)">班级成绩分析</el-button>
+                            <el-button size="mini" @click="showMyAnalysisView(scope.row)">章节的得分率</el-button>
+                            <el-button size="mini" @click="showClassAnalysisView(scope.row)">知识点得分率</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -78,9 +78,52 @@
                             :total="total">
                     </el-pagination>
                 </div>
-
             </div>
         </div>
+        <el-dialog title="知识点得分率" :visible.sync="knowledgePoints_value">
+            <div align="center">
+            <el-table
+                    :data="tableData_KnowledgePoints"
+                    border
+                    style="font-size: 20px;margin: 0 auto;">
+
+                <el-table-column
+                        :width="350"
+                        prop="knowledgePoints"
+                        label="知识点名称"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        :width="350"
+                        prop="scoringRate"
+                        label="得分率"
+                        width="180">
+                </el-table-column>
+            </el-table>
+                </div>
+        </el-dialog>
+        <el-dialog title="章节得分率" :visible.sync="chapters_value">
+            <div align="center">
+            <el-table
+                    :data="tableData_chapters"
+                    border
+                    style="font-size: 20px;margin: 0 auto;">
+
+                <el-table-column
+                        :width="350"
+                        prop="chapters"
+                        label="章节名称"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        :width="350"
+                        prop="scoringRate"
+                        label="得分率"
+                        width="180">
+                </el-table-column>
+            </el-table>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -94,6 +137,15 @@
                 total:0,
                 page:1,
                 size:10,
+                //知识点得分率表格
+                tableData_KnowledgePoints: [],
+                //知识点得分率对话框显示标志
+                knowledgePoints_value:false,
+                //章节得分率对话框显示标志
+                chapters_value:false,
+                //章节得分率表格
+                tableData_chapters: []
+
             }
         },mounted() {
             this.initMyTestPaper();
@@ -102,12 +154,10 @@
                 let user=window.sessionStorage.getItem("user");
                 let userObj=JSON.parse(user);//这里把用户的json消息转为对象
                 this.loading = true;
-                console.log(userObj);
                 let url = '/stu/analysis/getAllMyTestPaper?page=' + this.page + '&size=' + this.size+'&studentNum='+userObj.studentNum;
                 this.getRequest(url).then(resp=>{
                     if(resp){
                         this.loading = false;
-                        console.log(resp.data);
                         this.myTestPapers=resp.data;
                         this.total=resp.total;
                     }
@@ -116,30 +166,49 @@
             },
             //章节得分率
             showMyAnalysisView(data){
+                //清空表格数据
+                this.tableData_chapters.splice(0,this.tableData_chapters.length)
                 let user = window.sessionStorage.getItem("user")
                 let useObj = JSON.parse(user)
                 //这里的data为一条试卷的数据，通过data.id获取试卷的id
                 let that = this
-                let url = '/learningFeedbaek/getScoringRateOfIndividualChapters?testpaper_id='+data.id+"&student_id="+useObj.id
-                this.getRequest(url).then(resp=>{
-                    if(resp){
-                        console.log("章节得分率",resp)
+                let url = '/learningFeedbaek/getScoringRateOfIndividualChapters?testpaper_id='+data.id+"&student_id="+useObj.username
+                this.getRequest(url).then(res=>{
+                    if(res){
+                        console.log("知识点得分率",res)
+                        for(let i=0;i<res.rate.length;i++){
+                            let Data_chapters = {
+                                chapters:res.name[i],
+                                scoringRate:res.rate[i]
+                            }
+                            that.tableData_chapters.push(Data_chapters)
+                        }
                     }
                 })
-
+                this.chapters_value = true
             },
             //知识点得分率
             showClassAnalysisView(data){
+                //清空表格数据
+                this.tableData_KnowledgePoints.splice(0,this.tableData_KnowledgePoints.length)
                 let user = window.sessionStorage.getItem("user")
                 let useObj = JSON.parse(user)
                 //这里的data为一条试卷的数据，通过data.id获取试卷的id
                 let that = this
-                let url = '/learningFeedbaek/getScoreRateOfPersonalKnowledgePoints?testpaper_id='+data.id+"&student_id="+useObj.id
-                this.getRequest(url).then(resp=>{
-                    if(resp){
-                        console.log("知识点得分率",resp)
+                let url = '/learningFeedbaek/getScoreRateOfPersonalKnowledgePoints?testpaper_id='+data.id+"&student_id="+useObj.username
+                this.getRequest(url).then(res=>{
+                    if(res){
+                        console.log("知识点得分率",res)
+                        for(let i=0;i<res.rate.length;i++){
+                            let Data_KnowledgePoints = {
+                                knowledgePoints:res.name[i],
+                                scoringRate:res.rate[i]
+                            }
+                            that.tableData_KnowledgePoints.push(Data_KnowledgePoints)
+                        }
                     }
                 })
+                this.knowledgePoints_value=true
             },
             sizeChange(currentSize){//试卷选择中页码改变触发事件
                 this.size=currentSize;

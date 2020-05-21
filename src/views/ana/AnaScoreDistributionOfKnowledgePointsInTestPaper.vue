@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div><!--知识点分值分布-->
         <el-row class="el-row_margin">
             <el-col :span="12">
                 <el-input placeholder="请输入试卷名称（可以只输入部分关键字）" v-model="search_data" class="search_input" @keyup.enter.native="center_search">
@@ -63,6 +63,7 @@
                             </el-table-column>
                         </el-table>
                     </div>
+                    <div style="font-size: 20px">知识点分值分布是检验试卷质量的重要指标，考卷中的知识点要不仅仅要贴合课堂中讲过的知识点，也要突出重点。</div>
                 </el-dialog>
                 <!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
                 <!--                    <el-collapse-item v-for="(item,index) in papers" :title="item" :name="index">-->
@@ -176,12 +177,12 @@
                     toolbox: {//工具栏。内置有导出图片，数据视图，动态类型切换，数据区域缩放，重置五个工具。
                         show: true,
                         feature: {
-                            /* dataZoom: {
+                             dataZoom: {
                                  yAxisIndex: 'none'
                              },
                              dataView: {readOnly: false},
                              magicType: {type: ['line', 'bar']},
-                             restore: {},*/
+                             restore: {},
                             saveAsImage: {}
                         }
                     },
@@ -244,11 +245,13 @@
             },
             //列表点击事件
             list_click(row){
+                //清空表格数据
+                this.tableData_KnowledgePoints.splice(0,this.tableData_KnowledgePoints.length)
                 let that = this
                 //true表示显示弹出框
                 this.column_value=true
                 //向后台发送请求获取数据
-                this.getRequest('http://localhost:8080/analysis/getScoreDistributionOfKnowledgePointsInTestPaper?id='+row.id).then(res=>{
+                this.getRequest('/analysis/getScoreDistributionOfKnowledgePointsInTestPaper?id='+row.id).then(res=>{
                     if(res){
                         console.log(res)
                         // names
@@ -281,7 +284,7 @@
         mounted() {
             let that = this
             //挂载结束后立即向后台请求试卷列表的数据，然后将试卷列表显示在表格中
-            this.$http.get('http://localhost:8080/analysis/getListOfTestPaper').then(function (res) {
+            this.$http.get('/analysis/getListOfTestPaper').then(function (res) {
                 console.log(res)
                 that.count_TestPaper = res.length       //将返回数据总数保存起来
                 //将返回来的数组放到表格里

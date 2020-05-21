@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div><!--及格率和优秀率-->
         <el-row class="el-row_margin">
             <el-col :span="24">
                 <el-select v-model="college_value"
@@ -79,6 +79,7 @@
                     <td><span id="dialog2" :style="{width: '400px', height: '300px'}" ></span></td>
                 </tr>
             </table>
+            <div style="font-size: 20px">在试卷质量确定的情况下，及格率和优秀率越高，说明教学效果越好</div>
         </el-dialog>
     </div>
 </template>
@@ -92,7 +93,7 @@
 
             let that = this
             //挂载结束后立即向后台请求试卷列表的数据，然后将试卷列表显示在表格中
-            this.$http.get('http://localhost:8080/analysis/getListOfTestPaper').then(function (res) {
+            this.$http.get('/analysis/getListOfTestPaper').then(function (res) {
                 that.count_TestPaper = res.length       //将返回数据总数保存起来
                 //将返回来的数组放到表格里
                 that.list_oftestpaper = res
@@ -171,20 +172,13 @@
                     let that = this
                     //显示对话框
                     this.pie_value = true
-                    this.postRequest('http://localhost:8080/teachingEffectiveness/getPassStudentNumAndOutstandingStudentNum?classId='+this.class_value+"&testpaperId="+row.id).then(res=>{
+                    this.postRequest('/teachingEffectiveness/getPassStudentNumAndOutstandingStudentNum?classId='+this.class_value+"&testpaperId="+row.id).then(res=>{
                         if(res){
-                            console.log("res及格人数="+res.passStudentNum)
-                            console.log("res不及格人数="+res.failStudentNum)
-                            console.log("res优秀人数="+res.outstandingStudentNum)
-                            console.log("res其他人数="+res.otherStudentNum)
+
                             that.option1.series[0].data[0].value = res.passStudentNum   //及格人数设置
                             that.option1.series[0].data[1].value = res.failStudentNum   //不及格人数设置
                             that.option2.series[0].data[0].value = res.outstandingStudentNum //优秀人数设置
                             that.option2.series[0].data[1].value = res.otherStudentNum  //其他人数设置
-                            console.log("haha及格人数="+that.option1.series[0].data[0].value)
-                            console.log("haha不及格人数="+that.option1.series[0].data[1].value)
-                            console.log("haha优秀人数="+that.option2.series[0].data[0].value)
-                            console.log("haha其他人数="+that.option2.series[0].data[1].value)
                         }
                     })
                     //渲染饼状图
@@ -229,12 +223,12 @@
                     toolbox: {//工具栏。内置有导出图片，数据视图，动态类型切换，数据区域缩放，重置五个工具。
                         show: true,
                         feature: {
-                            dataZoom: {
-                                yAxisIndex: 'none'
-                            },
-                            dataView: {readOnly: false},
-                            magicType: {type: ['line', 'bar']},
-                            restore: {},
+                            // dataZoom: {
+                            //     yAxisIndex: 'none'
+                            // },
+                            // dataView: {readOnly: false},
+                            // magicType: {type: ['line', 'bar']},
+                            // restore: {},
                             saveAsImage: {}
                         }
                     },
@@ -271,6 +265,18 @@
                     ]
                 },
                 option2 : {
+                    toolbox: {//工具栏。内置有导出图片，数据视图，动态类型切换，数据区域缩放，重置五个工具。
+                        show: true,
+                        feature: {
+                            // dataZoom: {
+                            //     yAxisIndex: 'none'
+                            // },
+                            // dataView: {readOnly: false},
+                            // magicType: {type: ['line', 'bar']},
+                            // restore: {},
+                            saveAsImage: {}
+                        }
+                    },
                     tooltip: {
                         trigger: 'item',
                         formatter: '{a} <br/>{b}: {c} ({d}%)'

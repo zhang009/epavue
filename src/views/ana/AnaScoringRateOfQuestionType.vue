@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div><!--题型得分率-->
         <el-row class="el-row_margin">
             <el-col :span="12">
                 <el-input placeholder="请输入试卷名称（可以只输入部分关键字）" v-model="search_data" class="search_input" @keyup.enter.native="center_search">
@@ -44,7 +44,9 @@
                 </el-table>
                 <el-dialog title="柱状图" :visible.sync="column_value">
                     <div id="column" :style="{width: '700px', height: '300px'}" ></div>
+                    <div style="font-size: 20px">题型得分率是教学反馈的重要指标，若是学生填空题得分率较高，则说明学生对于基础概念掌握的比较牢固，若是学生的编程题得分率较低，则说明学生的编程能力还有待提高</div>
                 </el-dialog>
+
                 <!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
                 <!--                    <el-collapse-item v-for="(item,index) in papers" :title="item" :name="index">-->
                 <!--                        <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>-->
@@ -186,7 +188,7 @@
                 this.column_value=true
                 //向后台发送请求获取数据
                 let that = this
-                this.postRequest('http://localhost:8080/teachingFeedback/getScoringRateOfQuestionType?id='+row.id).then(res=>{
+                this.postRequest('/teachingFeedback/getScoringRateOfQuestionType?id='+row.id).then(res=>{
                     if(res){
                         that.option.xAxis[0].data = res.questionType
                         that.option.series[0].data = res.scoringRate
@@ -208,7 +210,7 @@
         mounted() {
             let that = this
             //挂载结束后立即向后台请求试卷列表的数据，然后将试卷列表显示在表格中
-            this.$http.get('http://localhost:8080/analysis/getListOfTestPaper').then(function (res) {
+            this.$http.get('/analysis/getListOfTestPaper').then(function (res) {
                 console.log(res)
                 that.count_TestPaper = res.length       //将返回数据总数保存起来
                 //将返回来的数组放到表格里
