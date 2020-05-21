@@ -17,7 +17,7 @@
 
                             <div class="divtable">
                                 <div class="innerdivtable">
-                                    <el-form-item  prop="courseId"  >
+                                    <el-form-item    >
                                         <el-select v-model="updatePaperInfo.courseId"
                                                    filterable
                                                    placeholder="请选择课程(可搜索）"
@@ -118,7 +118,7 @@
                                         题型:
                                         <el-select v-model="searchValue.queType"
                                                    placeholder="请选择题型"
-                                                   @change="initQuestions"
+                                                   @change="initQuestions('first')"
                                                    style="width: 120px;margin-right: 20px">
                                             <el-option
                                                     v-for="item in queTypes"
@@ -174,6 +174,9 @@
                                                                 <el-divider direction="vertical"></el-divider>
 
                                                                 <span>难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                                <el-divider direction="vertical"></el-divider>
+                                                                <span> 更新时间：{{scope.row.updateTime}}</span>
+
                                                                 <!-- <el-divider direction="vertical"></el-divider>
                                                                  <span>草木深</span>-->
                                                             </div>
@@ -213,6 +216,7 @@
                                                         </div>
 
                                                         <div   style="border-top: 1px solid #f0f0f0 ;padding: 10px;"><!--5.底部信息-->
+
                                                             <el-button v-if="scAddStatus[scope.$index]==false" type="primary" style="float: right; "  size="mini " @click="addSCQueToPap(scope.$index,scope.row)">加入试卷</el-button>
                                                             <el-button v-if="scAddStatus[scope.$index]==true" type="danger" style="float: right; " size="mini " @click="deleteSCQueFromPap(scope.$index,scope.row)">移出试卷</el-button>
                                                         </div>
@@ -253,6 +257,8 @@
                                                                 <el-divider direction="vertical"></el-divider>
 
                                                                 <span>难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                                <el-divider direction="vertical"></el-divider>
+                                                                <span> 更新时间：{{scope.row.updateTime}}</span>
                                                                 <!-- <el-divider direction="vertical"></el-divider>
                                                                  <span>草木深</span>-->
                                                             </div>
@@ -329,6 +335,8 @@
                                                                 <el-divider direction="vertical"></el-divider>
 
                                                                 <span>难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                                <el-divider direction="vertical"></el-divider>
+                                                                <span> 更新时间：{{scope.row.updateTime}}</span>
                                                                 <!-- <el-divider direction="vertical"></el-divider>
                                                                  <span>草木深</span>-->
                                                             </div>
@@ -405,6 +413,8 @@
                                                                 <el-divider direction="vertical"></el-divider>
 
                                                                 <span>难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                                <el-divider direction="vertical"></el-divider>
+                                                                <span> 更新时间：{{scope.row.updateTime}}</span>
                                                                 <!-- <el-divider direction="vertical"></el-divider>
                                                                  <span>草木深</span>-->
                                                             </div>
@@ -481,6 +491,8 @@
                                                                 <el-divider direction="vertical"></el-divider>
 
                                                                 <span>难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                                <el-divider direction="vertical"></el-divider>
+                                                                <span> 更新时间：{{scope.row.updateTime}}</span>
                                                                 <!-- <el-divider direction="vertical"></el-divider>
                                                                  <span>草木深</span>-->
                                                             </div>
@@ -546,12 +558,16 @@
                             <el-divider content-position="left">基本信息</el-divider>
                             <div style="margin-top: 20px"><!--试卷信息填写（试卷名称、学院、专业、学期-->
                                 <el-form
+                                        :rules="rules"
+                                        ref="baseInfo"
+                                        :model="updatePaperInfo"
                                     label-position="right"
                                     label-width="100px"
                                     style="margin: 0px auto"
                                     >
-                                    <el-form-item label="试卷名称:">
+                                    <el-form-item label="试卷名称:"  prop="name">
                                         <el-input size="medium"
+
                                                   style="width: 300px"
                                                   placeholder="请输入试卷的名称"
                                                   v-model="updatePaperInfo.name">
@@ -559,7 +575,7 @@
                                     </el-form-item>
                                     <el-row>
                                         <el-col :span="6">
-                                            <el-form-item label="学院:">
+                                            <el-form-item label="学院:" prop="schoolId">
                                                 <el-select v-model="updatePaperInfo.schoolId"
                                                            @change="selectSchoolChanged"
                                                            placeholder="选择学院"
@@ -575,7 +591,7 @@
                                             </el-form-item >
                                         </el-col>
                                         <el-col :span="6">
-                                            <el-form-item label="专业:">
+                                            <el-form-item label="专业:" prop="majorId">
                                                 <el-select
                                                     placeholder="选择专业"
                                                     size="small"
@@ -592,7 +608,7 @@
                                             </el-form-item >
                                         </el-col>
                                         <el-col :span="12">
-                                            <el-form-item label="学期:">
+                                            <el-form-item label="学期:" prop="semester">
                                                 <el-select
                                                         placeholder="选择学期"
                                                         size="small"
@@ -666,9 +682,7 @@
                                                     <template slot-scope="scope">
                                                         <el-input style="width: 100px"
                                                                   placeholder="0"
-
                                                                   v-model.trim="selectQueScore.scScore">
-
                                                         </el-input>&nbsp;分
                                                     </template>
                                                 </el-table-column>
@@ -1190,6 +1204,13 @@
                 selectPaperInfo:{//存放第三步，挑选的试题的详细信息,动态赋值
 
                 },
+                rules:{
+                    name: [{required: true, message: '请输入试卷名称', trigger: 'blur'}],
+                    schoolId: [{required: true, message: '请选择学院', trigger: 'blur'}],
+                    majorId: [{required: true, message: '请选择专业', trigger: 'blur'}],
+                    semester:[{required: true, message: '请选择学年', trigger: 'blur'}],
+                },
+
                 optionChar:['A.',"B.", "C.","D.","E.","F.","G.","H.","I.","J."],//这是为了对应多选题的选项序号
                 scViewStatus:[],//这里主要用来存放每个试题的隐藏div的标记
                 scAddStatus:[],//这里用来存放试题添加到试卷的标记
@@ -1408,33 +1429,41 @@
 
             },
             submitTestPaper(){//提交试卷
-                //提交前检查数据是否都已经填写正确，包括：课程、学院、专业、学期、试卷名称、
-                //试题分数、章节、知识点、审核教师id,总分,及格分
-                this.updatePaperInfo.totalScore=this.totalScore;
-                this.updatePaperInfo.passScore=this.passScore;
-                this.updatePaperInfo.sclist=this.selectPaperInfo.sclist;
-                this.updatePaperInfo.mclist=this.selectPaperInfo.mclist;
-                this.updatePaperInfo.tflist=this.selectPaperInfo.tflist;
-                this.updatePaperInfo.fblist=this.selectPaperInfo.fblist;
-                this.updatePaperInfo.qalist=this.selectPaperInfo.qalist;
-                this.getPaperChapter();
-                this.getPaperKnows();
-                //每个试题类型的分数
-                this.updatePaperInfo.scScore=this.selectQueScore.scScore;
-                this.updatePaperInfo.mcScore=this.selectQueScore.mcScore;
-                this.updatePaperInfo.tfScore=this.selectQueScore.tfScore;
-                this.updatePaperInfo.qaScore=this.selectQueScore.qaScore;
-                this.updatePaperInfo.fbScore=this.selectQueScore.fbScore;
+
 
                 //获取完试卷的信息，提交到后端添加试卷
-                this.postRequest("/pap/create/handAdd",this.updatePaperInfo).then(resp=> {
-                    if(resp){
-                        var that=this;
-                        setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
-                           /* location.reload();//刷新页面*/
-                        },1000);
-                    }
-                })
+                //验证是否选择课程负责人
+                //如果填写完基本信息，还需要验证是否分数填写完毕
+                if(this.updatePaperInfo.checkTeacherId==''){
+                    this.$message.error('请选择试卷审核人！')
+
+                }else{
+                    //提交前检查数据是否都已经填写正确，包括：课程、学院、专业、学期、试卷名称、
+                    //试题分数、章节、知识点、审核教师id,总分,及格分
+                    this.updatePaperInfo.totalScore=this.totalScore;
+                    this.updatePaperInfo.passScore=this.passScore;
+                    this.updatePaperInfo.sclist=this.selectPaperInfo.sclist;
+                    this.updatePaperInfo.mclist=this.selectPaperInfo.mclist;
+                    this.updatePaperInfo.tflist=this.selectPaperInfo.tflist;
+                    this.updatePaperInfo.fblist=this.selectPaperInfo.fblist;
+                    this.updatePaperInfo.qalist=this.selectPaperInfo.qalist;
+                    this.getPaperChapter();
+                    this.getPaperKnows();
+                    //每个试题类型的分数
+                    this.updatePaperInfo.scScore=this.selectQueScore.scScore;
+                    this.updatePaperInfo.mcScore=this.selectQueScore.mcScore;
+                    this.updatePaperInfo.tfScore=this.selectQueScore.tfScore;
+                    this.updatePaperInfo.qaScore=this.selectQueScore.qaScore;
+                    this.updatePaperInfo.fbScore=this.selectQueScore.fbScore;
+                    this.postRequest("/pap/create/handAdd",this.updatePaperInfo).then(resp=> {
+                        if(resp){
+                            var that=this;
+                            setTimeout(function () {//这里延迟1秒执行函数，因为需要用到sclist集合，所以得等后端传过来数据之后执行
+                                /* location.reload();//刷新页面*/
+                            },1000);
+                        }
+                    })
+                }
 
             },
             initCheckTeachers(){//
@@ -1807,9 +1836,16 @@
                     this.courses=JSON.parse(window.sessionStorage.getItem("courses"));
                 }
             },
-            initQuestions(){//初始化试题列表
+            initQuestions(type){//初始化试题列表
                 if(this.searchValue.queType=='单选题'){
-                    let url = '/question/scinput/?page=' + this.page + '&size=' + this.size;
+
+                    let url='';
+                    if(type&&type=='first'){
+                         url = '/question/scinput/?page=' + 1 + '&size=' + 10;
+                    }else{
+                        url = '/question/scinput/?page=' + this.page + '&size=' + this.size;
+                    }
+
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
                     }else if (this.updatePaperInfo.courseId) {
@@ -1818,6 +1854,7 @@
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
                     }
+                    console.log("url:",url)
                     this.getRequest(url).then(resp=>{
                         if(resp){
 
@@ -1830,8 +1867,12 @@
                         }
                     })
                 }else if(this.searchValue.queType=='多选题'){
-
-                    let url = '/question/mcinput/?page=' + this.page + '&size=' + this.size;
+                    let url='';
+                    if(type&&type=='first'){
+                        url = '/question/mcinput/?page=' + 1 + '&size=' + 10;
+                    }else{
+                        url  = '/question/mcinput/?page=' + this.page + '&size=' + this.size;
+                    }
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
                     }else if (this.updatePaperInfo.courseId) {
@@ -1840,6 +1881,7 @@
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
                     }
+                    console.log("url:",url)
                     this.getRequest(url).then(resp=>{
                         if(resp){
 
@@ -1851,7 +1893,13 @@
                         }
                     })
                 }else if(this.searchValue.queType=='判断题'){
-                    let url = '/question/tfinput/?page=' + this.page + '&size=' + this.size;
+                    let url='';
+                    if(type&&type=='first'){
+                        url = '/question/tfinput/?page=' + 1 + '&size=' + 10;
+                    }else{
+                        url  = '/question/tfinput/?page=' + this.page + '&size=' + this.size;
+                    }
+
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
                     }else if (this.updatePaperInfo.courseId) {
@@ -1860,6 +1908,7 @@
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
                     }
+                    console.log("url:",url)
                     this.getRequest(url).then(resp=>{
                         if(resp){
 
@@ -1872,7 +1921,13 @@
                         }
                     })
                 }else if(this.searchValue.queType=='填空题'){
-                    let url = '/question/fbinput/?page=' + this.page + '&size=' + this.size;
+                    let url='';
+                    if(type&&type=='first'){
+                        url = '/question/fbinput/?page=' + 1 + '&size=' + 10;
+                    }else{
+                        url  = '/question/fbinput/?page=' + this.page + '&size=' + this.size;
+                    }
+
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
                     }else if (this.updatePaperInfo.courseId) {
@@ -1881,6 +1936,7 @@
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
                     }
+                    console.log("url:",url)
                     this.getRequest(url).then(resp=>{
                         if(resp){
 
@@ -1893,7 +1949,13 @@
                         }
                     })
                 }else if(this.searchValue.queType=='简答题'){
-                    let url = '/question/qainput/?page=' + this.page + '&size=' + this.size;
+                    let url='';
+                    if(type&&type=='first'){
+                        url = '/question/qainput/?page=' + 1 + '&size=' + 10;
+                    }else{
+                        url  = '/question/qainput/?page=' + this.page + '&size=' + this.size;
+                    }
+
                     if (this.searchValue.qlevel) {//条件搜索
                         url += '&dot=' + this.searchValue.qlevel;
                     }else if (this.updatePaperInfo.courseId) {
@@ -1902,6 +1964,7 @@
                     if (this.searchValue.qchapter) {
                         url += '&chapterId=' + this.searchValue.qchapter;
                     }
+                    console.log("url:",url)
                     this.getRequest(url).then(resp=>{
                         if(resp){
 
@@ -1932,9 +1995,20 @@
             },
             nextStep() {
                 this.activeItemIndex++;
-                if (this.activeItemIndex == 2) {//根据id数组获取试题详细信息
+
+                if(this.activeItemIndex==1){//第二步
+                    //当用户没有选择课程，提示选择课程
+                    if(this.updatePaperInfo.courseId==''){
+                        this.$message.error('请先选择课程！');
+                        this.activeItemIndex--;
+                        return;
+                    }
+                }
+                if (this.activeItemIndex == 2) {//第三步，设置试卷参数，根据id数组获取试题详细信息
                     if(this.selectPaperQueNum==0){
                         this.$message.error('请先选择试题！');
+                        this.activeItemIndex--;
+                        return;
                     }
 
                 /*  if(Object.keys(this.selectPaperInfo).length==0){*/
@@ -1957,6 +2031,77 @@
                     },2000);*/
 
                  /* }*/
+                }
+                if(this.activeItemIndex==3){//试卷预览
+                    //判断试卷的基本信息是否填写，包括试卷的名称、学院、专业、学期
+                    //试卷的分数
+                    this.$refs.baseInfo.validate((valid) => {
+                        if (valid) {
+                            if(this.selectPaperInfo.sclist){
+                               if(this.selectQueScore.scScore==''||this.selectQueScore.scScore==null){
+                                   this.$message.error('你的单选题分数未设置！');
+                                   this.activeItemIndex--;
+                                   return ;
+                               }
+                            }
+                            if(this.selectPaperInfo.mclist){
+                                if(this.selectQueScore.mcScore==''||this.selectQueScore.mcScore==null){
+                                    this.$message.error('你的多选题分数未设置！');
+                                    this.activeItemIndex--;
+                                    return ;
+                                }
+                            }
+                            if(this.selectPaperInfo.tflist){
+                                if(this.selectQueScore.tfScore==''||this.selectQueScore.mcScore==null){
+                                    this.$message.error('你的判断题分数未设置！');
+                                    this.activeItemIndex--;
+                                    return ;
+                                }
+                            }
+                            if(this.selectPaperInfo.fblist){
+
+                                if(this.selectQueScore.fbScore.length>0){
+                                   // console.log("this.selectQueScore.fbScore",this.selectQueScore.fbScore);
+                                    let flag=true;
+                                    for (let i = 0; i < this.selectQueScore.fbScore.length; i++) {
+                                       if(this.selectQueScore.fbScore[i]==0){
+                                           flag=false;
+
+                                       }
+                                    }
+                                  //  console.log("flag:",flag);
+                                    if(flag==false){
+                                        this.$message.error('你有填空题分数未设置！');
+                                        this.activeItemIndex--;
+                                        return ;
+                                    }
+                                }
+                            }
+                            if(this.selectPaperInfo.qalist){
+
+                                if(this.selectQueScore.qaScore.length>0){
+                                   // console.log("this.selectQueScore.qaScore",this.selectQueScore.qaScore);
+                                    let flag=true;
+                                    for (let i = 0; i < this.selectQueScore.qaScore.length; i++) {
+                                       if(this.selectQueScore.qaScore[i]==0){
+                                           flag=false;
+
+                                       }
+                                    }
+                                  //  console.log("flag:",flag);
+                                    if(flag==false){
+                                        this.$message.error('你有简答题分数未设置！');
+                                        this.activeItemIndex--;
+                                        return ;
+                                    }
+                                }
+                            }
+
+                        }else{
+                            this.activeItemIndex--;
+                        }
+                    });
+                    window.scrollTo(0,0);//切换页面使页面的滚动条置顶
                 }
                 if(this.activeItemIndex==4){
                     var that=this;

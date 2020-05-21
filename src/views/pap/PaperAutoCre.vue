@@ -746,7 +746,7 @@
 
                             const content = res
                             const blob = new Blob([content])
-                            const fileName = '导出信息.docx'
+                            const fileName = '自动组卷试卷.docx'
                             if ('download' in document.createElement('a')) { // 非IE下载
                                 const elink = document.createElement('a')
                                 elink.download = fileName

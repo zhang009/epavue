@@ -44,24 +44,27 @@
             </el-table>
             <el-dialog title="知识点得分率" :visible.sync="column_value">
                 <div id="column" :style="{width: '700px', height: '500px'}" ></div>
-                <el-table
-                        :data="tableData_KnowledgePoints"
-                        border
-                        style="font-size: 20px;margin: 0 auto;">
+                <div align="center">
+                    <el-table
+                            :data="tableData_KnowledgePoints"
+                            border
+                            style="font-size: 20px;margin: 0 auto;">
 
-                    <el-table-column
-                            :width="350"
-                            prop="knowledgePoints"
-                            label="知识点名称"
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            :width="350"
-                            prop="scoringRate"
-                            label="得分率"
-                            width="180">
-                    </el-table-column>
-                </el-table>
+                        <el-table-column
+                                prop="knowledgePoints"
+                                label="知识点名称"
+                                width="300">
+                        </el-table-column>
+
+                        <el-table-column
+                                :width="350"
+                                prop="scoringRate"
+                                label="得分率"
+                                width="180">
+                        </el-table-column>
+                    </el-table>
+                </div>
+
             </el-dialog>
             <!--                <el-collapse v-model="activeNames" @change="handleChange($event)">-->
             <!--                    <el-collapse-item v-for="(item,index) in papers" :title="item" :name="index">-->
@@ -128,6 +131,18 @@
                         trigger: 'axis',
                         axisPointer: {
                             type: 'shadow'
+                        }
+                    },
+                    toolbox: {//工具栏。内置有导出图片，数据视图，动态类型切换，数据区域缩放，重置五个工具。
+                        show: true,
+                        feature: {
+                             dataZoom: {
+                                 yAxisIndex: 'none'
+                             },
+                             dataView: {readOnly: false},
+                             magicType: {type: ['line', 'bar']},
+                             restore: {},
+                            saveAsImage: {}
                         }
                     },
                     legend: {
