@@ -91,10 +91,25 @@
                         width="200"
                 ></el-table-column>
                 <el-table-column
-                        prop="className"
+                        :show-overflow-tooltip="true"
                         label="开设班级"
                         width="200">
-
+                    <template slot-scope="scope">
+                         <span v-for="(item,i) in scope.row.classes" :key="i" style="text-align: left;white-space:nowrap;">
+                            <el-tooltip
+                                    placement="top"
+                                    trigger="hover">
+                                <span v-for="(clazz,indexi) in scope.row.classes" :key="indexi" slot="content">
+                                    {{clazz.name}}<br/>
+                                </span>
+                                <span>
+                                    <span v-if="i==0">{{item.name}}</span>
+                                    <span v-else>/{{item.name}}</span>
+                                </span>
+                            </el-tooltip>
+                       <!-- <el-tag >{{scope.row.classes[0].name}}</el-tag>-->
+                         </span>
+                    </template>
                 </el-table-column>
                 <el-table-column
                         prop="term"
@@ -127,7 +142,6 @@
                     width="25%">
                 <div>
                     <table>
-
                         <tr>
                             <td> <el-tag>选择学院</el-tag></td>
                             <td>
@@ -149,11 +163,12 @@
                         <tr>
                             <td> <el-tag>选择专业</el-tag></td>
                             <td>
-                                <el-select v-model="updateCourse.majorId"
+                                <el-select v-model="updateCourse.majorIds"
                                            @change="selectMajor2Changed"
-                                           placeholder="请选择专业"
+                                           placeholder="请选择专业(可多选）"
                                            :disabled="majorDisabled"
                                            size="small"
+                                           multiple
                                            style="margin-left: 5px;width: 300px">
                                     <el-option
                                             v-for="item in majors2"
@@ -167,10 +182,11 @@
                         <tr>
                             <td> <el-tag>选择班级</el-tag></td>
                             <td>
-                                <el-select v-model="updateCourse.classId"
-                                           placeholder="请选择班级"
+                                <el-select v-model="updateCourse.classIds"
+                                           placeholder="请选择班级(可多选）"
                                            size="small"
                                            :disabled="classDisabled"
+                                           multiple
                                            style="margin-left: 5px;width: 300px">
                                     <el-option
                                             v-for="item in classes2"
@@ -240,8 +256,8 @@
                     schoolId:'',
                     name:'',
                     term:'',
-                    classId:'',
-                    majorId:'',
+                    classIds:[],
+                    majorIds:[],
                 },
                 schools:[],
                 majors:[],
@@ -322,8 +338,8 @@
                 this.initClassByMajorId()
             },
 
-            selectMajor2Changed(){//更新班级信息,根据专业id
-                this.getRequest("/baseinfo/class/all?majorId="+this.updateCourse.majorId).then(resp=>{
+            selectMajor2Changed(){//更新班级信息,根据专业id数组，查询该专业下的班级列表
+                this.getRequest("/baseinfo/class/getClassByMids?majorIds="+this.updateCourse.majorIds).then(resp=>{
                     if(resp){
                         this.classes2=resp;
                     }
@@ -355,20 +371,17 @@
             },
             initCourseByPage(type){//根据条件初始化分页的课程数据
                 this.loading = true;//展示数据加载图标
-                let url = '/baseinfo/course/withClass?page=' + this.page + '&size=' + this.size;
+                let url = '/baseinfo/course/withClass2?page=' + this.page + '&size=' + this.size;
                 if(type&&type=='advanced'){//条件搜索
                     if(this.searchValue.schoolId!=''&&this.searchValue.majorId==''){
                         this.$message.error('请选择专业');
                         return ;
                     }
-                    if (this.searchValue.schoolId) {
-
-                        url += '&schoolId=' + this.searchValue.schoolId;
+                    if(this.searchValue.classId==''){
+                        this.$message.error('请选择班级');
+                        return ;
                     }
-                    if (this.searchValue.majorId) {
 
-                        url += '&majorId=' + this.searchValue.majorId;
-                    }
                     if (this.searchValue.classId) {
                         url += '&classId=' + this.searchValue.classId;
                     }
@@ -415,6 +428,7 @@
                     }
                 })
             },showEditView(data){
+
                 console.log("schools:",this.schools);
                 console.log("majors2:",this.majors2);
                 console.log("classes2:",this.classes2);
@@ -422,13 +436,20 @@
                 Object.assign(this.updateCourse,data);
                 console.log("updateCourse:",this.updateCourse);
                 this.initMajors2();
-               this.selectMajor2Changed();
+                this.selectMajor2Changed();
+              /*  var that = this;
+                setTimeout(function () {//跳转到试题审核页面
+                    that.selectMajor2Changed();
+                },1000);*/
+
+
+
                 this.$forceUpdate();
                 this.title='编辑课程信息';
 
-                this.schoolDisabled=true;
-                this.majorDisabled=true;
-                this.classDisabled=true;
+              this.schoolDisabled=true;
+                /* this.majorDisabled=true;
+               this.classDisabled=true;*/
 
                 this.dialogVisible=true;//显示编辑对话框
 

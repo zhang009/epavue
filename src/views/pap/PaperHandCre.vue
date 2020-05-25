@@ -967,10 +967,10 @@
                                             <strong>总试题数：</strong>{{selectPaperQueNum}}
                                         </el-col>
                                         <el-col :span="3">
-                                            <strong>总分值：</strong>{{totalScore}}<strong>分</strong>
+                                            <strong>总分值：</strong><span style="color: red">{{totalScore}}</span><strong>&#12288;分</strong>
                                         </el-col>
                                         <el-col :span="6">
-                                            <strong>及格分：</strong>{{passScore}}<strong>分（总分*60%）</strong>
+                                            <strong>及格分：</strong><span style="color: red">{{passScore}}</span><strong>&#12288;分（总分*60%）</strong>
                                         </el-col>
                                     </el-row>
 
@@ -1811,10 +1811,10 @@
                                 },
 
                             },
-                            showBackground: true,
-                            backgroundStyle: {
-                                color: 'rgba(220, 220, 220, 0.8)'
-                            },
+                            /* showBackground: true,
+                             backgroundStyle: {
+                                 color: 'rgba(220, 220, 220, 0.8)'
+                             },*/
                             itemStyle:{
                                 color: '#409EFF',
                             }

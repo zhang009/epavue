@@ -16,10 +16,12 @@
                         <div v-show="activeItemIndex==0" style="display: flex;justify-content:center;margin-top:60px;margin-bottom:50px;"><!--第一步.填写试卷信息-->
                             <el-form
                                     ref="paperBaseInfo"
+                                    :rules="rules"
+                                    :model="updatePaperInfo"
                                 label-position="right"
-                                label-width="100px"
+                                label-width="120px"
                                 >
-                                <el-form-item label="试卷名称">
+                                <el-form-item label="试卷名称" prop="name">
                                     <el-input size="medium"
                                               style="width: 300px"
                                               placeholder="请输入试卷的名称"
@@ -27,7 +29,7 @@
                                     </el-input>
                                 </el-form-item>
 
-                                <el-form-item label="学院:">
+                                <el-form-item label="学院" prop="schoolId">
                                     <el-select v-model="updatePaperInfo.schoolId"
                                                @change="selectSchoolChanged"
                                                placeholder="选择学院"
@@ -42,7 +44,7 @@
                                     </el-select>
                                 </el-form-item >
 
-                                <el-form-item label="专业:">
+                                <el-form-item label="专业:" prop="majorId">
                                     <el-select
                                             placeholder="选择专业"
                                             size="medium"
@@ -57,7 +59,7 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item >
-                                <el-form-item label="选择考试课程">
+                                <el-form-item label="选择考试课程" prop="courseId">
                                     <el-select v-model="updatePaperInfo.courseId"
                                                filterable
                                                prop="courseId"
@@ -73,9 +75,9 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-form-item label="学期:">
+                                <el-form-item label="学年学期" prop="semester">
                                     <el-select
-                                            placeholder="选择学期"
+                                            placeholder="选择学年学期"
                                             size="medium"
                                             v-model="updatePaperInfo.semester"
                                             style="width: 300px">
@@ -87,7 +89,7 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-form-item label="试卷总分:">
+                                <el-form-item label="试卷总分" prop="totalScore">
                                     <el-input size="medium"
                                               style="width: 150px"
                                               placeholder="请输入试卷的总分"
@@ -167,7 +169,7 @@
                                                         </el-input>分,
                                                     </el-col>
                                                     <el-col :span="8">
-                                                        共有 <el-link type="primary" style="width: 20px">{{paperQueNums.scAvailableNums}}</el-link>道题可用
+                                                        共有 <el-link type="primary" style="width: 20px">{{paperQueNums.scAvailableNums}}</el-link>&#12288;道题可用
                                                     </el-col>
                                                 </el-row>
                                                 <el-row style="margin-top: 20px"><!--多选题-->
@@ -189,7 +191,7 @@
                                                         </el-input>分,
                                                     </el-col>
                                                     <el-col :span="8">
-                                                        共有 <el-link type="primary" style="width: 20px">{{paperQueNums.mcAvailableNums}}</el-link>道题可用
+                                                        共有 <el-link type="primary" style="width: 20px">{{paperQueNums.mcAvailableNums}}</el-link>&#12288;道题可用
                                                     </el-col>
                                                 </el-row>
                                                 <el-row style="margin-top: 20px"><!--多选题-->
@@ -211,7 +213,7 @@
                                                         </el-input>分,
                                                     </el-col>
                                                     <el-col :span="8">
-                                                        共有 <el-link type="primary" style="width: 20px">{{paperQueNums.tfAvailableNums}}</el-link>道题可用
+                                                        共有 <el-link type="primary" style="width: 20px">{{paperQueNums.tfAvailableNums}}</el-link>&#12288;道题可用
                                                     </el-col>
                                                 </el-row>
                                                 <el-row style="margin-top: 20px"><!--单选题-->
@@ -233,7 +235,7 @@
                                                         </el-input>分,
                                                     </el-col>
                                                     <el-col :span="8">
-                                                        共有 <el-link type="primary" style="width: 20px">{{paperQueNums.fbAvailableNums}}</el-link>道题可用
+                                                        共有 <el-link type="primary" style="width: 20px">{{paperQueNums.fbAvailableNums}}</el-link>&#12288;道题可用
                                                     </el-col>
                                                 </el-row>
                                                 <el-row style="margin-top: 20px"><!--填空题-->
@@ -255,13 +257,13 @@
                                                         </el-input>分,
                                                     </el-col>
                                                     <el-col :span="8">
-                                                        共有 <el-link type="primary" style="width: 20px">{{paperQueNums.qaAvailableNums}}</el-link>道题可用
+                                                        共有 <el-link type="primary" style="width: 20px">{{paperQueNums.qaAvailableNums}}</el-link>&#12288;道题可用
                                                     </el-col>
                                                 </el-row>
                                             </el-form>
 
                                             <div style="margin-top: 20px;">
-                                                <span>试卷共：<strong>{{updatePaperInfo.totalScore}}分</strong></span> <span style="margin-left: 20px">已分配：<span style="color: red">{{allocationScore}}</span>分</span>
+                                                <span>试卷共：<span style="color: red">{{updatePaperInfo.totalScore}}</span>&#12288;分</span> <span style="margin-left: 20px">已分配：<span style="color: red">{{allocationScore}}</span>&#12288;分</span>
                                             </div>
                                         </div>
                                     </div>
@@ -599,9 +601,12 @@
                     totalNum:''//分配数量
                 }],
                 rules:{
+                    name:[{required:true,message:'请输入试卷名称',trigger:'blur'}],
+                    schoolId:[{required:true,message:'请选择学院',trigger:'blur'}],
+                    majorId:[{required:true,message:'请选择专业',trigger:'blur'}],
+                    semester:[{required:true,message:'请选择学年学期',trigger:'blur'}],
+                    totalScore:[{required:true,message:'请输入试卷总分',trigger:'blur'}],
                     courseId: [{required: true, message: '请选择课程', trigger: 'blur'}],
-                    chapterId: [{required: true, message: '请选择章节', trigger: 'blur'}],
-                    checkTeacherId:[{required: true, message: '请选择审核人', trigger: 'blur'}],
                 },
                 testPaper:{},//试卷对象，用于接收后端传来的数据
                 testPaper2:{},//试卷预览数据
@@ -696,28 +701,32 @@
             submitTestPaper(){//提交保存试卷
                 //提交前检查数据是否都已经填写正确，包括：课程、学院、专业、学期、试卷名称、
                 //试题分数、章节、知识点、审核教师id,总分,及格分
+                if(this.updatePaperInfo.checkTeacherId){
+                    this.updatePaperInfo.passScore=(Number(this.updatePaperInfo.totalScore)*0.6).toFixed(2);
+                    this.updatePaperInfo.sclist=this.testPaper2.sclist;
+                    this.updatePaperInfo.mclist=this.testPaper2.mclist;
+                    this.updatePaperInfo.tflist=this.testPaper2.tflist;
+                    this.updatePaperInfo.fblist=this.testPaper2.fblist;
+                    this.updatePaperInfo.qalist=this.testPaper2.qalist;
+                    /* this.getPaperChapter();*/
+                    /*  this.updatePaperInfo.knowIds=this.testPaper2.knowIds;*/
+                    //每个试题类型的分数
+                    this.updatePaperInfo.scScore=this.paperQueScores.scScore;
+                    this.updatePaperInfo.mcScore=this.paperQueScores.mcScore;
+                    this.updatePaperInfo.tfScore=this.paperQueScores.tfScore;
+                    this.updatePaperInfo.qaScore2=this.paperQueScores.qaScore;
+                    this.updatePaperInfo.fbScore2=this.paperQueScores.fbScore;
 
-                this.updatePaperInfo.passScore=(Number(this.updatePaperInfo.totalScore)*0.6).toFixed(2);
-                this.updatePaperInfo.sclist=this.testPaper2.sclist;
-                this.updatePaperInfo.mclist=this.testPaper2.mclist;
-                this.updatePaperInfo.tflist=this.testPaper2.tflist;
-                this.updatePaperInfo.fblist=this.testPaper2.fblist;
-                this.updatePaperInfo.qalist=this.testPaper2.qalist;
-               /* this.getPaperChapter();*/
-              /*  this.updatePaperInfo.knowIds=this.testPaper2.knowIds;*/
-                //每个试题类型的分数
-                this.updatePaperInfo.scScore=this.paperQueScores.scScore;
-                this.updatePaperInfo.mcScore=this.paperQueScores.mcScore;
-                this.updatePaperInfo.tfScore=this.paperQueScores.tfScore;
-                this.updatePaperInfo.qaScore2=this.paperQueScores.qaScore;
-                this.updatePaperInfo.fbScore2=this.paperQueScores.fbScore;
+                    //获取完试卷的信息，提交到后端添加试卷
+                    this.postRequest("/pap/create/autoAdd",this.updatePaperInfo).then(resp=> {
+                        if(resp){
 
-                //获取完试卷的信息，提交到后端添加试卷
-                this.postRequest("/pap/create/autoAdd",this.updatePaperInfo).then(resp=> {
-                    if(resp){
+                        }
+                    })
+                }else{
+                    this.$message.error('请选择试卷审核人');
+                }
 
-                    }
-                })
             },
             exportPapToWord(){//导出word文档
                 let data={
@@ -1034,19 +1043,73 @@
 
                 this.activeItemIndex++;
                 if (this.activeItemIndex == 1) {//根据课程获取章节和知识点信息
-                    this.initKnows();//初始化知识点
-                    this.initQueNums();//初始化试题数量
+
                     this.$refs.paperBaseInfo.validate((valid) => {
                         if (valid) {
 
+                            this.initKnows();//初始化知识点
+                            this.initQueNums();//初始化试题数量
                         }else{
                             this.activeItemIndex--;
+                            return;
                         }
                     });
 
                 }
                 if(this.activeItemIndex==2){
+                    //判断试题范围是否选择
+                    if(this.testPaperReg.knowIds.length==0){
+                        this.$message.error('请选择考试范围');
+                        this.activeItemIndex--;
+                        return;
+                    }
+                    //判断试题题型的分数是否已经输入
+                    if(this.paperQueNums.scSelectNums>0){
+                        if(this.paperQueScores.scScore==''||this.paperQueScores.scScore==null){
+                            this.$message.error('请输入单选题分数');
+                            this.activeItemIndex--;
+                            return;
+                        }
+                    }
+                    if(this.paperQueNums.mcSelectNums>0){
+                        if(this.paperQueScores.mcScore==''||this.paperQueScores.mcScore==null){
+                            this.$message.error('请输入多选题分数');
+                            this.activeItemIndex--;
+                            return;
+                        }
+                    }
+                    if(this.paperQueNums.tfSelectNums>0){
+                        if(this.paperQueScores.tfScore==''||this.paperQueScores.tfScore==null){
+                            this.$message.error('请输入判断题分数');
+                            this.activeItemIndex--;
+                            return;
+                        }
+                    }
+                    if(this.paperQueNums.fbSelectNums>0){
+                        if(this.paperQueScores.fbScore==''||this.paperQueScores.fbScore==null){
+                            this.$message.error('请输入填空题分数');
+                            this.activeItemIndex--;
+                            return;
+                        }
+                    }
+                    if(this.paperQueNums.qaSelectNums>0){
+                        if(this.paperQueScores.qaScore==''||this.paperQueScores.qaScore==null){
+                            this.$message.error('请输入简答题分数');
+                            this.activeItemIndex--;
+                            return;
+                        }
+                    }
+                    if(this.paperQueNums.scSelectNums==0&&
+                        this.paperQueNums.mcSelectNums==0&&
+                        this.paperQueNums.tfSelectNums==0&&
+                        this.paperQueNums.fbSelectNums==0&&
+                        this.paperQueNums.qaSelectNums==0){
 
+                            this.$message.error('请选择试题题型');
+                            this.activeItemIndex--;
+                            return;
+
+                    }
                 }
                 if(this.activeItemIndex==3){
                     this.$confirm('是否生成试卷？, 是否继续?', '提示', {

@@ -25,7 +25,7 @@
                         :value="item.id">
                 </el-option>
             </el-select>
-            <el-select v-model="searchValue.classId"
+           <!-- <el-select v-model="searchValue.classId"
                        @change="selectClassChanged"
                        placeholder="请选择班级"
                        size="small"
@@ -36,7 +36,7 @@
                         :label="item.name"
                         :value="item.id">
                 </el-option>
-            </el-select>
+            </el-select>-->
             <el-select v-model="searchValue.courseId"
                        @change="selectCourseChanged"
                        placeholder="请选择课程"
@@ -268,7 +268,8 @@
             },
             selectMajorChanged(){
                 //专业下拉框改变
-                this.initClassByMajorId();
+               // this.initClassByMajorId();
+                this.initCourseByMajorId();
             },
             selectClassChanged(){
                //班级下拉框改变
@@ -299,6 +300,13 @@
             },
             initCourseByClassId(){/*根据班级id获取课程*/
                 this.getRequest("/baseinfo/course/all?classId="+this.searchValue.classId).then(resp=>{
+                    if(resp){
+                        this.courses=resp;
+                    }
+                })
+            },
+            initCourseByMajorId(){/*根据专业id获取课程*/
+                this.getRequest("/baseinfo/course/getCourseByMajorId?majorId="+this.searchValue.majorId).then(resp=>{
                     if(resp){
                         this.courses=resp;
                     }

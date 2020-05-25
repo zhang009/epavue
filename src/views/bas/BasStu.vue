@@ -389,7 +389,6 @@
                         url+='&classId='+this.searchValue.classId;
                     }else{
                         this.$message.error('请先选择班级！');
-
                         return;
                     }
                 }else{
