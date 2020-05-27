@@ -287,7 +287,7 @@
                                                        @change="queTypeChange2(scope.row)"
                                                        style="width: 180px;">
                                                 <el-option
-                                                        v-for="item in queTypes"
+                                                        v-for="item in queTypes2"
                                                         :key="item"
                                                         :label="item"
                                                         :value="item">
@@ -299,6 +299,7 @@
                                         <template slot-scope="scope">
                                             <el-select v-model="scope.row.dot"
                                                        placeholder="请选择试题难度"
+                                                       @change="checkAvaNum(scope.row)"
                                                        style="width: 180px;">
                                                 <el-option
                                                         v-for="item in qlevel"
@@ -311,9 +312,9 @@
                                     </el-table-column>
                                     <el-table-column label="题型试题总数"  prop="totalNum" header-align="center" align="center">
                                     </el-table-column>
-                                    <el-table-column label="分配数量" header-align="center">
+                                    <el-table-column label="分配数量" header-align="left">
                                         <template slot-scope="scope">
-                                            <el-input v-model="scope.row.queNum" @change="checkQueNum(scope.$index,scope.row)"></el-input>
+                                            <el-input v-model="scope.row.queNum" @input="checkQueNum(scope.$index,scope.row)"></el-input>
                                         </template>
                                     </el-table-column>
                                     <el-table-column label="操作" width="80" header-align="center">
@@ -520,6 +521,7 @@
                 checkTeachers:[],
                 chapters:[],/*存放根据关键词查找的课程列表*/
                 queTypes:['单选题','多选题','判断题','填空题','简答题'],
+                queTypes2:[],
                 updatePaperInfo:{//提交的试卷
                     courseId:'',
                     name:'',//存储试卷名称
@@ -598,7 +600,8 @@
                     queType:'',//试题题型
                     dot:'',//难度
                     queNum:'',//该题型下试题的总数
-                    totalNum:''//分配数量
+                    totalNum:'',//分配数量
+                    avaNum:'',//可用试题总数
                 }],
                 rules:{
                     name:[{required:true,message:'请输入试卷名称',trigger:'blur'}],
@@ -701,6 +704,7 @@
             submitTestPaper(){//提交保存试卷
                 //提交前检查数据是否都已经填写正确，包括：课程、学院、专业、学期、试卷名称、
                 //试题分数、章节、知识点、审核教师id,总分,及格分
+
                 if(this.updatePaperInfo.checkTeacherId){
                     this.updatePaperInfo.passScore=(Number(this.updatePaperInfo.totalScore)*0.6).toFixed(2);
                     this.updatePaperInfo.sclist=this.testPaper2.sclist;
@@ -709,7 +713,7 @@
                     this.updatePaperInfo.fblist=this.testPaper2.fblist;
                     this.updatePaperInfo.qalist=this.testPaper2.qalist;
                     /* this.getPaperChapter();*/
-                    /*  this.updatePaperInfo.knowIds=this.testPaper2.knowIds;*/
+                     this.updatePaperInfo.knowIds=this.testPaper2.knowIds;
                     //每个试题类型的分数
                     this.updatePaperInfo.scScore=this.paperQueScores.scScore;
                     this.updatePaperInfo.mcScore=this.paperQueScores.mcScore;
@@ -987,6 +991,47 @@
                         if(queType=="单选题"&&total>Number(this.paperDotDis[index].totalNum)){
                             this.$message.error('超出范围，请重新计算后输入！');
                             this.$set(data,"queNum",0);
+
+
+                        }
+                        if(queType=="多选题"&&total>Number(this.paperDotDis[index].totalNum)){
+                            this.$message.error('超出范围，请重新计算后输入！');
+                            this.$set(data,"queNum",0);
+
+                        }
+                        if(queType=="填空题"&&total>Number(this.paperDotDis[index].totalNum)){
+                            this.$message.error('超出范围，请重新计算后输入！');
+                            this.$set(data,"queNum",0);
+
+                        }
+                        if(queType=="判断题"&&total>Number(this.paperDotDis[index].totalNum)){
+                            this.$message.error('超出范围，请重新计算后输入！');
+                            this.$set(data,"queNum",0);
+
+                        }
+                        if(queType=="简答题"&&total>Number(this.paperDotDis[index].totalNum)){
+                            this.$message.error('超出范围，请重新计算后输入！');
+                            this.$set(data,"queNum",0);
+
+                        }
+                    }
+                }
+            },
+            checkAvaNum(data){//第三步中，检查用户数输入的试题的分配数量是否超出上一步规定的试题类型数量
+                if(this.paperDotDis){
+                    /*if(this.paperDotDis.length>0&&this.paperDotDis[0].queType!=''){
+
+                        let total=0;
+                        var queType=this.paperDotDis[index].queType;
+                        for (let i = 0; i < this.paperDotDis.length; i++) {
+                            if(queType==this.paperDotDis[i].queType){
+                                total+=Number(this.paperDotDis[i].queNum);
+                            }
+                        }
+                        console.log(total);
+                        if(queType=="单选题"&&total>Number(this.paperDotDis[index].totalNum)){
+                            this.$message.error('超出范围，请重新计算后输入！');
+                            this.$set(data,"queNum",0);
                         }
                         if(queType=="多选题"&&total>Number(this.paperDotDis[index].totalNum)){
                             this.$message.error('超出范围，请重新计算后输入！');
@@ -1004,7 +1049,7 @@
                             this.$message.error('超出范围，请重新计算后输入！');
                             this.$set(data,"queNum",0);
                         }
-                    }
+                    }*/
                 }
             },
             queTypeChange2(data){//根据题型查询出该题型下面选择了多少个试题，并计算出该题型的难度的数目
@@ -1110,9 +1155,32 @@
                             return;
 
                     }
+                    if(this.updatePaperInfo.totalScore!=this.allocationScore){
+                        this.$message.error('试卷分数分配有误，请检查');
+                        this.activeItemIndex--;
+                        return;
+                    }
+                    //根据用户选择題型，來生成下面试题难度分布的题型
+                    if(this.queTypes2==null||this.queTypes2.length==0){
+                        if(this.paperQueNums.scSelectNums>0){
+                            this.queTypes2.push('单选题');
+                        }
+                        if(this.paperQueNums.mcSelectNums>0){
+                            this.queTypes2.push('多选题');
+                        }
+                        if(this.paperQueNums.tfSelectNums>0){
+                            this.queTypes2.push('判断题');
+                        }
+                        if(this.paperQueNums.fbSelectNums>0){
+                            this.queTypes2.push('填空题');
+                        }
+                        if(this.paperQueNums.qaSelectNums>0){
+                            this.queTypes2.push('简答题');
+                        }
+                    }
                 }
                 if(this.activeItemIndex==3){
-                    this.$confirm('是否生成试卷？, 是否继续?', '提示', {
+                    this.$confirm('是否生成试卷？ 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'

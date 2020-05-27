@@ -95,6 +95,8 @@
                                                 <el-divider direction="vertical"></el-divider>
                                                 <span v-if="scope.row.dot">难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
                                                 <span v-else>难度：</span><!--难度为空-->
+                                                <el-divider direction="vertical"></el-divider>
+                                                <span> 更新时间：{{scope.row.updateTime}}</span>
                                                <!-- <el-divider direction="vertical"></el-divider>
                                                 <span>草木深</span>-->
                                             </div>
@@ -176,6 +178,8 @@
 
                                                 <span v-if="scope.row.dot">难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
                                                 <span v-else>难度：</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <el-divider direction="vertical"></el-divider>
+                                                <span> 更新时间：{{scope.row.updateTime}}</span>
                                                <!-- <el-divider direction="vertical"></el-divider>
                                                 <span>草木深</span>-->
                                             </div>
@@ -254,6 +258,8 @@
 
                                                 <span v-if="scope.row.dot">难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
                                                 <span v-else>难度：</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <el-divider direction="vertical"></el-divider>
+                                                <span> 更新时间：{{scope.row.updateTime}}</span>
                                                <!-- <el-divider direction="vertical"></el-divider>
                                                 <span>草木深</span>-->
                                             </div>
@@ -332,6 +338,8 @@
 
                                                 <span v-if="scope.row.dot">难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
                                                 <span v-else>难度：</span>
+                                                <el-divider direction="vertical"></el-divider>
+                                                <span> 更新时间：{{scope.row.updateTime}}</span>
                                                <!-- <el-divider direction="vertical"></el-divider>
                                                 <span>草木深</span>-->
                                             </div>
@@ -410,6 +418,8 @@
 
                                                 <span v-if="scope.row.dot">难度：{{qlevel[scope.row.dot-1].label}}</span><!--根据dot的数值，对应到qlevel的label值-->
                                                 <span v-else>难度：</span><!--根据dot的数值，对应到qlevel的label值-->
+                                                <el-divider direction="vertical"></el-divider>
+                                                <span> 更新时间：{{scope.row.updateTime}}</span>
                                                <!-- <el-divider direction="vertical"></el-divider>
                                                 <span>草木深</span>-->
                                             </div>

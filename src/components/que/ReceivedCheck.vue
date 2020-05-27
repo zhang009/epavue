@@ -123,7 +123,12 @@
                         size="mini"
                         type="danger"
                         style="margin-top:8px "
-                        @click="checkMany" :disabled="multipleSelection.length==0">批量删除</el-button><!--批量删除-->
+                        @click="deleteMany" :disabled="multipleSelection.length==0">批量删除</el-button><!--批量删除-->
+                <el-button
+                        size="mini"
+                        type="danger"
+                        style="margin-top:8px "
+                        @click="checkMany" :disabled="multipleSelection.length==0">批量审核</el-button><!--批量审核-->
                 <div style="text-align: center">
                     <el-pagination
                             background
@@ -133,13 +138,36 @@
                             :total="total">
                     </el-pagination>
                 </div>
+                <el-dialog title="批量审核" :visible.sync="dialogQueCheckVisible"><!--批量审核对话框-->
+                    <div  align="center"><!--审核按钮-->
+                        <el-radio-group
+                                size="small"
+                                v-model="passManyQuestion">
+                            <el-radio :label='1' border>通过</el-radio>
+                            <el-radio :label='2' border>拒绝</el-radio>
+                        </el-radio-group>
+                        <div style="padding-left: 20px;padding-right: 20px;margin-bottom: 10px;margin-top: 5px">
+                            <el-input type="textarea"
+                                      :rows="7"
+                                      v-if="passManyQuestion==2"
+                                      v-model="refuseReason"
+                                      placeholder="请备注拒绝原因"
 
+                            ></el-input>
+                        </div>
+                        <div align="right" style="margin-top: 10px;margin-right: 20px">
+
+                            <el-button v-if="questionCheckInfo.checkStatus==0" type="primary" @click="submitQueManyCheck">提交</el-button>
+
+                        </div>
+                    </div>
+                    </el-dialog>
                 <el-dialog
                         :title="title1"
                         :visible.sync="dialogVisible2"
                         width="45%"
 
-                >
+                ><!--试题审核-->
                     <div style="border: 1px solid #dedede;margin-left: 20px;margin-right: 20px;padding-top: 20px;background-color: #F8F8F8">
                         <el-row :gutter="5" style="margin-bottom: 8px;"><!--带间隔的布局-->
                             <el-col :span="5" style="text-align: right;">
@@ -298,13 +326,16 @@
             return{
                     dialogVisible1:false,//拒绝申请对话框
                     dialogVisible2:false,//试题信息详情显示
+                    dialogQueCheckVisible:false,//批量审核对话框
                     receivedChecklist:[],//收到的审核列表数据
                     total:0,
                     page:1,
                     size:10,
                     title1:'试题详情',//收到的试题审核，对话框标题
                     passQuestion:1,//审核试题，是否通过单选按钮
-                    multipleSelection:[],
+                    passManyQuestion:1,//审核试题，是否通过单选按钮
+
+                    multipleSelection:[],//批量操作存储id
                     queType:'',
                     refuseReason:'',
                     updateQuestionCheck:{
@@ -319,18 +350,17 @@
                 this.initData();
 
             }, methods:{
-                initData(){//获取收到的请求信息
 
-                    let url = "/que/check/receive?page="+this.page+"&size="+this.size;
-                    this.getRequest(url).then(resp=>{
-                        if(resp){
-                            this.receivedChecklist=resp.data;
-                            console.log(this.receivedChecklist.length);
-                            this.total=resp.total;
-                        }
-                    })
-                },
-
+            initData(){//获取收到的请求信息
+                let url = "/que/check/receive?page="+this.page+"&size="+this.size;
+                this.getRequest(url).then(resp=>{
+                    if(resp){
+                        this.receivedChecklist=resp.data;
+                        console.log(this.receivedChecklist.length);
+                        this.total=resp.total;
+                    }
+                })
+            },
             submitCheckResult(){
 
                    if(this.passQuestion==2){
@@ -350,8 +380,25 @@
 
 
             },
-            handleSelectionChange(){
+            submitQueManyCheck(){//批量审核提交
+                if(this.passManyQuestion==2){
+                    this.updateQuestionCheck.checkStatus=this.passQuestion;//审核状态
+                    this.updateQuestionCheck.refuseReason=this.refuseReason;//审核未通过原因
+                }else{
+                    this.updateQuestionCheck.checkStatus=this.passQuestion;//审核状态
+                }
+                this.updateQuestionCheck.ids=this.multipleSelection;//审核id
+                this.postRequest("/que/check/checkMany",this.updateQuestionCheck).then(resp=>{
+                    if(resp){
+                        this.initData();//刷新页面
+                        this.emptyRefuseViewData();
+                        this.dialogQueCheckVisible=false;
+                    }
+                })
 
+            },
+            handleSelectionChange(){
+                this.multipleSelection = val;
             },
                 showDetailView(data){
                     if(data.checkStatus==0){//未审核，将标题改为
@@ -382,9 +429,33 @@
                         });
                     });
                 },
-                checkMany(){
+            checkMany(){
+                this.dialogQueCheckVisible=true;
+            },
+            deleteMany(){
+                this.$confirm('此操作将永久删除【'+this.multipleSelection.length+'】条审核记录, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    //点击确定批量删除
+                    let ids='?';
+                    this.multipleSelection.forEach(item=>{
+                        ids+='ids='+item.id+'&'
+                    })
+                    this.deleteRequest("/que/check/"+ids).then(resp=>{
+                        if(resp){
+                            this.initData();
+                        }
+                    })
 
-                },
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
             emptyRefuseViewData(){
                     this.updateQuestionCheck.id='';
                     this.refuseReason='';
@@ -405,7 +476,11 @@
 
 <style >
     .stem span{
-        white-space:pre
+        white-space:pre;
+        word-break: break-all;
+        word-wrap: break-word
+
+
     }
 
 </style>

@@ -17,7 +17,7 @@
             </el-dropdown>
         </el-header>
             <el-container>
-                <el-aside width="200px;">
+                <el-aside width="200px "  style="height: 100%">
                     <!--<el-menu @select="menuClick">-->
                     <el-menu router unique-opened><!--左侧菜单栏-->
                             <!--default-active="2"默认打开的菜单项，这里关闭-->
@@ -44,7 +44,7 @@
 
                     </el-menu>
                 </el-aside>
-                <el-main>
+                <el-main >
                     <!--面包屑导航-->
                     <el-breadcrumb separator-class="el-icon-arrow-right" v-if="this.$router.currentRoute.path!='/home'">
                         <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
@@ -208,6 +208,13 @@
     .el-dropdown-link{
         display: flex;
         align-items: center;
+    }
+    .el-aside {
+       /* display: block;
+        position: absolute;
+        overflow-y: scroll;*/
+
+
     }
 
 </style>

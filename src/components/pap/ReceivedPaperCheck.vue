@@ -5,6 +5,10 @@
                     :data="receivedPaperChecklist"
                     border
                     stripe
+                    v-loading="loading1"
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-text="正在加载数据"
+                    element-loading-background="rgba(0, 0, 0, 0.7)"
                     @selection-change="handleSelectionChange"
                     size="small"
                     style="width: 80%">
@@ -92,11 +96,8 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <el-button
-                    size="mini"
-                    type="danger"
-                    style="margin-top:8px "
-                    @click="checkMany" :disabled="multipleSelection.length==0">批量删除</el-button><!--批量删除-->
+
+
             <div style="text-align: center">
                 <el-pagination
                         background
@@ -324,8 +325,8 @@
                     }
                 })
             },
-            handleSelectionChange(){
-
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
             },
             submitResuseReason(data){
                 //提交拒绝原因
@@ -417,6 +418,7 @@
             checkMany(){//多选批量删除
 
             },
+
             emptyRefuseViewData(){
                 this.updateTestPaperInfo.id='';
                 this.refuseReason='';

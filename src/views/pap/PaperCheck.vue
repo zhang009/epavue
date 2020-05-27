@@ -46,11 +46,13 @@
                     let role=roles[i];
                     if(role.name=='ROLE_coursemanager'){
                         this.isCourseCourseManager=true;//
+                        this.activeName='receivedpapercheck';//默认显示标签栏
                         return;
                     }
                 }
             },
             handleClick(tab){
+
                 if(tab.name=="receivedpapercheck"){
                     this.isChildUpdate1=true;
                     this.isChildUpdate2=false;

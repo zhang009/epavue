@@ -5,6 +5,10 @@
                     :data="submittedPaperChecklist"
                     border
                     stripe
+                    v-loading="loading1"
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-text="正在加载数据"
+                    element-loading-background="rgba(0, 0, 0, 0.7)"
                     @selection-change="handleSelectionChange"
                     size="small"
                     style="width: 75%">
@@ -278,10 +282,11 @@
             this.initData();
         },methods:{
             initData() {//获取收到的请求信息，初始化试卷审核列表
-
+                this.loading1=true;
                 let url = "/pap/check/submit?page=" + this.page + "&size=" + this.size;
                 this.getRequest(url).then(resp => {
                     if (resp) {
+                        this.loading1=false;
                         this.submittedPaperChecklist = resp.data;
                        /* console.log(this.submittedChecklist.length);*/
                         this.total = resp.total;
