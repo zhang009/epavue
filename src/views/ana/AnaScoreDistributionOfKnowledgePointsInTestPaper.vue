@@ -79,7 +79,9 @@
                 <el-pagination
                         background
                         layout="prev, pager, next"
-                        :total="count_TestPaper">
+                        :total="count_TestPaper"
+                        :current-page.sync="currentPage"
+                        @current-change="page_click">
                 </el-pagination>
             </el-col>
         </el-row>
@@ -91,6 +93,7 @@
         name: "AnaScoreOfTestpaperKnowledgePoints",
         data(){
             return{
+
                 //知识点表格
                 tableData_KnowledgePoints: [{
                     knowledgePoints:"c语言符合表达式",
@@ -123,6 +126,8 @@
                     knowledgePoints:"二维数组",
                     scoringRate:0.05
                 },],
+                //当前页码
+                currentPage:1,
                 //发送请求后返回的试卷数组
                 list_oftestpaper:null,
                 //总共有多少条数据被返回
@@ -220,6 +225,33 @@
             }
         },
         methods:{
+            //页码点击事件
+            page_click(){
+                /*
+                * 1,获取当前页码
+                * 2,将当前页码所需要的数据绑定到表格当中（在此之前，先判断是不是最后一页）
+                * */
+
+                let table_data = []
+                // console.log("当前页码2",this.currentPage)
+                // console.log("总共有几页",parseInt(this.count_TestPaper/10)+1)
+                // console.log("数据前下标",(this.currentPage-1)*10)
+                if(this.currentPage != parseInt(this.count_TestPaper/10)+1){
+                    for(let i=(this.currentPage-1)*10;i<this.currentPage*10;i++){
+                        table_data.push(this.list_oftestpaper[i])
+                    }
+                    // console.log("表格数据1",table_data)
+                    // console.log("数据1",this.list_oftestpaper)
+                }else{
+                    for(let i=(this.currentPage-1)*10;i<this.count_TestPaper;i++){
+                        console.log("下标2",i)
+                        table_data.push(this.list_oftestpaper[i])
+                    }
+                    // console.log("表格数据2",table_data)
+                    // console.log("数据2",this.list_oftestpaper[1])
+                }
+                this.tableData = table_data
+            },
             //搜索框回车按钮监听
             center_search(){
                 this.click_search()
@@ -284,12 +316,12 @@
         mounted() {
             let that = this
             //挂载结束后立即向后台请求试卷列表的数据，然后将试卷列表显示在表格中
-            this.$http.get('/analysis/getListOfTestPaper').then(function (res) {
+            this.$http.get('/analysis/getAllListOfTestPaper').then(function (res) {
                 console.log(res)
                 that.count_TestPaper = res.length       //将返回数据总数保存起来
                 //将返回来的数组放到表格里
                 that.list_oftestpaper = res
-                that.setTableData()
+                that.page_click()
                 //setTimeout(() => {this.setTableData()},300)
             }).catch(function (err) {
                 console.log(err)

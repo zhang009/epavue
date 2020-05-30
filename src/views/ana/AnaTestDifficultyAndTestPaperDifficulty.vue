@@ -201,6 +201,7 @@
         name: "AnaTestDifficultyAndTestPaperDifficulty",
         data(){
             return{
+
                 optionChar:['A.',"B.", "C.","D.","E.","F.","G.","H.","I.","J."],//这是为了对应多选题的选项序号
                 //向后台请求的试卷信息
                 updateTestPaperInfo:{},

@@ -61,7 +61,9 @@
             <el-pagination
                     background
                     layout="prev, pager, next"
-                    :total="count_TestPaper">
+                    :total="count_TestPaper"
+                    :current-page.sync="currentPage"
+                    @current-change="page_click">
             </el-pagination>
         </el-col>
     </el-row>
@@ -73,6 +75,8 @@
         name: "AnaScoresOfAllChapters",
         data(){
             return{
+                //当前页码
+                currentPage:1,
                 //发送请求后返回的试卷数组
                 list_oftestpaper:null,
                 //总共有多少条数据被返回
@@ -159,6 +163,33 @@
             }
         },
         methods:{
+            //页码点击事件
+            page_click(){
+                /*
+                * 1,获取当前页码
+                * 2,将当前页码所需要的数据绑定到表格当中（在此之前，先判断是不是最后一页）
+                * */
+
+                let table_data = []
+                // console.log("当前页码2",this.currentPage)
+                // console.log("总共有几页",parseInt(this.count_TestPaper/10)+1)
+                // console.log("数据前下标",(this.currentPage-1)*10)
+                if(this.currentPage != parseInt(this.count_TestPaper/10)+1){
+                    for(let i=(this.currentPage-1)*10;i<this.currentPage*10;i++){
+                        table_data.push(this.list_oftestpaper[i])
+                    }
+                    // console.log("表格数据1",table_data)
+                    // console.log("数据1",this.list_oftestpaper)
+                }else{
+                    for(let i=(this.currentPage-1)*10;i<this.count_TestPaper;i++){
+                        console.log("下标2",i)
+                        table_data.push(this.list_oftestpaper[i])
+                    }
+                    // console.log("表格数据2",table_data)
+                    // console.log("数据2",this.list_oftestpaper[1])
+                }
+                this.tableData = table_data
+            },
             //搜索框回车按钮监听
             center_search(){
                 this.click_search()
